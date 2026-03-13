@@ -115,8 +115,9 @@ function LoginPage({ onGoRegister }: any) {
             <input value={pass} onChange={e => setPass(e.target.value)} placeholder="••••••••" type="password" style={{ width: "100%", padding: "12px 14px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.06)", color: "#fff", fontSize: 14, boxSizing: "border-box", outline: "none" }} />
           </div>
           <button onClick={() => signIn("credentials", { email, password: pass, callbackUrl: "/" })} style={{ width: "100%", padding: "13px", borderRadius: 10, border: "none", background: BRAND.gradBtn, color: "#fff", fontSize: 15, fontWeight: 700, cursor: "pointer", marginBottom: 16 }}>Sign in</button>
-          <button onClick={() => signIn("google", { callbackUrl: "/" })} style={{ width: "100%", padding: "10px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <img src="/google-logo.png" alt="Continue with Google" style={{ height: 24, objectFit: "contain" }} />
+          <button onClick={() => signIn("google", { callbackUrl: "/" })} style={{ width: "100%", padding: "11px", borderRadius: 10, border: "1px solid #dadce0", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}>
+            <span style={{ fontSize: 14, fontWeight: 600, color: "#3c4043" }}>Sign in with</span>
+            <img src="/google-logo.png" alt="Google" style={{ height: 20, objectFit: "contain" }} />
           </button>
           <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 13, textAlign: "center", marginTop: 24 }}>
             Don't have an account?{" "}
