@@ -89,7 +89,7 @@ function StatusTag({ status, approval }: any) {
 }
 
 // AUTH PAGES
-function LoginPage({ onLogin, onGoRegister }: any) {
+function LoginPage({ onGoRegister }: any) {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   return (
@@ -114,7 +114,7 @@ function LoginPage({ onLogin, onGoRegister }: any) {
             <label style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.6)", display: "block", marginBottom: 6 }}>Password</label>
             <input value={pass} onChange={e => setPass(e.target.value)} placeholder="••••••••" type="password" style={{ width: "100%", padding: "12px 14px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.06)", color: "#fff", fontSize: 14, boxSizing: "border-box", outline: "none" }} />
           </div>
-          <button onClick={onLogin} style={{ width: "100%", padding: "13px", borderRadius: 10, border: "none", background: BRAND.gradBtn, color: "#fff", fontSize: 15, fontWeight: 700, cursor: "pointer", marginBottom: 16 }}>Sign in</button>
+          <button onClick={() => signIn("credentials", { email, password: pass, callbackUrl: "/" })} style={{ width: "100%", padding: "13px", borderRadius: 10, border: "none", background: BRAND.gradBtn, color: "#fff", fontSize: 15, fontWeight: 700, cursor: "pointer", marginBottom: 16 }}>Sign in</button>
           <div style={{ display: "flex", gap: 10 }}>
             <button onClick={() => signIn("google", { callbackUrl: "/" })} style={{ flex: 1, padding: "10px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.7)", fontSize: 13, cursor: "pointer", fontWeight: 500 }}>Google</button>
             <button onClick={() => signIn("facebook", { callbackUrl: "/" })} style={{ flex: 1, padding: "10px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.7)", fontSize: 13, cursor: "pointer", fontWeight: 500 }}>Facebook</button>
@@ -145,7 +145,7 @@ function LoginPage({ onLogin, onGoRegister }: any) {
   );
 }
 
-function RegisterPage({ onRegister, onGoLogin }: any) {
+function RegisterPage({ onGoLogin }: any) {
   const [form, setForm] = useState({ name: "", email: "", pass: "", company: "" });
   const f = (k: string) => (e: any) => setForm(p => ({ ...p, [k]: e.target.value }));
   return (
@@ -176,7 +176,7 @@ function RegisterPage({ onRegister, onGoLogin }: any) {
         <div style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.3)", borderRadius: 10, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "rgba(255,255,255,0.6)" }}>
           🎁 14 days free — then from <strong style={{ color: "#fff" }}>SRD 45/month</strong>
         </div>
-        <button onClick={onRegister} style={{ width: "100%", padding: "13px", borderRadius: 10, border: "none", background: BRAND.gradBtn, color: "#fff", fontSize: 15, fontWeight: 700, cursor: "pointer", marginBottom: 16 }}>Create free account</button>
+        <button onClick={() => signIn("google", { callbackUrl: "/" })} style={{ width: "100%", padding: "13px", borderRadius: 10, border: "none", background: BRAND.gradBtn, color: "#fff", fontSize: 15, fontWeight: 700, cursor: "pointer", marginBottom: 16 }}>Create free account</button>
         <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 13, textAlign: "center" }}>
           Already have an account?{" "}
           <button onClick={onGoLogin} style={{ background: "none", border: "none", color: BRAND.accent, fontWeight: 700, cursor: "pointer", fontSize: 13 }}>Sign in</button>
@@ -188,7 +188,8 @@ function RegisterPage({ onRegister, onGoLogin }: any) {
 
 // MAIN DASHBOARD
 export default function App() {
-  const [screen, setScreen] = useState<"login"|"register"|"app">("login");
+  const { data: session, status } = useSession();
+  const [screen, setScreen] = useState<"login"|"register">("login");
   const [workspaces, setWorkspaces] = useState(INIT_WS);
   const [posts, setPosts] = useState(INIT_POSTS);
   const [feedback, setFeedback] = useState(INIT_FB);
@@ -204,8 +205,18 @@ export default function App() {
   const [calView, setCalView] = useState<"week"|"month">("week");
   const [showUserMenu, setShowUserMenu] = useState(false);
 
-  if (screen === "login") return <LoginPage onLogin={() => setScreen("app")} onGoRegister={() => setScreen("register")} />;
-  if (screen === "register") return <RegisterPage onRegister={() => setScreen("app")} onGoLogin={() => setScreen("login")} />;
+  // Show loading spinner while checking session
+  if (status === "loading") return (
+    <div style={{ minHeight: "100vh", background: BRAND.dark, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ color: "#fff", fontSize: 16, fontWeight: 600 }}>Loading...</div>
+    </div>
+  );
+
+  // If not logged in, show login or register page
+  if (!session) {
+    if (screen === "register") return <RegisterPage onGoLogin={() => setScreen("login")} />;
+    return <LoginPage onGoRegister={() => setScreen("register")} />;
+  }
 
   const ws = workspaces.find(w => w.id === activeWS);
   const wsPosts = posts[activeWS] || [];
@@ -276,14 +287,16 @@ export default function App() {
     { id:"settings", icon:"⚙️", label:"Settings" },
   ];
 
-  const I = { color: BRAND.primary, bg: BRAND.primaryL };
+  // Get user info from session
+  const userName = session.user?.name || "User";
+  const userEmail = session.user?.email || "";
+  const userInitials = userName.split(" ").map((n:string)=>n[0]).join("").slice(0,2).toUpperCase();
 
   return (
     <div style={{ display:"flex", minHeight:"100vh", fontFamily:"'Segoe UI',system-ui,sans-serif", background: BRAND.bg }}>
 
       {/* SIDEBAR */}
       <div style={{ width: sidebarOpen?240:64, flexShrink:0, background: BRAND.sidebar, display:"flex", flexDirection:"column", transition:"width 0.2s", overflow:"hidden", borderRight:"1px solid rgba(255,255,255,0.05)" }}>
-        {/* Logo */}
         <div style={{ padding:"16px 12px", display:"flex", alignItems:"center", gap:10, borderBottom:"1px solid rgba(255,255,255,0.06)", minHeight:60 }}>
           <div style={{ width:34, height:34, borderRadius:10, background: BRAND.grad, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
             <span style={{ color:"#fff", fontWeight:900, fontSize:17 }}>D</span>
@@ -292,7 +305,6 @@ export default function App() {
           <button onClick={()=>setSidebarOpen(o=>!o)} style={{ marginLeft:"auto", background:"none", border:"none", color:"rgba(255,255,255,0.3)", cursor:"pointer", fontSize:18, flexShrink:0, padding:4 }}>☰</button>
         </div>
 
-        {/* Workspace selector */}
         <div style={{ padding:"10px 8px", borderBottom:"1px solid rgba(255,255,255,0.06)" }}>
           {sidebarOpen && <div style={{ fontSize:9, fontWeight:700, color:"rgba(255,255,255,0.25)", letterSpacing:1.5, marginBottom:6, paddingLeft:4 }}>WORKSPACES</div>}
           {workspaces.map(w => {
@@ -319,7 +331,6 @@ export default function App() {
           </button>
         </div>
 
-        {/* Nav */}
         <div style={{ padding:"8px 8px", flex:1, overflowY:"auto" }}>
           {sidebarOpen && <div style={{ fontSize:9, fontWeight:700, color:"rgba(255,255,255,0.25)", letterSpacing:1.5, marginBottom:6, paddingLeft:4, marginTop:4 }}>MENU</div>}
           {NAV.map(n => {
@@ -335,15 +346,14 @@ export default function App() {
           })}
         </div>
 
-        {/* Bottom */}
         <div style={{ padding:"10px 8px", borderTop:"1px solid rgba(255,255,255,0.06)" }}>
           {sidebarOpen && totalPending>0 && <div style={{ background:"rgba(124,58,237,0.15)", border:"1px solid rgba(124,58,237,0.25)", borderRadius:9, padding:"8px 10px", marginBottom:8 }}>
             <div style={{ fontSize:11, color: BRAND.primaryL, fontWeight:600 }}>{totalPending} pending approval{totalPending>1?"s":""}</div>
           </div>}
-          <button onClick={()=>setScreen("login")} style={{ width:"100%", display:"flex", alignItems:"center", gap:10, padding:"7px 6px", borderRadius:9, background:"transparent", border:"none", cursor:"pointer" }}>
-            <div style={{ width:28, height:28, borderRadius:"50%", background: BRAND.grad, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, fontSize:12, color:"#fff", fontWeight:700 }}>R</div>
+          <button onClick={()=>signOut({ callbackUrl: "/" })} style={{ width:"100%", display:"flex", alignItems:"center", gap:10, padding:"7px 6px", borderRadius:9, background:"transparent", border:"none", cursor:"pointer" }}>
+            <div style={{ width:28, height:28, borderRadius:"50%", background: BRAND.grad, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, fontSize:12, color:"#fff", fontWeight:700 }}>{userInitials}</div>
             {sidebarOpen && <div style={{ textAlign:"left" }}>
-              <div style={{ fontSize:12, color:"rgba(255,255,255,0.7)", fontWeight:600 }}>Ravis</div>
+              <div style={{ fontSize:12, color:"rgba(255,255,255,0.7)", fontWeight:600 }}>{userName}</div>
               <div style={{ fontSize:10, color:"rgba(255,255,255,0.3)" }}>Sign out</div>
             </div>}
           </button>
@@ -352,7 +362,6 @@ export default function App() {
 
       {/* MAIN */}
       <div style={{ flex:1, display:"flex", flexDirection:"column", overflow:"hidden" }}>
-        {/* Topbar */}
         <div style={{ background: BRAND.white, borderBottom:`1px solid ${BRAND.border}`, padding:"0 24px", display:"flex", alignItems:"center", height:58, gap:12, flexShrink:0 }}>
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
             {ws && <Avatar initials={ws.avatar} color={ws.color} size={32} />}
@@ -366,20 +375,26 @@ export default function App() {
             <button onClick={()=>setShowNewPost(true)} style={{ background: BRAND.gradBtn, color:"#fff", border:"none", borderRadius:9, padding:"8px 18px", fontSize:13, fontWeight:700, cursor:"pointer" }}>+ Create Post</button>
             <div style={{ position:"relative" }}>
               <button onClick={()=>setShowUserMenu(o=>!o)} style={{ display:"flex", alignItems:"center", gap:8, background:"none", border:`1px solid ${BRAND.border}`, borderRadius:10, padding:"5px 10px", cursor:"pointer" }}>
-                <div style={{ width:30, height:30, borderRadius:"50%", background: BRAND.gradBtn, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, fontWeight:700, color:"#fff" }}>RK</div>
+                {session.user?.image
+                  ? <img src={session.user.image} style={{ width:30, height:30, borderRadius:"50%" }} alt="avatar" />
+                  : <div style={{ width:30, height:30, borderRadius:"50%", background: BRAND.gradBtn, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, fontWeight:700, color:"#fff" }}>{userInitials}</div>
+                }
                 <div style={{ textAlign:"left" }}>
-                  <div style={{ fontSize:12, fontWeight:700, color: BRAND.text }}>Ravish Kalka</div>
-                  <div style={{ fontSize:10, color: BRAND.textT }}>ravish@equimarketing.nl</div>
+                  <div style={{ fontSize:12, fontWeight:700, color: BRAND.text }}>{userName}</div>
+                  <div style={{ fontSize:10, color: BRAND.textT }}>{userEmail}</div>
                 </div>
                 <span style={{ fontSize:12, color: BRAND.textT }}>▾</span>
               </button>
               {showUserMenu && (
                 <div style={{ position:"absolute", right:0, top:"calc(100% + 8px)", background: BRAND.white, border:`1px solid ${BRAND.border}`, borderRadius:14, boxShadow:"0 8px 30px rgba(0,0,0,0.12)", width:220, zIndex:100, overflow:"hidden" }}>
                   <div style={{ padding:"14px 16px", borderBottom:`1px solid ${BRAND.border}`, display:"flex", alignItems:"center", gap:10 }}>
-                    <div style={{ width:38, height:38, borderRadius:"50%", background: BRAND.gradBtn, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, fontWeight:700, color:"#fff" }}>RK</div>
+                    {session.user?.image
+                      ? <img src={session.user.image} style={{ width:38, height:38, borderRadius:"50%" }} alt="avatar" />
+                      : <div style={{ width:38, height:38, borderRadius:"50%", background: BRAND.gradBtn, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, fontWeight:700, color:"#fff" }}>{userInitials}</div>
+                    }
                     <div>
-                      <div style={{ fontSize:13, fontWeight:700, color: BRAND.text }}>Ravish Kalka</div>
-                      <div style={{ fontSize:11, color: BRAND.textT }}>ravish@equimarketing.nl</div>
+                      <div style={{ fontSize:13, fontWeight:700, color: BRAND.text }}>{userName}</div>
+                      <div style={{ fontSize:11, color: BRAND.textT }}>{userEmail}</div>
                     </div>
                   </div>
                   {[
@@ -396,7 +411,7 @@ export default function App() {
                     </button>
                   ))}
                   <div style={{ borderTop:`1px solid ${BRAND.border}` }}>
-                    <button onClick={()=>setScreen("login")} style={{ width:"100%", display:"flex", alignItems:"center", gap:10, padding:"10px 16px", background:"none", border:"none", cursor:"pointer", fontSize:13, color: BRAND.red, textAlign:"left" }}
+                    <button onClick={()=>signOut({ callbackUrl: "/" })} style={{ width:"100%", display:"flex", alignItems:"center", gap:10, padding:"10px 16px", background:"none", border:"none", cursor:"pointer", fontSize:13, color: BRAND.red, textAlign:"left" }}
                       onMouseEnter={e=>(e.currentTarget.style.background=BRAND.redL)}
                       onMouseLeave={e=>(e.currentTarget.style.background="none")}>
                       <span style={{ fontSize:16 }}>🚪</span>Logout
@@ -408,14 +423,13 @@ export default function App() {
           </div>
         </div>
 
-        {/* Page content */}
         <div style={{ flex:1, overflowY:"auto", padding:"24px" }}>
 
           {page==="dashboard" && (
             <div>
               <div style={{ marginBottom:20 }}>
                 <h1 style={{ fontSize:22, fontWeight:800, color: BRAND.text, marginBottom:4 }}>Dashboard</h1>
-                <p style={{ fontSize:13, color: BRAND.textT }}>Welcome back — here's an overview of {ws?.name}</p>
+                <p style={{ fontSize:13, color: BRAND.textT }}>Welcome back, {userName} — here's an overview of {ws?.name}</p>
               </div>
               <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:14, marginBottom:24 }}>
                 {[
