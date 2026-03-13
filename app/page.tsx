@@ -1,4 +1,5 @@
 "use client"; 
+import { signIn, signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 
 const BRAND = {
@@ -115,9 +116,8 @@ function LoginPage({ onLogin, onGoRegister }: any) {
           </div>
           <button onClick={onLogin} style={{ width: "100%", padding: "13px", borderRadius: 10, border: "none", background: BRAND.gradBtn, color: "#fff", fontSize: 15, fontWeight: 700, cursor: "pointer", marginBottom: 16 }}>Sign in</button>
           <div style={{ display: "flex", gap: 10 }}>
-            {["Google","Facebook","Apple"].map(s => (
-              <button key={s} style={{ flex: 1, padding: "10px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.7)", fontSize: 13, cursor: "pointer", fontWeight: 500 }}>{s}</button>
-            ))}
+            <button onClick={() => signIn("google", { callbackUrl: "/" })} style={{ flex: 1, padding: "10px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.7)", fontSize: 13, cursor: "pointer", fontWeight: 500 }}>Google</button>
+            <button onClick={() => signIn("facebook", { callbackUrl: "/" })} style={{ flex: 1, padding: "10px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.7)", fontSize: 13, cursor: "pointer", fontWeight: 500 }}>Facebook</button>
           </div>
           <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 13, textAlign: "center", marginTop: 24 }}>
             Don't have an account?{" "}
