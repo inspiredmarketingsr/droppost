@@ -717,10 +717,45 @@ export default function App() {
           {page === "settings" && (
             <div>
               <h1 style={{ fontSize: 20, fontWeight: 800, color: BRAND.text, marginBottom: 20 }}>Settings</h1>
+
+              {/* Connected accounts */}
+              <div style={{ background: BRAND.white, border: `1px solid ${BRAND.border}`, borderRadius: 14, padding: "18px", marginBottom: 14 }}>
+                <div style={{ fontSize: 14, fontWeight: 700, color: BRAND.text, marginBottom: 12 }}>Connected accounts</div>
+                {[
+                  { id: "youtube", label: "YouTube", color: "#FF0000", icon: "▶", description: "Post videos & Shorts" },
+                  { id: "facebook", label: "Facebook Pages", color: "#1877F2", icon: "f", description: "Post to Facebook Pages" },
+                  { id: "instagram", label: "Instagram", color: "#E1306C", icon: "ig", description: "Post photos & Reels" },
+                  { id: "tiktok", label: "TikTok", color: "#010101", icon: "tt", description: "Post videos" },
+                  { id: "snapchat", label: "Snapchat", color: "#FFCE00", icon: "sc", description: "Post Stories" },
+                ].map(platform => (
+                  <div key={platform.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: `1px solid #F3F4F6` }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                      <div style={{ width: 36, height: 36, borderRadius: 9, background: platform.color + "15", border: `1px solid ${platform.color}30`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, color: platform.color, fontWeight: 700 }}>{platform.icon}</div>
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: BRAND.text }}>{platform.label}</div>
+                        <div style={{ fontSize: 11, color: BRAND.textT }}>{platform.description}</div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        if (platform.id === "youtube") {
+                          signIn("google", {
+                            callbackUrl: "/",
+                            scope: "openid email profile https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtube.upload"
+                          } as any);
+                        }
+                      }}
+                      style={{ fontSize: 12, padding: "6px 14px", borderRadius: 8, border: `1px solid ${platform.id === "youtube" ? platform.color : BRAND.border}`, background: platform.id === "youtube" ? platform.color + "10" : "transparent", color: platform.id === "youtube" ? platform.color : BRAND.textT, cursor: platform.id === "youtube" ? "pointer" : "default", fontWeight: 600 }}>
+                      {platform.id === "youtube" ? "Connect →" : "Coming soon"}
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Other settings */}
               {[
                 { title: "Account", items: ["Profile", "Email & Password", "Two-factor authentication"] },
                 { title: "Workspace", items: ["Workspace name", "Logo & branding", "Delete workspace"] },
-                { title: "Connected accounts", items: ["Facebook Pages", "Instagram", "TikTok", "Snapchat", "YouTube"] },
                 { title: "Billing", items: ["Current plan", "Payment method", "Invoices"] },
                 { title: "Notifications", items: ["Email notifications", "Push notifications", "Approval alerts"] },
               ].map(section => (
