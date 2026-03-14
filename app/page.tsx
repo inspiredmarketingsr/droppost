@@ -160,7 +160,8 @@ export default function App() {
   const [showNewPost, setShowNewPost] = useState(false);
   const [showNewWS, setShowNewWS] = useState(false);
   const [showFB, setShowFB] = useState<string|null>(null);
-  const [draft, setDraft] = useState({ content: "", platforms: [] as string[], date: "", time: "12:00", type: "post" });
+  const [draft, setDraft] = useState({ content: "", platforms: [] as string[], date: "", time: "12:00", type: "post", image_url: "" });
+  const [uploading, setUploading] = useState(false);
   const [newWS, setNewWS] = useState({ name: "", industry: "", color: WORKSPACE_COLORS[0] });
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [calView, setCalView] = useState<"week"|"month">("week");
@@ -223,6 +224,16 @@ export default function App() {
     if (!posts[wsId]) await loadPosts(wsId);
   }
 
+  async function uploadImage(file: File): Promise<string | null> {
+    setUploading(true);
+    const fileName = `${userEmail}/${Date.now()}-${file.name}`;
+    const { data, error } = await supabase.storage.from("post-images").upload(fileName, file, { upsert: true });
+    setUploading(false);
+    if (error) { console.error(error); return null; }
+    const { data: urlData } = supabase.storage.from("post-images").getPublicUrl(fileName);
+    return urlData.publicUrl;
+  }
+
   async function addPost() {
     if (!draft.content || !draft.date || draft.platforms.length === 0 || !activeWS) return;
     const { data } = await supabase.from("posts").insert({
@@ -233,10 +244,10 @@ export default function App() {
       scheduled_time: draft.time,
       status: "scheduled",
       approval: "pending",
-      type: draft.type,
+      image_url: draft.image_url || null,
     }).select().single();
     if (data) setPosts(prev => ({ ...prev, [activeWS]: [data, ...(prev[activeWS] || [])] }));
-    setDraft({ content: "", platforms: [], date: "", time: "12:00", type: "post" });
+    setDraft({ content: "", platforms: [], date: "", time: "12:00", type: "post", image_url: "" });
     setShowNewPost(false);
   }
 
@@ -796,6 +807,23 @@ export default function App() {
                   <button key={p.id} onClick={() => setDraft(d => ({ ...d, platforms: d.platforms.includes(p.id) ? d.platforms.filter(x => x !== p.id) : [...d.platforms, p.id] }))} style={{ border: draft.platforms.includes(p.id) ? `2px solid ${p.color}` : `1px solid ${BRAND.border}`, background: draft.platforms.includes(p.id) ? p.bg : "transparent", color: draft.platforms.includes(p.id) ? p.color : BRAND.textS, borderRadius: 9, padding: "7px 14px", fontSize: 13, cursor: "pointer", fontWeight: draft.platforms.includes(p.id) ? 700 : 400 }}>{p.label}</button>
                 ))}
               </div>
+            </div>
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ fontSize: 12, fontWeight: 700, color: BRAND.textS, display: "block", marginBottom: 6 }}>IMAGE</label>
+              {draft.image_url
+                ? <div style={{ position: "relative", marginBottom: 8 }}>
+                    <img src={draft.image_url} style={{ width: "100%", height: 160, objectFit: "cover", borderRadius: 10, border: `1px solid ${BRAND.border}` }} />
+                    <button onClick={() => setDraft(d => ({ ...d, image_url: "" }))} style={{ position: "absolute", top: 8, right: 8, background: BRAND.red, color: "#fff", border: "none", borderRadius: 6, padding: "4px 8px", cursor: "pointer", fontSize: 12 }}>✕ Remove</button>
+                  </div>
+                : <label style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "20px", borderRadius: 10, border: `2px dashed ${BRAND.border}`, cursor: "pointer", background: "#FAFAFA" }}>
+                    <span style={{ fontSize: 20 }}>📁</span>
+                    <span style={{ fontSize: 13, color: BRAND.textS }}>{uploading ? "Uploading..." : "Click to upload image"}</span>
+                    <input type="file" accept="image/*" style={{ display: "none" }} onChange={async e => {
+                      const file = e.target.files?.[0];
+                      if (file) { const url = await uploadImage(file); if (url) setDraft(d => ({ ...d, image_url: url })); }
+                    }} />
+                  </label>
+              }
             </div>
             <div style={{ marginBottom: 14 }}>
               <label style={{ fontSize: 12, fontWeight: 700, color: BRAND.textS, display: "block", marginBottom: 6 }}>CONTENT</label>
