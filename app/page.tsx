@@ -273,7 +273,8 @@ export default function App() {
     }));
   }
 
-  if (status === "loading" || (session && loading)) return (
+  if (status === "loading") return null;
+  if (session && loading && workspaces.length === 0) return (
     <div style={{ minHeight: "100vh", background: BRAND.dark, display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div style={{ color: "#fff", fontSize: 16, fontWeight: 600 }}>Loading...</div>
     </div>
