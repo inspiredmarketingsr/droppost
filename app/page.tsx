@@ -2,7 +2,7 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
-import { Settings, User, CreditCard, HelpCircle, Gift, LogOut, Headphones, Newspaper, Moon, Sun, Globe } from "lucide-react";
+import { Settings, User, CreditCard, HelpCircle, Gift, LogOut, Headphones, Newspaper, Moon, Sun, Globe, LayoutDashboard, Calendar, PenLine, Clock, FileText, CheckSquare, BarChart2, Image, Users, CheckCircle, Clock3, AlertCircle, Upload, Inbox } from "lucide-react";
 
 const BRAND = {
   primary: "#7C3AED", primaryD: "#5B21B6", primaryL: "#EDE9FE",
@@ -320,16 +320,16 @@ export default function App() {
   const HOURS = Array.from({ length: 16 }, (_, i) => `${String(i + 6).padStart(2, "0")}:00`);
 
   const NAV = [
-    { id: "dashboard", icon: "⊞", label: "Dashboard" },
-    { id: "calendar", icon: "📅", label: "Calendar" },
-    { id: "posts", icon: "✏️", label: "Posts" },
-    { id: "queue", icon: "⏱", label: "Queue" },
-    { id: "drafts", icon: "📝", label: "Drafts" },
-    { id: "approval", icon: "✓", label: "Approval", badge: pending.length },
-    { id: "analytics", icon: "📊", label: "Analytics" },
-    { id: "media", icon: "🖼", label: "Media Library" },
-    { id: "team", icon: "👥", label: "Team" },
-    { id: "settings", icon: "⚙️", label: "Settings" },
+    { id: "dashboard", icon: <LayoutDashboard size={16} />, label: "Dashboard" },
+    { id: "calendar", icon: <Calendar size={16} />, label: "Calendar" },
+    { id: "posts", icon: <PenLine size={16} />, label: "Posts" },
+    { id: "queue", icon: <Clock size={16} />, label: "Queue" },
+    { id: "drafts", icon: <FileText size={16} />, label: "Drafts" },
+    { id: "approval", icon: <CheckSquare size={16} />, label: "Approval", badge: pending.length },
+    { id: "analytics", icon: <BarChart2 size={16} />, label: "Analytics" },
+    { id: "media", icon: <Image size={16} />, label: "Media Library" },
+    { id: "team", icon: <Users size={16} />, label: "Team" },
+    { id: "settings", icon: <Settings size={16} />, label: "Settings" },
   ];
 
   return (
@@ -378,7 +378,7 @@ export default function App() {
             const active = page === n.id;
             return (
               <button key={n.id} onClick={() => setPage(n.id)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "8px 8px", borderRadius: 9, marginBottom: 1, background: active ? "rgba(124,58,237,0.2)" : "transparent", border: "none", cursor: "pointer", position: "relative" }}>
-                <span style={{ fontSize: 16, flexShrink: 0, width: 20, textAlign: "center" }}>{n.icon}</span>
+                <span style={{ flexShrink: 0, width: 20, display: "flex", alignItems: "center", justifyContent: "center", color: active ? "#fff" : "rgba(255,255,255,0.55)" }}>{n.icon}</span>
                 {sidebarOpen && <span style={{ fontSize: 13, color: active ? "#fff" : "rgba(255,255,255,0.55)", fontWeight: active ? 600 : 400 }}>{n.label}</span>}
                 {n.badge && n.badge > 0 && <span style={{ marginLeft: "auto", background: BRAND.primary, color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 10, padding: "1px 6px" }}>{n.badge}</span>}
                 {active && <div style={{ position: "absolute", left: 0, top: "20%", height: "60%", width: 3, background: BRAND.primary, borderRadius: "0 3px 3px 0" }} />}
@@ -560,15 +560,15 @@ export default function App() {
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginBottom: 24 }}>
                 {[
-                  { label: "Total Posts", value: wsPosts.length, color: BRAND.primary, bg: BRAND.primaryL, icon: "✏️" },
-                  { label: "Scheduled", value: scheduled.length, color: "#0EA5E9", bg: "#E0F2FE", icon: "📅" },
-                  { label: "Published", value: published.length, color: BRAND.green, bg: BRAND.greenL, icon: "✓" },
-                  { label: "Pending", value: pending.length, color: BRAND.amber, bg: BRAND.amberL, icon: "⏳" },
+                  { label: "Total Posts", value: wsPosts.length, color: BRAND.primary, bg: BRAND.primaryL, icon: <PenLine size={16} color={BRAND.primary} /> },
+                  { label: "Scheduled", value: scheduled.length, color: "#0EA5E9", bg: "#E0F2FE", icon: <Clock3 size={16} color="#0EA5E9" /> },
+                  { label: "Published", value: published.length, color: BRAND.green, bg: BRAND.greenL, icon: <CheckCircle size={16} color={BRAND.green} /> },
+                  { label: "Pending", value: pending.length, color: BRAND.amber, bg: BRAND.amberL, icon: <AlertCircle size={16} color={BRAND.amber} /> },
                 ].map(s => (
                   <div key={s.label} style={{ background: BRAND.white, borderRadius: 14, padding: "18px 20px", border: `1px solid ${BRAND.border}` }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                       <div style={{ fontSize: 11, fontWeight: 700, color: BRAND.textT, letterSpacing: 0.5 }}>{s.label.toUpperCase()}</div>
-                      <div style={{ width: 32, height: 32, borderRadius: 9, background: s.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>{s.icon}</div>
+                      <div style={{ width: 32, height: 32, borderRadius: 9, background: s.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>{s.icon}</div>
                     </div>
                     <div style={{ fontSize: 34, fontWeight: 900, color: s.color }}>{s.value}</div>
                   </div>
@@ -579,8 +579,8 @@ export default function App() {
                   <div style={{ fontSize: 14, fontWeight: 700, color: BRAND.text, marginBottom: 16 }}>Recent Posts</div>
                   {wsPosts.slice(0, 4).map((post: any) => (
                     <div key={post.id} style={{ display: "flex", gap: 12, alignItems: "flex-start", marginBottom: 14, paddingBottom: 14, borderBottom: `1px solid ${BRAND.border}` }}>
-                      <div style={{ width: 38, height: 38, borderRadius: 10, background: BRAND.primaryL, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 18 }}>
-                        {post.status === "published" ? "✅" : post.status === "draft" ? "📝" : "📅"}
+                      <div style={{ width: 38, height: 38, borderRadius: 10, background: BRAND.primaryL, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        {post.status === "published" ? <CheckCircle size={18} color={BRAND.green} /> : post.status === "draft" ? <FileText size={18} color={BRAND.textS} /> : <Clock3 size={18} color={BRAND.primary} />}
                       </div>
                       <div style={{ flex: 1, overflow: "hidden" }}>
                         <div style={{ fontSize: 13, color: BRAND.text, overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis", marginBottom: 5 }}>{post.content}</div>
@@ -846,7 +846,7 @@ export default function App() {
               </div>
               {scheduled.map((post: any) => (
                 <div key={post.id} style={{ background: BRAND.white, border: `1px solid ${BRAND.border}`, borderRadius: 12, padding: "14px 16px", marginBottom: 8, display: "flex", gap: 12, alignItems: "center" }}>
-                  <div style={{ width: 44, height: 44, borderRadius: 10, background: BRAND.primaryL, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>📅</div>
+                  <div style={{ width: 44, height: 44, borderRadius: 10, background: BRAND.primaryL, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><Clock3 size={20} color={BRAND.primary} /></div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 13, color: BRAND.text, marginBottom: 4 }}>{post.content.slice(0, 80)}…</div>
                     <div style={{ display: "flex", gap: 5 }}>{post.platforms?.map((pid: string) => <PBadge key={pid} pid={pid} />)}<span style={{ fontSize: 11, color: BRAND.textT }}>{post.scheduled_date} · {post.scheduled_time}</span></div>
@@ -930,7 +930,7 @@ export default function App() {
               <h1 style={{ fontSize: 20, fontWeight: 800, color: BRAND.text, marginBottom: 6 }}>Media Library</h1>
               <p style={{ fontSize: 13, color: BRAND.textT, marginBottom: 20 }}>Manage your images, videos and files.</p>
               <div style={{ background: BRAND.white, border: `2px dashed ${BRAND.border}`, borderRadius: 14, padding: "40px", textAlign: "center", marginBottom: 20, cursor: "pointer" }}>
-                <div style={{ fontSize: 40, marginBottom: 8 }}>📁</div>
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}><Upload size={36} color={BRAND.textT} /></div>
                 <div style={{ fontSize: 14, fontWeight: 600, color: BRAND.text, marginBottom: 4 }}>Drop files here or click to upload</div>
                 <div style={{ fontSize: 13, color: BRAND.textT }}>PNG, JPG, GIF, MP4 up to 100MB</div>
               </div>
