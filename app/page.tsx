@@ -400,7 +400,7 @@ export default function App() {
 
       {/* MAIN */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-        <div style={{ background: BRAND.white, borderBottom: `1px solid ${BRAND.border}`, padding: "0 24px", display: "flex", alignItems: "center", height: 58, gap: 12, flexShrink: 0 }}>
+        <div style={{ background: BRAND.white, borderBottom: `1px solid ${BRAND.border}`, padding: "0 24px", display: "flex", alignItems: "center", height: 58, gap: 12, flexShrink: 0, position: "relative" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             {ws && <Avatar initials={ws.avatar} color={ws.color} size={32} />}
             <div>
@@ -409,9 +409,40 @@ export default function App() {
             </div>
           </div>
           <div style={{ flex: 1 }} />
-          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-            <button onClick={() => setShowNewPost(true)} style={{ background: BRAND.gradBtn, color: "#fff", border: "none", borderRadius: 9, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>+ Create Post</button>
+          <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+            <button onClick={() => setShowNewPost(true)} style={{ background: BRAND.gradBtn, color: "#fff", border: "none", borderRadius: 9, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer", marginRight: 8 }}>+ {t("Create Post","Maak Post")}</button>
+
+            {/* Support */}
+            <button onClick={() => { setShowSupport(o => !o); setShowNews(false); }} title="Support" style={{ width: 34, height: 34, borderRadius: 8, border: "none", background: showSupport ? BRAND.primaryL : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Headphones size={18} color={showSupport ? BRAND.primary : BRAND.textS} />
+            </button>
+
+            {/* News */}
+            <button onClick={() => { setShowNews(o => !o); setShowSupport(false); }} title="What's new" style={{ width: 34, height: 34, borderRadius: 8, border: "none", background: showNews ? BRAND.primaryL : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Newspaper size={18} color={showNews ? BRAND.primary : BRAND.textS} />
+            </button>
+
+            {/* Dark mode */}
+            <button onClick={() => setDarkMode(o => !o)} title="Dark mode" style={{ width: 34, height: 34, borderRadius: 8, border: "none", background: darkMode ? BRAND.primaryL : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              {darkMode ? <Sun size={18} color={BRAND.primary} /> : <Moon size={18} color={BRAND.textS} />}
+            </button>
+
+            {/* Language */}
             <div style={{ position: "relative" }}>
+              <button onClick={() => setShowLangMenu(o => !o)} title="Language" style={{ width: 34, height: 34, borderRadius: 8, border: "none", background: showLangMenu ? BRAND.primaryL : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Globe size={18} color={showLangMenu ? BRAND.primary : BRAND.textS} />
+              </button>
+              {showLangMenu && (
+                <div style={{ position: "absolute", right: 0, top: "calc(100% + 8px)", background: BRAND.white, border: `1px solid ${BRAND.border}`, borderRadius: 10, boxShadow: "0 8px 30px rgba(0,0,0,0.12)", overflow: "hidden", zIndex: 200, minWidth: 150 }}>
+                  {[{ code: "en", label: "🇬🇧 English" }, { code: "nl", label: "🇳🇱 Nederlands" }].map(l => (
+                    <button key={l.code} onClick={() => { setLanguage(l.code as any); setShowLangMenu(false); }} style={{ width: "100%", padding: "10px 16px", background: language === l.code ? BRAND.primaryL : "none", border: "none", cursor: "pointer", fontSize: 13, color: language === l.code ? BRAND.primary : BRAND.text, textAlign: "left", fontWeight: language === l.code ? 700 : 400 }}>{l.label}</button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* User menu */}
+            <div style={{ position: "relative", marginLeft: 4 }}>
               <button onClick={() => setShowUserMenu(o => !o)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: `1px solid ${BRAND.border}`, borderRadius: 10, padding: "5px 10px", cursor: "pointer" }}>
                 {session.user?.image
                   ? <img src={session.user.image} style={{ width: 30, height: 30, borderRadius: "50%" }} alt="avatar" />
@@ -424,7 +455,7 @@ export default function App() {
                 <span style={{ fontSize: 12, color: BRAND.textT }}>▾</span>
               </button>
               {showUserMenu && (
-                <div style={{ position: "absolute", right: 0, top: "calc(100% + 8px)", background: BRAND.white, border: `1px solid ${BRAND.border}`, borderRadius: 14, boxShadow: "0 8px 30px rgba(0,0,0,0.12)", width: 220, zIndex: 100, overflow: "hidden" }}>
+                <div style={{ position: "absolute", right: 0, top: "calc(100% + 8px)", background: BRAND.white, border: `1px solid ${BRAND.border}`, borderRadius: 14, boxShadow: "0 8px 30px rgba(0,0,0,0.12)", width: 220, zIndex: 200, overflow: "hidden" }}>
                   <div style={{ padding: "14px 16px", borderBottom: `1px solid ${BRAND.border}`, display: "flex", alignItems: "center", gap: 10 }}>
                     {session.user?.image
                       ? <img src={session.user.image} style={{ width: 38, height: 38, borderRadius: "50%" }} alt="avatar" />
@@ -436,29 +467,85 @@ export default function App() {
                     </div>
                   </div>
                   {[
-                    { icon: <Settings size={15} />, label: "Company Settings" },
-                    { icon: <User size={15} />, label: "User Settings" },
-                    { icon: <CreditCard size={15} />, label: "Billing" },
-                    { icon: <HelpCircle size={15} />, label: "Help" },
-                    { icon: <Gift size={15} />, label: "Affiliates" },
+                    { icon: <Settings size={15} />, label: t("Company Settings","Bedrijfsinstellingen") },
+                    { icon: <User size={15} />, label: t("User Settings","Gebruikersinstellingen") },
+                    { icon: <CreditCard size={15} />, label: t("Billing","Facturering") },
+                    { icon: <HelpCircle size={15} />, label: t("Help","Hulp") },
+                    { icon: <Gift size={15} />, label: t("Affiliates","Affiliates") },
                   ].map(item => (
                     <button key={item.label} onClick={() => setShowUserMenu(false)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", background: "none", border: "none", cursor: "pointer", fontSize: 13, color: BRAND.text, textAlign: "left" }}
                       onMouseEnter={e => (e.currentTarget.style.background = BRAND.bg)}
                       onMouseLeave={e => (e.currentTarget.style.background = "none")}>
-                      <span style={{ fontSize: 16 }}>{item.icon}</span>{item.label}
+                      {item.icon}{item.label}
                     </button>
                   ))}
                   <div style={{ borderTop: `1px solid ${BRAND.border}` }}>
                     <button onClick={() => signOut({ callbackUrl: "/" })} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", background: "none", border: "none", cursor: "pointer", fontSize: 13, color: BRAND.red, textAlign: "left" }}
                       onMouseEnter={e => (e.currentTarget.style.background = BRAND.redL)}
                       onMouseLeave={e => (e.currentTarget.style.background = "none")}>
-                      <LogOut size={15} color={BRAND.red} />Logout
+                      <LogOut size={15} color={BRAND.red} />{t("Logout","Uitloggen")}
                     </button>
                   </div>
                 </div>
               )}
             </div>
           </div>
+
+          {/* SUPPORT PANEL */}
+          {showSupport && (
+            <div style={{ position: "fixed", right: 0, top: 58, width: 360, height: "calc(100vh - 58px)", background: BRAND.white, borderLeft: `1px solid ${BRAND.border}`, boxShadow: "-4px 0 20px rgba(0,0,0,0.08)", zIndex: 200, overflowY: "auto" }}>
+              <div style={{ padding: "20px", borderBottom: `1px solid ${BRAND.border}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div style={{ fontSize: 16, fontWeight: 800, color: BRAND.text }}>🎧 {t("Support","Ondersteuning")}</div>
+                <button onClick={() => setShowSupport(false)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: BRAND.textT }}>✕</button>
+              </div>
+              <div style={{ padding: "16px" }}>
+                <div style={{ background: BRAND.primaryL, borderRadius: 12, padding: "14px", marginBottom: 16 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: BRAND.primary, marginBottom: 4 }}>📧 {t("Contact us","Neem contact op")}</div>
+                  <div style={{ fontSize: 12, color: BRAND.textS }}>inspiredmarketingsr@gmail.com</div>
+                </div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: BRAND.text, marginBottom: 12 }}>FAQ</div>
+                {[
+                  { q: t("How do I create a post?","Hoe maak ik een post?"), a: t("Click '+ Create Post' in the top right corner.","Klik op '+ Maak Post' rechtsboven.") },
+                  { q: t("How do I connect YouTube?","Hoe koppel ik YouTube?"), a: t("Go to Settings → Connected accounts → Click 'Connect' next to YouTube.","Ga naar Instellingen → Gekoppelde accounts → Klik op 'Verbinden' naast YouTube.") },
+                  { q: t("How do I add a workspace?","Hoe voeg ik een workspace toe?"), a: t("Click '+ New workspace' in the sidebar.","Klik op '+ Nieuwe workspace' in de zijbalk.") },
+                  { q: t("How does approval work?","Hoe werkt goedkeuring?"), a: t("Go to 'Approval' in the menu to approve or reject posts.","Ga naar 'Goedkeuring' in het menu om posts goed te keuren of af te wijzen.") },
+                  { q: t("Can I upload images?","Kan ik afbeeldingen uploaden?"), a: t("Yes! When creating a post, click the image upload area.","Ja! Klik op het upload gebied bij het aanmaken van een post.") },
+                ].map((faq, i) => (
+                  <div key={i} style={{ background: "#F9FAFB", borderRadius: 10, padding: "12px 14px", marginBottom: 8 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: BRAND.text, marginBottom: 6 }}>❓ {faq.q}</div>
+                    <div style={{ fontSize: 12, color: BRAND.textS, lineHeight: 1.6 }}>{faq.a}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* NEWS PANEL */}
+          {showNews && (
+            <div style={{ position: "fixed", right: 0, top: 58, width: 360, height: "calc(100vh - 58px)", background: BRAND.white, borderLeft: `1px solid ${BRAND.border}`, boxShadow: "-4px 0 20px rgba(0,0,0,0.08)", zIndex: 200, overflowY: "auto" }}>
+              <div style={{ padding: "20px", borderBottom: `1px solid ${BRAND.border}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div style={{ fontSize: 16, fontWeight: 800, color: BRAND.text }}>📰 {t("What's New","Wat is er nieuw")}</div>
+                <button onClick={() => setShowNews(false)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: BRAND.textT }}>✕</button>
+              </div>
+              <div style={{ padding: "16px" }}>
+                {[
+                  { date: t("March 14, 2026","14 maart 2026"), title: t("Image uploads in posts","Afbeeldingen uploaden in posts"), desc: t("Upload images directly when creating a post.","Upload afbeeldingen direct bij het aanmaken van een post."), tag: "🆕 New" },
+                  { date: t("March 13, 2026","13 maart 2026"), title: t("New calendar design","Nieuw kalender ontwerp"), desc: t("Month, week and day views with post thumbnails.","Maand, week en dag weergaven met post thumbnails."), tag: "✨ Improved" },
+                  { date: t("March 13, 2026","13 maart 2026"), title: t("Supabase database","Supabase database"), desc: t("Posts and workspaces are now saved in a real database.","Posts en workspaces worden nu opgeslagen in een echte database."), tag: "🔧 Update" },
+                  { date: t("March 12, 2026","12 maart 2026"), title: t("DropPost launched!","DropPost gelanceerd!"), desc: t("The first version of DropPost is live!","De eerste versie van DropPost is live!"), tag: "🚀 Launch" },
+                ].map((item, i) => (
+                  <div key={i} style={{ borderLeft: `3px solid ${BRAND.primary}`, paddingLeft: 14, marginBottom: 20 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                      <span style={{ fontSize: 11, background: BRAND.primaryL, color: BRAND.primary, borderRadius: 5, padding: "2px 8px", fontWeight: 700 }}>{item.tag}</span>
+                      <span style={{ fontSize: 11, color: BRAND.textT }}>{item.date}</span>
+                    </div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: BRAND.text, marginBottom: 4 }}>{item.title}</div>
+                    <div style={{ fontSize: 12, color: BRAND.textS, lineHeight: 1.6 }}>{item.desc}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div style={{ flex: 1, overflowY: "auto", padding: "24px" }}>
