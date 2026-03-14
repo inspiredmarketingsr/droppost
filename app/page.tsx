@@ -341,7 +341,8 @@ export default function App() {
             <span style={{ color: "#fff", fontWeight: 900, fontSize: 17 }}>D</span>
           </div>
           {sidebarOpen && <span style={{ color: "#fff", fontWeight: 800, fontSize: 17, whiteSpace: "nowrap" }}>Drop<span style={{ background: BRAND.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Post</span></span>}
-          <button onClick={() => setSidebarOpen(o => !o)} style={{ marginLeft: "auto", background: "none", border: "none", color: "rgba(255,255,255,0.3)", cursor: "pointer", fontSize: 18, flexShrink: 0, padding: 4 }}>☰</button>
+          {/* Only show hamburger in sidebar when minimized */}
+          {!sidebarOpen && <button onClick={() => setSidebarOpen(true)} style={{ marginLeft: "auto", background: "none", border: "none", color: "rgba(255,255,255,0.5)", cursor: "pointer", fontSize: 18, flexShrink: 0, padding: 4 }}>☰</button>}
         </div>
 
         <div style={{ padding: "10px 8px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
@@ -402,6 +403,12 @@ export default function App() {
       {/* MAIN */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
         <div style={{ background: BRAND.white, borderBottom: `1px solid ${BRAND.border}`, padding: "0 24px", display: "flex", alignItems: "center", height: 58, gap: 12, flexShrink: 0, position: "relative" }}>
+          {/* Hamburger — only show here when sidebar is OPEN */}
+          {sidebarOpen && (
+            <button onClick={() => setSidebarOpen(false)} style={{ marginRight: 8, background: "none", border: "none", color: BRAND.textS, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 4 }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+          )}
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             {ws && <Avatar initials={ws.avatar} color={ws.color} size={32} />}
             <div>
