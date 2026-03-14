@@ -310,6 +310,7 @@ export default function App() {
   const drafts = wsPosts.filter(p => p.status === "draft");
   const pending = wsPosts.filter(p => p.approval === "pending" && p.status !== "draft");
   const totalPending = workspaces.reduce((s, w) => s + ((posts[w.id] || []).filter((p: any) => p.approval === "pending" && p.status !== "draft").length), 0);
+  const t = (en: string, nl: string) => language === "nl" ? nl : en;
 
   const weekDates = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(); d.setDate(d.getDate() + i);
