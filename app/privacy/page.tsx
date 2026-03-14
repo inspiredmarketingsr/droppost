@@ -1,5 +1,6 @@
 export default function PrivacyPage() {
   return (
+    <div style={{ minHeight: "100vh", background: "#ffffff" }}>
     <div style={{ maxWidth: 800, margin: "0 auto", padding: "60px 24px", fontFamily: "'Segoe UI', system-ui, sans-serif", color: "#111827" }}>
       <div style={{ marginBottom: 40 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 32 }}>
@@ -59,6 +60,7 @@ export default function PrivacyPage() {
       <div style={{ borderTop: "1px solid #E5E7EB", paddingTop: 24, marginTop: 40 }}>
         <a href="/" style={{ color: "#7C3AED", fontWeight: 600, textDecoration: "none" }}>← Back to DropPost</a>
       </div>
+    </div>
     </div>
   );
 }
