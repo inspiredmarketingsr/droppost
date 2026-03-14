@@ -429,7 +429,13 @@ export default function App() {
                       <div style={{ fontSize: 11, color: BRAND.textT }}>{userEmail}</div>
                     </div>
                   </div>
-                  {[{ icon: "⚙️", label: "Company Settings" }, { icon: "👤", label: "User Settings" }, { icon: "💳", label: "Billing" }, { icon: "❓", label: "Help" }, { icon: "🤝", label: "Affiliates" }].map(item => (
+                  {[
+                    { icon: "⚙️", label: "Company Settings" },
+                    { icon: "👤", label: "User Settings" },
+                    { icon: "💳", label: "Billing" },
+                    { icon: "🔗", label: "Help" },
+                    { icon: "🎁", label: "Affiliates" },
+                  ].map(item => (
                     <button key={item.label} onClick={() => setShowUserMenu(false)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", background: "none", border: "none", cursor: "pointer", fontSize: 13, color: BRAND.text, textAlign: "left" }}
                       onMouseEnter={e => (e.currentTarget.style.background = BRAND.bg)}
                       onMouseLeave={e => (e.currentTarget.style.background = "none")}>
