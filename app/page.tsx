@@ -2,6 +2,7 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
+import { Settings, User, CreditCard, HelpCircle, Gift, LogOut } from "lucide-react";
 
 const BRAND = {
   primary: "#7C3AED", primaryD: "#5B21B6", primaryL: "#EDE9FE",
@@ -430,11 +431,11 @@ export default function App() {
                     </div>
                   </div>
                   {[
-                    { icon: "⚙️", label: "Company Settings" },
-                    { icon: "👤", label: "User Settings" },
-                    { icon: "💳", label: "Billing" },
-                    { icon: "🔗", label: "Help" },
-                    { icon: "🎁", label: "Affiliates" },
+                    { icon: <Settings size={15} />, label: "Company Settings" },
+                    { icon: <User size={15} />, label: "User Settings" },
+                    { icon: <CreditCard size={15} />, label: "Billing" },
+                    { icon: <HelpCircle size={15} />, label: "Help" },
+                    { icon: <Gift size={15} />, label: "Affiliates" },
                   ].map(item => (
                     <button key={item.label} onClick={() => setShowUserMenu(false)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", background: "none", border: "none", cursor: "pointer", fontSize: 13, color: BRAND.text, textAlign: "left" }}
                       onMouseEnter={e => (e.currentTarget.style.background = BRAND.bg)}
@@ -446,7 +447,7 @@ export default function App() {
                     <button onClick={() => signOut({ callbackUrl: "/" })} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", background: "none", border: "none", cursor: "pointer", fontSize: 13, color: BRAND.red, textAlign: "left" }}
                       onMouseEnter={e => (e.currentTarget.style.background = BRAND.redL)}
                       onMouseLeave={e => (e.currentTarget.style.background = "none")}>
-                      <span style={{ fontSize: 16 }}>🚪</span>Logout
+                      <LogOut size={15} color={BRAND.red} />Logout
                     </button>
                   </div>
                 </div>
