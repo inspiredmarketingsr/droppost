@@ -164,7 +164,8 @@ export default function App() {
   const [uploading, setUploading] = useState(false);
   const [newWS, setNewWS] = useState({ name: "", industry: "", color: WORKSPACE_COLORS[0] });
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [calView, setCalView] = useState<"week"|"month">("week");
+  const [calView, setCalView] = useState<"day"|"week"|"month">("month");
+  const [calDate, setCalDate] = useState(new Date());
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -551,53 +552,178 @@ export default function App() {
             </div>
           )}
 
-          {page === "calendar" && (
-            <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-                <h1 style={{ fontSize: 20, fontWeight: 800, color: BRAND.text }}>Content Calendar</h1>
-                <div style={{ display: "flex", gap: 8 }}>
-                  {(["week", "month"] as const).map(v => (
-                    <button key={v} onClick={() => setCalView(v)} style={{ padding: "7px 16px", borderRadius: 8, border: calView === v ? `2px solid ${BRAND.primary}` : `1px solid ${BRAND.border}`, background: calView === v ? BRAND.primaryL : BRAND.white, color: calView === v ? BRAND.primary : BRAND.textS, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
-                      {v.charAt(0).toUpperCase() + v.slice(1)}
-                    </button>
-                  ))}
-                  <button onClick={() => setShowNewPost(true)} style={{ background: BRAND.gradBtn, color: "#fff", border: "none", borderRadius: 8, padding: "7px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>+ Post</button>
+          {page === "calendar" && (() => {
+            const today = new Date();
+            const yr = calDate.getFullYear();
+            const mo = calDate.getMonth();
+            const monthName = calDate.toLocaleString("en", { month: "long" });
+            const DAYS_SHORT = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+            function navigate(dir: number) {
+              const d = new Date(calDate);
+              if (calView === "month") d.setMonth(mo + dir);
+              else if (calView === "week") d.setDate(d.getDate() + dir * 7);
+              else d.setDate(d.getDate() + dir);
+              setCalDate(d);
+            }
+
+            function headerLabel() {
+              if (calView === "month") return `${monthName} ${yr}`;
+              if (calView === "week") {
+                const start = new Date(calDate);
+                start.setDate(calDate.getDate() - calDate.getDay());
+                const end = new Date(start); end.setDate(start.getDate() + 6);
+                return `${start.toLocaleString("en",{month:"short"})} ${start.getDate()} – ${end.getDate()}, ${yr}`;
+              }
+              return calDate.toLocaleString("en", { month: "long", day: "numeric", year: "numeric" });
+            }
+
+            const btnStyle = (active: boolean) => ({
+              padding: "7px 16px", borderRadius: 8, border: "none",
+              background: active ? "#0D9488" : "#E0F2F1",
+              color: active ? "#fff" : "#0D9488",
+              fontSize: 13, fontWeight: 600, cursor: "pointer"
+            });
+
+            const arrowStyle = {
+              width: 32, height: 32, borderRadius: 8, border: "none",
+              background: "#E0F2F1", color: "#0D9488", fontSize: 16,
+              cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center"
+            } as any;
+
+            // MONTH VIEW
+            const firstDay = new Date(yr, mo, 1).getDay();
+            const daysInMonth = new Date(yr, mo + 1, 0).getDate();
+            const cells = Array.from({ length: 42 }, (_, i) => {
+              const day = i - firstDay + 1;
+              return day >= 1 && day <= daysInMonth ? day : null;
+            });
+
+            // WEEK VIEW
+            const weekStart = new Date(calDate);
+            weekStart.setDate(calDate.getDate() - calDate.getDay());
+            const weekDays = Array.from({ length: 7 }, (_, i) => {
+              const d = new Date(weekStart); d.setDate(weekStart.getDate() + i); return d;
+            });
+
+            const HOURS = Array.from({ length: 18 }, (_, i) => `${String(i + 6).padStart(2, "0")}:00`);
+
+            function postsForDate(date: Date) {
+              const str = date.toISOString().split("T")[0];
+              return wsPosts.filter((p: any) => p.scheduled_date === str);
+            }
+
+            function PostThumb({ post }: any) {
+              const isToday = post.scheduled_date === today.toISOString().split("T")[0];
+              return (
+                <div style={{ borderRadius: 10, overflow: "hidden", border: `2px solid ${post.approval === "approved" ? "#10B981" : BRAND.primary}`, background: "#fff", marginBottom: 4, cursor: "pointer", position: "relative" }}>
+                  {post.image_url
+                    ? <img src={post.image_url} style={{ width: "100%", height: 70, objectFit: "cover", display: "block" }} />
+                    : <div style={{ width: "100%", height: 70, background: BRAND.primaryL, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>📝</div>
+                  }
+                  {/* Time + avatar */}
+                  <div style={{ position: "absolute", top: 4, left: 4, background: "rgba(0,0,0,0.6)", borderRadius: 5, padding: "2px 6px", fontSize: 10, color: "#fff", fontWeight: 700 }}>{post.scheduled_time?.slice(0,5)}</div>
+                  {post.approval === "approved" && <div style={{ position: "absolute", top: 4, right: 4, background: BRAND.green, borderRadius: "50%", width: 18, height: 18, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10 }}>✓</div>}
+                  {/* Platforms */}
+                  <div style={{ display: "flex", gap: 3, padding: "3px 4px", background: "#fff" }}>
+                    {post.platforms?.slice(0,3).map((pid: string) => <PBadge key={pid} pid={pid} />)}
+                  </div>
                 </div>
-              </div>
-              <div style={{ background: BRAND.white, border: `1px solid ${BRAND.border}`, borderRadius: 16, overflow: "hidden" }}>
-                <div style={{ display: "grid", gridTemplateColumns: `60px repeat(7,1fr)` }}>
-                  <div style={{ background: "#F9FAFB", borderBottom: `1px solid ${BRAND.border}` }} />
-                  {DAYS.map((d, i) => (
-                    <div key={d} style={{ padding: "12px 8px", textAlign: "center", borderBottom: `1px solid ${BRAND.border}`, borderLeft: `1px solid ${BRAND.border}`, background: i === 5 || i === 6 ? "#FFF8F0" : "#F9FAFB" }}>
-                      <div style={{ fontSize: 11, fontWeight: 700, color: BRAND.textT, letterSpacing: 0.5 }}>{d}</div>
-                      <div style={{ fontSize: 16, fontWeight: 800, color: BRAND.text, marginTop: 2 }}>{weekDates[i]?.slice(8)}</div>
+              );
+            }
+
+            return (
+              <div>
+                {/* Header */}
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20, flexWrap: "wrap" }}>
+                  <span style={{ fontSize: 16, fontWeight: 700, color: BRAND.text, minWidth: 160 }}>{headerLabel()}</span>
+                  <button style={btnStyle(false)} onClick={() => setCalDate(new Date())}>Today</button>
+                  <button style={btnStyle(calView === "day")} onClick={() => setCalView("day")}>Day</button>
+                  <button style={btnStyle(calView === "week")} onClick={() => setCalView("week")}>Week</button>
+                  <button style={btnStyle(calView === "month")} onClick={() => setCalView("month")}>Month</button>
+                  <button style={arrowStyle} onClick={() => navigate(-1)}>‹</button>
+                  <button style={arrowStyle} onClick={() => navigate(1)}>›</button>
+                  <div style={{ flex: 1 }} />
+                  <button onClick={() => setShowNewPost(true)} style={{ background: "#0D9488", color: "#fff", border: "none", borderRadius: 9, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>Create Post</button>
+                </div>
+
+                {/* MONTH VIEW */}
+                {calView === "month" && (
+                  <div style={{ background: BRAND.white, borderRadius: 16, border: `1px solid ${BRAND.border}`, overflow: "hidden" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", borderBottom: `1px solid ${BRAND.border}` }}>
+                      {DAYS_SHORT.map(d => <div key={d} style={{ padding: "10px 0", textAlign: "center", fontSize: 12, fontWeight: 700, color: BRAND.textT }}>{d}</div>)}
                     </div>
-                  ))}
-                </div>
-                {HOURS.map(hour => (
-                  <div key={hour} style={{ display: "grid", gridTemplateColumns: `60px repeat(7,1fr)`, borderBottom: `1px solid #F3F4F6`, minHeight: 52 }}>
-                    <div style={{ padding: "4px 8px", fontSize: 11, color: BRAND.textT, fontWeight: 500, borderRight: `1px solid ${BRAND.border}`, background: "#FAFAFA", display: "flex", alignItems: "flex-start", paddingTop: 6 }}>{hour}</div>
-                    {weekDates.map((date, di) => {
-                      const dayPosts = wsPosts.filter((p: any) => p.scheduled_date === date && p.scheduled_time?.startsWith(hour.slice(0, 2)));
-                      return (
-                        <div key={date} style={{ borderLeft: `1px solid #F3F4F6`, padding: "3px 4px", background: di === 5 || di === 6 ? "#FFFBF5" : "transparent" }}>
-                          {dayPosts.map((post: any) => (
-                            <div key={post.id} style={{ background: BRAND.primaryL, border: `1px solid ${BRAND.primary}30`, borderRadius: 7, padding: "4px 7px", marginBottom: 3 }}>
-                              <div style={{ fontSize: 10, fontWeight: 700, color: BRAND.primary }}>{post.scheduled_time}</div>
-                              <div style={{ fontSize: 11, color: BRAND.text, overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>{post.content.slice(0, 30)}</div>
-                              <div style={{ display: "flex", gap: 3, marginTop: 2 }}>
-                                {post.platforms?.slice(0, 3).map((pid: string) => <PBadge key={pid} pid={pid} />)}
-                              </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)" }}>
+                      {cells.map((day, i) => {
+                        const date = day ? new Date(yr, mo, day) : null;
+                        const isToday = date ? date.toDateString() === today.toDateString() : false;
+                        const isWeekend = i % 7 === 0 || i % 7 === 6;
+                        const dayPosts = date ? postsForDate(date) : [];
+                        return (
+                          <div key={i} style={{ minHeight: 110, padding: "6px 4px", borderRight: `1px solid ${BRAND.border}`, borderBottom: `1px solid ${BRAND.border}`, background: isWeekend ? "#F0FDFA" : (date?.getMonth() !== mo ? "#F9FAFB" : "#fff") }}>
+                            {day && <div style={{ fontSize: 13, fontWeight: isToday ? 800 : 500, color: isToday ? "#0D9488" : BRAND.textS, marginBottom: 4, textAlign: "right", paddingRight: 4 }}>{day}</div>}
+                            {dayPosts.map((post: any) => <PostThumb key={post.id} post={post} />)}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* WEEK VIEW */}
+                {calView === "week" && (
+                  <div style={{ background: BRAND.white, borderRadius: 16, border: `1px solid ${BRAND.border}`, overflow: "hidden" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "60px repeat(7,1fr)", borderBottom: `1px solid ${BRAND.border}` }}>
+                      <div style={{ background: "#F9FAFB" }} />
+                      {weekDays.map((d, i) => {
+                        const isToday = d.toDateString() === today.toDateString();
+                        return (
+                          <div key={i} style={{ padding: "10px 8px", textAlign: "center", borderLeft: `1px solid ${BRAND.border}`, background: isToday ? "#E0F2F1" : "#F9FAFB" }}>
+                            <div style={{ fontSize: 11, fontWeight: 700, color: BRAND.textT }}>{DAYS_SHORT[d.getDay()]}</div>
+                            <div style={{ fontSize: 18, fontWeight: 800, color: isToday ? "#0D9488" : BRAND.text }}>{d.getDate()}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {HOURS.map(hour => (
+                      <div key={hour} style={{ display: "grid", gridTemplateColumns: "60px repeat(7,1fr)", borderBottom: `1px solid #F3F4F6`, minHeight: 60 }}>
+                        <div style={{ padding: "4px 8px", fontSize: 11, color: BRAND.textT, borderRight: `1px solid ${BRAND.border}`, background: "#FAFAFA", paddingTop: 6 }}>{hour}</div>
+                        {weekDays.map((d, di) => {
+                          const dayPosts = postsForDate(d).filter((p: any) => p.scheduled_time?.startsWith(hour.slice(0,2)));
+                          return (
+                            <div key={di} style={{ borderLeft: `1px solid #F3F4F6`, padding: "3px 4px" }}>
+                              {dayPosts.map((post: any) => <PostThumb key={post.id} post={post} />)}
                             </div>
-                          ))}
+                          );
+                        })}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* DAY VIEW */}
+                {calView === "day" && (
+                  <div style={{ background: BRAND.white, borderRadius: 16, border: `1px solid ${BRAND.border}`, overflow: "hidden" }}>
+                    <div style={{ padding: "14px 20px", borderBottom: `1px solid ${BRAND.border}`, background: "#E0F2F1", textAlign: "center" }}>
+                      <span style={{ fontSize: 24, fontWeight: 800, color: "#0D9488" }}>{calDate.getDate()}</span>
+                      <span style={{ fontSize: 14, color: BRAND.textT, marginLeft: 8 }}>/ {DAYS_SHORT[calDate.getDay()]}</span>
+                    </div>
+                    {HOURS.map(hour => {
+                      const dayPosts = postsForDate(calDate).filter((p: any) => p.scheduled_time?.startsWith(hour.slice(0,2)));
+                      return (
+                        <div key={hour} style={{ display: "grid", gridTemplateColumns: "60px 1fr", borderBottom: `1px solid #F3F4F6`, minHeight: 60 }}>
+                          <div style={{ padding: "6px 8px", fontSize: 11, color: BRAND.textT, borderRight: `1px solid ${BRAND.border}`, background: "#FAFAFA" }}>{hour}</div>
+                          <div style={{ padding: "4px 8px", display: "flex", gap: 8, flexWrap: "wrap" }}>
+                            {dayPosts.map((post: any) => <PostThumb key={post.id} post={post} />)}
+                          </div>
                         </div>
                       );
                     })}
                   </div>
-                ))}
+                )}
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {page === "queue" && (
             <div>
