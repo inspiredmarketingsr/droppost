@@ -174,6 +174,7 @@ export default function App() {
   // Load workspaces from Supabase
   useEffect(() => {
     if (!session) return;
+    if (workspaces.length > 0) return;
     loadWorkspaces();
   }, [session]);
 
