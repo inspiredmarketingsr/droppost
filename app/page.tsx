@@ -2,7 +2,7 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
-import { Settings, User, CreditCard, HelpCircle, Gift, LogOut } from "lucide-react";
+import { Settings, User, CreditCard, HelpCircle, Gift, LogOut, Headphones, Newspaper, Moon, Sun, Globe } from "lucide-react";
 
 const BRAND = {
   primary: "#7C3AED", primaryD: "#5B21B6", primaryL: "#EDE9FE",
@@ -167,6 +167,11 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [calView, setCalView] = useState<"day"|"week"|"month">("month");
   const [calDate, setCalDate] = useState(new Date());
+  const [darkMode, setDarkMode] = useState(false);
+  const [language, setLanguage] = useState<"en"|"nl">("en");
+  const [showSupport, setShowSupport] = useState(false);
+  const [showNews, setShowNews] = useState(false);
+  const [showLangMenu, setShowLangMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [loading, setLoading] = useState(true);
 
