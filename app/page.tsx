@@ -341,8 +341,8 @@ export default function App() {
             <span style={{ color: "#fff", fontWeight: 900, fontSize: 17 }}>D</span>
           </div>
           {sidebarOpen && <span style={{ color: "#fff", fontWeight: 800, fontSize: 17, whiteSpace: "nowrap" }}>Drop<span style={{ background: BRAND.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Post</span></span>}
-          <button onClick={() => setSidebarOpen(o => !o)} style={{ marginLeft: sidebarOpen ? "auto" : undefined, background: "none", border: "none", color: "rgba(255,255,255,0.5)", cursor: "pointer", flexShrink: 0, padding: 4, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          <button onClick={() => setSidebarOpen(o => !o)} style={{ marginLeft: sidebarOpen ? "auto" : undefined, background: "rgba(255,255,255,0.1)", border: "none", color: "rgba(255,255,255,0.8)", cursor: "pointer", flexShrink: 0, padding: "6px", borderRadius: 7, display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
           </button>
         </div>
 
