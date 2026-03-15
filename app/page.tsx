@@ -13,6 +13,7 @@ import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import { SupportPanel, NewsPanel } from "./components/Panels";
 import { CreatePostModal, NewWorkspaceModal, ChannelPickerModal } from "./components/Modals";
+import Dashboard from "./components/Dashboard";
 
 /* ═══ Platform icon reused from Modals ═══ */
 const PlatformIcon = ({ id, size = 18 }: { id: string; size?: number }) => {
@@ -152,38 +153,7 @@ export default function App() {
         <div style={{ flex: 1, overflowY: "auto", padding: "24px" }}>
 
           {/* ═══ DASHBOARD ═══ */}
-          {page === "dashboard" && <div>
-            <h1 style={{ fontSize: 22, fontWeight: 800, color: theme.text, marginBottom: 20 }}>Dashboard</h1>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginBottom: 24 }}>
-              {[
-                { label: "Total", value: wsPosts.length, color: BRAND.primary, icon: <PenLine size={16} color={BRAND.primary} /> },
-                { label: "Scheduled", value: scheduled.length, color: "#0EA5E9", icon: <Clock3 size={16} color="#0EA5E9" /> },
-                { label: "Published", value: published.length, color: BRAND.green, icon: <CheckCircle size={16} color={BRAND.green} /> },
-                { label: "Pending", value: pending.length, color: BRAND.amber, icon: <AlertCircle size={16} color={BRAND.amber} /> },
-              ].map(s => (
-                <div key={s.label} style={{ background: theme.card, borderRadius: 14, padding: "18px 20px", border: `1px solid ${theme.border}` }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: theme.textT }}>{s.label.toUpperCase()}</div>
-                    <div style={{ width: 32, height: 32, borderRadius: 9, background: darkMode ? s.color + "20" : s.color + "15", display: "flex", alignItems: "center", justifyContent: "center" }}>{s.icon}</div>
-                  </div>
-                  <div style={{ fontSize: 34, fontWeight: 900, color: s.color }}>{s.value}</div>
-                </div>
-              ))}
-            </div>
-            <div style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 14, padding: "20px" }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: theme.text, marginBottom: 16 }}>{t("Recent Posts", "Recente Posts")}</div>
-              {wsPosts.slice(0, 5).map((post: any) => (
-                <div key={post.id} style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 12, paddingBottom: 12, borderBottom: `1px solid ${theme.border}` }}>
-                  <div style={{ flex: 1, overflow: "hidden" }}>
-                    <div style={{ fontSize: 13, color: theme.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{post.content}</div>
-                    <div style={{ display: "flex", gap: 5, marginTop: 4 }}>{post.platforms?.map((pid: string) => <PBadge key={pid} pid={pid} dark={darkMode} />)}</div>
-                  </div>
-                  <StatusTag status={post.status} approval={post.approval} />
-                </div>
-              ))}
-              {wsPosts.length === 0 && <p style={{ fontSize: 13, color: theme.textT }}>{t("No posts yet", "Nog geen posts")}</p>}
-            </div>
-          </div>}
+          {page === "dashboard" && <Dashboard wsPosts={wsPosts} scheduled={scheduled} published={published} pending={pending} darkMode={darkMode} theme={theme} t={t} />}
 
           {/* ═══ POSTS ═══ */}
           {page === "posts" && <div>
