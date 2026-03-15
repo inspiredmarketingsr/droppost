@@ -102,14 +102,14 @@ export default function LandingPage() {
 
           {/* Floating platform icons */}
           {[
-            { icon: <FaYoutube size={20} />, color: "#FF0000", x: "8%", y: "20%", delay: "0s", dur: "6s" },
-            { icon: <FaFacebookF size={18} />, color: "#1877F2", x: "85%", y: "15%", delay: "1s", dur: "7s" },
-            { icon: <FaInstagram size={20} />, color: "#E1306C", x: "92%", y: "55%", delay: "0.5s", dur: "8s" },
-            { icon: <FaTiktok size={18} />, color: "#010101", x: "5%", y: "65%", delay: "1.5s", dur: "6.5s" },
-            { icon: <FaSnapchat size={18} />, color: "#FFCE00", x: "15%", y: "85%", delay: "2s", dur: "7.5s" },
-            { icon: <FaXTwitter size={16} />, color: "#000", x: "80%", y: "80%", delay: "0.8s", dur: "9s" },
+            { icon: <FaYoutube size={20} />, color: "#FF0000", x: "6%", y: "25%", delay: "0s", dur: "6s" },
+            { icon: <FaFacebookF size={18} />, color: "#1877F2", x: "88%", y: "22%", delay: "1s", dur: "7s" },
+            { icon: <FaInstagram size={20} />, color: "#E1306C", x: "12%", y: "50%", delay: "0.5s", dur: "8s" },
+            { icon: <FaTiktok size={18} />, color: "#010101", x: "82%", y: "52%", delay: "1.5s", dur: "6.5s" },
+            { icon: <FaSnapchat size={18} />, color: "#FFCE00", x: "18%", y: "12%", delay: "2s", dur: "7.5s" },
+            { icon: <FaXTwitter size={16} />, color: "#000", x: "76%", y: "10%", delay: "0.8s", dur: "9s" },
           ].map((p, i) => (
-            <div key={i} style={{ position: "absolute", left: p.x, top: p.y, width: 44, height: 44, borderRadius: "50%", background: `${C.bg}ee`, border: `1.5px solid ${p.color}20`, display: "flex", alignItems: "center", justifyContent: "center", color: p.color, boxShadow: `0 4px 20px ${p.color}10`, animation: `heroFloat ${p.dur} ease-in-out ${p.delay} infinite`, opacity: 0.7 }}>
+            <div key={i} style={{ position: "absolute", left: p.x, top: p.y, width: 48, height: 48, borderRadius: "50%", background: `${C.bg}ee`, border: `2px solid ${p.color}25`, display: "flex", alignItems: "center", justifyContent: "center", color: p.color, boxShadow: `0 4px 20px ${p.color}15`, animation: `heroFloat ${p.dur} ease-in-out ${p.delay} infinite`, opacity: 0.85 }}>
               {p.icon}
             </div>
           ))}
@@ -145,12 +145,12 @@ export default function LandingPage() {
             {t("The all-in-one social media management tool for agencies and teams. Plan content, get approvals, and publish across all platforms — from one dashboard.", "De alles-in-één social media tool voor agencies en teams. Plan content, krijg goedkeuringen en publiceer op alle platformen — vanuit één dashboard.")}
           </p>
 
-          <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 52, animation: "fadeInUp 0.8s ease-out 0.6s both" }}>
-            <button onClick={() => signIn("google")} style={{ ...btn(true, "lg"), transition: "all 0.3s", boxShadow: "0 4px 20px rgba(124,58,237,0.25)" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(124,58,237,0.35)"; }} onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(124,58,237,0.25)"; }}>
-              {t("Start Free — No Credit Card", "Gratis Starten — Geen Creditcard")} <ArrowRight size={18} style={{ marginLeft: 8, verticalAlign: "middle" }} />
+          <div style={{ display: "inline-flex", gap: 14, justifyContent: "center", marginBottom: 52, animation: "fadeInUp 0.8s ease-out 0.6s both" }}>
+            <button onClick={() => signIn("google")} style={{ ...btn(true, "lg"), transition: "all 0.3s", boxShadow: "0 4px 20px rgba(124,58,237,0.25)", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(124,58,237,0.35)"; }} onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(124,58,237,0.25)"; }}>
+              {t("Start Free — No Credit Card", "Gratis Starten — Geen Creditcard")} <ArrowRight size={18} style={{ marginLeft: 8 }} />
             </button>
-            <button style={{ ...btn(false, "lg"), transition: "all 0.3s", backdropFilter: "blur(8px)", background: `${C.bg}cc` }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.borderColor = C.primary; }} onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = C.border; }}>
-              <Play size={16} style={{ marginRight: 8, verticalAlign: "middle" }} fill={C.primary} color={C.primary} />{t("Watch Demo", "Bekijk Demo")}
+            <button style={{ ...btn(false, "lg"), transition: "all 0.3s", backdropFilter: "blur(8px)", background: `${C.bg}cc`, whiteSpace: "nowrap", display: "inline-flex", alignItems: "center" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.borderColor = C.primary; }} onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = C.border; }}>
+              <Play size={16} style={{ marginRight: 8 }} fill={C.primary} color={C.primary} />{t("Watch Demo", "Bekijk Demo")}
             </button>
           </div>
 
