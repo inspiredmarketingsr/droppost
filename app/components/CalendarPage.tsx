@@ -115,39 +115,41 @@ export default function CalendarPage({ wsPosts, calDate, setCalDate, darkMode, t
 
   return (
     <div>
-      {/* ═══ HEADER ═══ */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text, margin: 0 }}>{headerLabel}</h1>
-          <div style={{ display: "flex", gap: 4 }}>
-            <button onClick={goBack} style={{ width: 32, height: 32, borderRadius: 8, border: "none", background: darkMode ? `${BRAND.primary}20` : BRAND.primaryL, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <ChevronLeft size={16} color={BRAND.primary} />
-            </button>
-            <button onClick={goForward} style={{ width: 32, height: 32, borderRadius: 8, border: "none", background: darkMode ? `${BRAND.primary}20` : BRAND.primaryL, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <ChevronRight size={16} color={BRAND.primary} />
-            </button>
-            <button onClick={goToday} style={{ padding: "6px 12px", borderRadius: 8, border: `1px solid ${theme.border}`, background: "transparent", cursor: "pointer", fontSize: 12, fontWeight: 600, color: BRAND.primary }}>
-              {t("Today", "Vandaag")}
-            </button>
-          </div>
-        </div>
+      {/* ═══ HEADER — Inline toolbar ═══ */}
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 18, flexWrap: "wrap" }}>
+        <h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text, margin: 0, marginRight: "auto" }}>{headerLabel}</h1>
 
-        {/* View switcher */}
-        <div style={{ display: "flex", gap: 4, background: theme.codeBg, borderRadius: 10, padding: 3 }}>
+        {/* Pill bar: Today | Day | Week | Month | < > */}
+        <div style={{ display: "flex", alignItems: "center", background: darkMode ? "rgba(255,255,255,0.06)" : "#f3f4f6", borderRadius: 12, padding: 3, gap: 2 }}>
+          <button onClick={goToday} style={{
+            padding: "7px 14px", borderRadius: 10, border: "none", fontSize: 12, fontWeight: 600, cursor: "pointer",
+            background: "transparent", color: theme.textS, transition: "all 0.15s",
+          }} onMouseEnter={e => (e.currentTarget.style.background = darkMode ? "rgba(255,255,255,0.08)" : "#e5e7eb")} onMouseLeave={e => (e.currentTarget.style.background = "transparent")}>
+            {t("Today", "Vandaag")}
+          </button>
+          <div style={{ width: 1, height: 20, background: darkMode ? "rgba(255,255,255,0.1)" : "#d1d5db" }} />
           {([
-            { id: "day" as const, icon: <List size={14} />, label: t("Day", "Dag") },
-            { id: "week" as const, icon: <Columns3 size={14} />, label: t("Week", "Week") },
-            { id: "month" as const, icon: <LayoutGrid size={14} />, label: t("Month", "Maand") },
+            { id: "day" as const, label: t("Day", "Dag") },
+            { id: "week" as const, label: t("Week", "Week") },
+            { id: "month" as const, label: t("Month", "Maand") },
           ]).map(v => (
             <button key={v.id} onClick={() => setView(v.id)} style={{
-              display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 8, border: "none",
-              background: view === v.id ? BRAND.primary : "transparent",
+              padding: "7px 16px", borderRadius: 10, border: "none", fontSize: 12, fontWeight: 600, cursor: "pointer",
+              background: view === v.id ? `linear-gradient(135deg, ${BRAND.primary}, #06B6D4)` : "transparent",
               color: view === v.id ? "#fff" : theme.textS,
-              fontSize: 12, fontWeight: 600, cursor: "pointer", transition: "all 0.15s",
+              boxShadow: view === v.id ? `0 2px 8px ${BRAND.primary}40` : "none",
+              transition: "all 0.2s",
             }}>
-              {v.icon} {v.label}
+              {v.label}
             </button>
           ))}
+          <div style={{ width: 1, height: 20, background: darkMode ? "rgba(255,255,255,0.1)" : "#d1d5db" }} />
+          <button onClick={goBack} style={{ width: 30, height: 30, borderRadius: 8, border: "none", background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }} onMouseEnter={e => (e.currentTarget.style.background = darkMode ? "rgba(255,255,255,0.08)" : "#e5e7eb")} onMouseLeave={e => (e.currentTarget.style.background = "transparent")}>
+            <ChevronLeft size={16} color={theme.textS} />
+          </button>
+          <button onClick={goForward} style={{ width: 30, height: 30, borderRadius: 8, border: "none", background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }} onMouseEnter={e => (e.currentTarget.style.background = darkMode ? "rgba(255,255,255,0.08)" : "#e5e7eb")} onMouseLeave={e => (e.currentTarget.style.background = "transparent")}>
+            <ChevronRight size={16} color={theme.textS} />
+          </button>
         </div>
       </div>
 
