@@ -52,6 +52,7 @@ function PostCard({ post, compact, darkMode, theme, onClick }: { post: any; comp
       <style>{`
         .cal-cell:hover .cal-plus { opacity: 1 !important; }
         .cal-cell:hover .cal-plus:hover { transform: scale(1.15); }
+        .cal-plus-wrap:hover .cal-tooltip { opacity: 1 !important; }
       `}</style>
     </div>
     );
@@ -195,9 +196,15 @@ export default function CalendarPage({ wsPosts, calDate, setCalDate, darkMode, t
                       <div />
                       <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                         {current && (
-                          <button onClick={() => onNewPost(dateStr)} className="cal-plus" style={{ width: 18, height: 18, borderRadius: "50%", border: "none", background: BRAND.primary, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", opacity: 0, transition: "opacity 0.15s", flexShrink: 0 }}>
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                          </button>
+                          <div style={{ position: "relative" }} className="cal-plus-wrap">
+                            <button onClick={() => onNewPost(dateStr)} className="cal-plus" style={{ width: 18, height: 18, borderRadius: "50%", border: "none", background: BRAND.primary, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", opacity: 0, transition: "all 0.15s", flexShrink: 0 }}>
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            </button>
+                            <div className="cal-tooltip" style={{ position: "absolute", bottom: "calc(100% + 6px)", left: "50%", transform: "translateX(-50%)", background: "#1a1a2e", color: "#fff", fontSize: 10, fontWeight: 600, padding: "4px 10px", borderRadius: 6, whiteSpace: "nowrap", opacity: 0, pointerEvents: "none", transition: "opacity 0.15s" }}>
+                              {t("New Content", "Nieuwe Content")}
+                              <div style={{ position: "absolute", top: "100%", left: "50%", transform: "translateX(-50%)", width: 0, height: 0, borderLeft: "4px solid transparent", borderRight: "4px solid transparent", borderTop: "4px solid #1a1a2e" }} />
+                            </div>
+                          </div>
                         )}
                         <span style={{
                           fontSize: 13, fontWeight: isToday ? 800 : 500,
