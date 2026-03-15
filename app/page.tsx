@@ -205,6 +205,7 @@ export default function App() {
   const [publishing, setPublishing] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingVideo, setUploadingVideo] = useState(false);
+  const [videoAspect, setVideoAspect] = useState<"horizontal"|"vertical"|null>(null);
   const [newWS, setNewWS] = useState({ name: "", industry: "", color: WORKSPACE_COLORS[0] });
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [calView, setCalView] = useState<"day"|"week"|"month">("month");
@@ -285,7 +286,7 @@ export default function App() {
     setPublishing(null);
   }
 
-  function resetDraft() { setDraft({ content: "", platforms: [], date: "", time: "12:00", type: "post", image_url: "", video_url: "" }); setShowNewPost(false); }
+  function resetDraft() { setDraft({ content: "", platforms: [], date: "", time: "12:00", type: "post", image_url: "", video_url: "" }); setVideoAspect(null); setShowNewPost(false); }
 
   async function saveAsDraft() {
     if (!draft.content || !activeWS) return;
@@ -666,7 +667,17 @@ export default function App() {
           <div style={{ marginBottom: 14 }}>
             <label style={{ fontSize: 12, fontWeight: 700, color: theme.textS, display: "block", marginBottom: 6 }}>VIDEO</label>
             {draft.video_url
-              ? <div style={{ borderRadius: 12, overflow: "hidden", border: `1px solid ${theme.border}` }}><div style={{ position: "relative" }}><video src={draft.video_url} controls style={{ width: "100%", height: 180, objectFit: "cover", display: "block", background: "#000" }} /><button onClick={() => setDraft(d => ({ ...d, video_url: "" }))} style={{ position: "absolute", top: 8, right: 8, background: BRAND.red, color: "#fff", border: "none", borderRadius: 8, padding: "5px 10px", cursor: "pointer", fontSize: 12, fontWeight: 600 }}>✕</button></div><div style={{ padding: "10px 12px", display: "flex", alignItems: "center", gap: 8, background: theme.codeBg }}><div style={{ width: 8, height: 8, borderRadius: "50%", background: BRAND.green }} /><span style={{ fontSize: 12, color: BRAND.green, fontWeight: 600 }}>{t("Video ready","Klaar")}</span></div></div>
+              ? <div style={{ borderRadius: 12, overflow: "hidden", border: `1px solid ${theme.border}`, display: "flex", flexDirection: "column", alignItems: videoAspect === "vertical" ? "center" : "stretch", background: "#000" }}>
+                  <div style={{ position: "relative", width: videoAspect === "vertical" ? 180 : "100%", margin: videoAspect === "vertical" ? "0 auto" : undefined }}>
+                    <video src={draft.video_url} controls onLoadedMetadata={(e) => { const v = e.currentTarget; setVideoAspect(v.videoHeight > v.videoWidth ? "vertical" : "horizontal"); }} style={{ width: "100%", height: videoAspect === "vertical" ? 320 : 180, objectFit: "contain", display: "block", background: "#000" }} />
+                    <button onClick={() => { setDraft(d => ({ ...d, video_url: "" })); setVideoAspect(null); }} style={{ position: "absolute", top: 8, right: 8, background: BRAND.red, color: "#fff", border: "none", borderRadius: 8, padding: "5px 10px", cursor: "pointer", fontSize: 12, fontWeight: 600 }}>✕</button>
+                  </div>
+                  <div style={{ padding: "10px 12px", display: "flex", alignItems: "center", gap: 8, background: theme.codeBg, width: "100%" }}>
+                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: BRAND.green }} />
+                    <span style={{ fontSize: 12, color: BRAND.green, fontWeight: 600 }}>{t("Video ready","Klaar")}</span>
+                    <span style={{ fontSize: 11, marginLeft: "auto", background: videoAspect === "vertical" ? "#FF000015" : BRAND.primary + "15", padding: "2px 8px", borderRadius: 5, fontWeight: 700, color: videoAspect === "vertical" ? "#FF0000" : BRAND.primary }}>{videoAspect === "vertical" ? "Short / Reel" : "Video"}</span>
+                  </div>
+                </div>
               : uploadingVideo
                 ? <div style={{ borderRadius: 12, border: `1px solid ${BRAND.primary}40`, background: darkMode ? "rgba(124,58,237,0.1)" : BRAND.primaryL, padding: "20px", textAlign: "center" }}><div style={{ width: 40, height: 40, margin: "0 auto 12px", borderRadius: "50%", border: `3px solid ${BRAND.primary}30`, borderTopColor: BRAND.primary, animation: "spin 1s linear infinite" }} /><div style={{ fontSize: 13, fontWeight: 600, color: BRAND.primary }}>{t("Uploading video...","Video uploaden...")}</div><div style={{ fontSize: 11, color: theme.textT, marginTop: 4 }}>{t("This may take a moment","Even geduld")}</div><style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style></div>
                 : <label style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, padding: "24px", borderRadius: 12, border: `2px dashed ${theme.border}`, cursor: "pointer", background: theme.codeBg }} onMouseEnter={e => (e.currentTarget.style.borderColor = BRAND.primary)} onMouseLeave={e => (e.currentTarget.style.borderColor = theme.border)}><div style={{ fontSize: 24 }}>🎬</div><span style={{ fontSize: 13, fontWeight: 600, color: theme.text }}>{t("Upload video","Upload video")}</span><span style={{ fontSize: 11, color: theme.textT }}>MP4, MOV · max 256MB</span><input type="file" accept="video/mp4,video/*" style={{ display: "none" }} onChange={async e => { const f = e.target.files?.[0]; if (f) { const u = await uploadVideo(f); if (u) setDraft(d => ({ ...d, video_url: u })); } }} /></label>}
