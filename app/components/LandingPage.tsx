@@ -36,11 +36,15 @@ const TESTIMONIALS = [
   { name: "Sarah J.", role: "Marketing Manager", badge: "Agency", badgeColor: "#7C3AED", text: "DropPost transformed how we manage social media for our clients. The approval workflow alone saves us hours every week.", textNl: "DropPost heeft veranderd hoe we social media beheren voor klanten. Alleen al de goedkeuringsflow bespaart ons uren per week." },
   { name: "Mark D.", role: "Agency Owner", badge: "Agency", badgeColor: "#7C3AED", text: "Finally a tool that understands agencies. Multi-workspace is a game changer for managing multiple clients.", textNl: "Eindelijk een tool die agencies begrijpt. Multi-workspace is een game changer voor meerdere klanten." },
   { name: "Lisa R.", role: "Content Creator", badge: "Creator", badgeColor: "#E1306C", text: "The drag-and-drop queue and calendar make planning content so intuitive. I can't imagine going back.", textNl: "De sleep-en-herorden wachtrij en kalender maken contentplanning zo intuïtief. Ik kan niet meer terug." },
-  { name: "James K.", role: "Brand Manager at Nike", badge: "Brand", badgeColor: "#06B6D4", text: "We manage 5 brands from one dashboard. The scheduling and approval flow keeps our content on-brand and on-time.", textNl: "We beheren 5 merken vanuit één dashboard. De planning en goedkeuringsflow houdt onze content on-brand en op tijd." },
+  { name: "James K.", role: "Brand Manager", badge: "Brand", badgeColor: "#06B6D4", text: "We manage 5 brands from one dashboard. The scheduling and approval flow keeps our content on-brand and on-time.", textNl: "We beheren 5 merken vanuit één dashboard. De planning en goedkeuringsflow houdt onze content on-brand en op tijd." },
   { name: "Priya S.", role: "Lifestyle Influencer", badge: "Influencer", badgeColor: "#F59E0B", text: "As an influencer managing multiple platforms, DropPost keeps everything organized. The AI captions feature is incredible.", textNl: "Als influencer die meerdere platformen beheert, houdt DropPost alles georganiseerd. De AI bijschriften zijn geweldig." },
   { name: "Tom W.", role: "Social Media Lead", badge: "Team", badgeColor: "#10B981", text: "Our team of 8 collaborates seamlessly. The approval system ensures nothing goes live without proper review.", textNl: "Ons team van 8 werkt naadloos samen. Het goedkeuringssysteem zorgt dat niets live gaat zonder review." },
   { name: "Ana M.", role: "YouTube Creator", badge: "Creator", badgeColor: "#E1306C", text: "Publishing to YouTube directly from DropPost with the channel picker is so smooth. Huge time saver for my workflow.", textNl: "Direct naar YouTube publiceren vanuit DropPost met de kanaalkiezer is zo soepel. Enorme tijdsbesparing." },
-  { name: "David L.", role: "CMO at TechFlow", badge: "Brand", badgeColor: "#06B6D4", text: "The analytics give us clear insights into what's working. DropPost helped us increase engagement by 40% in 3 months.", textNl: "De analytics geven ons helder inzicht in wat werkt. DropPost hielp ons de engagement met 40% te verhogen in 3 maanden." },
+  { name: "David L.", role: "CMO", badge: "Brand", badgeColor: "#06B6D4", text: "The analytics give us clear insights into what content performs best. We increased engagement by 40% in just 3 months.", textNl: "De analytics geven ons helder inzicht in welke content het beste presteert. We verhoogden engagement met 40% in 3 maanden." },
+  { name: "Nina F.", role: "Freelance Designer", badge: "Creator", badgeColor: "#E1306C", text: "I schedule all my portfolio posts across platforms in minutes. Dark mode is a nice touch for late-night planning sessions.", textNl: "Ik plan al mijn portfolio posts op alle platformen in minuten. Dark mode is fijn voor late avond sessies." },
+  { name: "Carlos R.", role: "Digital Agency CEO", badge: "Agency", badgeColor: "#7C3AED", text: "We switched from Buffer to DropPost. The client approval workflow and multi-workspace setup is exactly what we needed.", textNl: "We zijn van Buffer naar DropPost overgestapt. De klant goedkeuringsflow en multi-workspace is precies wat we nodig hadden." },
+  { name: "Emma T.", role: "Travel Influencer", badge: "Influencer", badgeColor: "#F59E0B", text: "I post across 5 platforms daily. DropPost lets me batch everything in one session and forget about it. Absolute lifesaver.", textNl: "Ik post dagelijks op 5 platformen. DropPost laat me alles in één sessie batchen. Absolute levensredder." },
+  { name: "Ryan P.", role: "Marketing Team Lead", badge: "Team", badgeColor: "#10B981", text: "The queue system with drag-and-drop reordering makes it so easy for our team to prioritize content on the fly.", textNl: "Het wachtrijsysteem met drag-and-drop maakt het zo makkelijk voor ons team om content te prioriteren." },
 ];
 
 const PLANS = [
@@ -69,11 +73,6 @@ export default function LandingPage() {
     const interval = setInterval(() => setRoleIndex(i => (i + 1) % roles.length), 2500);
     return () => clearInterval(interval);
   }, [roles.length]);
-
-  useEffect(() => {
-    const interval = setInterval(() => setTestimonialIndex(i => (i + 1) % Math.ceil(TESTIMONIALS.length / 3)), 4000);
-    return () => clearInterval(interval);
-  }, []);
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
@@ -376,50 +375,58 @@ export default function LandingPage() {
       </section>
 
       {/* ═══ TESTIMONIALS ═══ */}
-      <section id="testimonials" style={{ padding: "80px 24px", background: C.bgS, overflow: "hidden" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+      <section id="testimonials" style={{ padding: "80px 0", background: C.bgS, overflow: "hidden" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <p style={{ fontSize: 13, fontWeight: 700, color: C.primary, letterSpacing: 1.5, marginBottom: 12 }}>{t("TESTIMONIALS", "REVIEWS")}</p>
             <h2 style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 800, color: C.dark, marginBottom: 12 }}>{t("Loved by creators, brands & agencies", "Geliefd bij creators, merken & agencies")}</h2>
             <p style={{ fontSize: 16, color: C.textS }}>{t("See what our users have to say", "Bekijk wat onze gebruikers zeggen")}</p>
           </div>
+        </div>
 
-          {/* Carousel */}
-          <div style={{ position: "relative" }}>
-            <div style={{ overflow: "hidden", margin: "0 -10px", padding: "0 10px" }}>
-              <div style={{ display: "flex", transition: "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)", transform: `translateX(-${testimonialIndex * 100}%)` }}>
-                {Array.from({ length: Math.ceil(TESTIMONIALS.length / 3) }, (_, pageIdx) => (
-                  <div key={pageIdx} style={{ display: "flex", gap: 20, minWidth: "100%", flexShrink: 0, padding: "4px 0" }}>
-                    {TESTIMONIALS.slice(pageIdx * 3, pageIdx * 3 + 3).map((tm, i) => (
-                      <div key={i} style={{ flex: "1 1 0%", minWidth: 0, background: C.bg, borderRadius: 16, padding: "28px 24px", border: `1px solid ${C.border}`, display: "flex", flexDirection: "column", transition: "box-shadow 0.3s, transform 0.3s" }} onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 8px 30px rgba(124,58,237,0.08)"; e.currentTarget.style.transform = "translateY(-3px)"; }} onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "translateY(0)"; }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-                          <div style={{ display: "flex", gap: 3 }}>{[1,2,3,4,5].map(s => <Star key={s} size={15} fill="#F59E0B" color="#F59E0B" />)}</div>
-                          <span style={{ fontSize: 11, fontWeight: 700, color: tm.badgeColor, background: tm.badgeColor + "12", padding: "3px 10px", borderRadius: 100, border: `1px solid ${tm.badgeColor}20` }}>{tm.badge}</span>
-                        </div>
-                        <p style={{ fontSize: 14, color: C.textS, lineHeight: 1.7, marginBottom: 20, fontStyle: "italic", flex: 1 }}>"{lang === "nl" ? tm.textNl : tm.text}"</p>
-                        <div style={{ display: "flex", alignItems: "center", gap: 12, borderTop: `1px solid ${C.border}`, paddingTop: 16 }}>
-                          <div style={{ width: 40, height: 40, borderRadius: "50%", background: `${tm.badgeColor}15`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 800, color: tm.badgeColor }}>{tm.name[0]}</div>
-                          <div><div style={{ fontSize: 14, fontWeight: 700, color: C.dark }}>{tm.name}</div><div style={{ fontSize: 12, color: C.textT }}>{tm.role}</div></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ))}
+        {/* Row 1 - scrolls left */}
+        <div style={{ position: "relative", marginBottom: 20 }}>
+          <div style={{ display: "flex", gap: 20, animation: "marqueeLeft 60s linear infinite", width: "max-content" }}>
+            {[...TESTIMONIALS.slice(0, 6), ...TESTIMONIALS.slice(0, 6)].map((tm, i) => (
+              <div key={i} style={{ width: 380, flexShrink: 0, background: C.bg, borderRadius: 16, padding: "24px 22px", border: `1px solid ${C.border}`, display: "flex", flexDirection: "column", transition: "box-shadow 0.3s, transform 0.3s" }} onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 8px 30px rgba(124,58,237,0.08)"; e.currentTarget.style.transform = "translateY(-3px)"; }} onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "translateY(0)"; }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                  <div style={{ display: "flex", gap: 3 }}>{[1,2,3,4,5].map(s => <Star key={s} size={14} fill="#F59E0B" color="#F59E0B" />)}</div>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: tm.badgeColor, background: tm.badgeColor + "12", padding: "3px 10px", borderRadius: 100, border: `1px solid ${tm.badgeColor}20` }}>{tm.badge}</span>
+                </div>
+                <p style={{ fontSize: 13, color: C.textS, lineHeight: 1.7, marginBottom: 16, fontStyle: "italic", flex: 1 }}>"{lang === "nl" ? tm.textNl : tm.text}"</p>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, borderTop: `1px solid ${C.border}`, paddingTop: 14 }}>
+                  <div style={{ width: 36, height: 36, borderRadius: "50%", background: `${tm.badgeColor}15`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 800, color: tm.badgeColor }}>{tm.name[0]}</div>
+                  <div><div style={{ fontSize: 13, fontWeight: 700, color: C.dark }}>{tm.name}</div><div style={{ fontSize: 11, color: C.textT }}>{tm.role}</div></div>
+                </div>
               </div>
-            </div>
-
-            {/* Dots + arrows */}
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 16, marginTop: 32 }}>
-              <button onClick={() => setTestimonialIndex(i => i === 0 ? Math.ceil(TESTIMONIALS.length / 3) - 1 : i - 1)} style={{ width: 40, height: 40, borderRadius: "50%", border: `1px solid ${C.border}`, background: C.bg, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, color: C.textS, transition: "all 0.2s" }} onMouseEnter={e => { e.currentTarget.style.borderColor = C.primary; e.currentTarget.style.color = C.primary; }} onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.textS; }}>‹</button>
-              <div style={{ display: "flex", gap: 8 }}>
-                {Array.from({ length: Math.ceil(TESTIMONIALS.length / 3) }, (_, i) => (
-                  <button key={i} onClick={() => setTestimonialIndex(i)} style={{ width: testimonialIndex === i ? 28 : 10, height: 10, borderRadius: 10, border: "none", background: testimonialIndex === i ? C.grad : C.border, cursor: "pointer", transition: "all 0.3s", padding: 0 }} />
-                ))}
-              </div>
-              <button onClick={() => setTestimonialIndex(i => (i + 1) % Math.ceil(TESTIMONIALS.length / 3))} style={{ width: 40, height: 40, borderRadius: "50%", border: `1px solid ${C.border}`, background: C.bg, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, color: C.textS, transition: "all 0.2s" }} onMouseEnter={e => { e.currentTarget.style.borderColor = C.primary; e.currentTarget.style.color = C.primary; }} onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.textS; }}>›</button>
-            </div>
+            ))}
           </div>
         </div>
+
+        {/* Row 2 - scrolls right */}
+        <div style={{ position: "relative" }}>
+          <div style={{ display: "flex", gap: 20, animation: "marqueeRight 65s linear infinite", width: "max-content" }}>
+            {[...TESTIMONIALS.slice(6, 12), ...TESTIMONIALS.slice(6, 12)].map((tm, i) => (
+              <div key={i} style={{ width: 380, flexShrink: 0, background: C.bg, borderRadius: 16, padding: "24px 22px", border: `1px solid ${C.border}`, display: "flex", flexDirection: "column", transition: "box-shadow 0.3s, transform 0.3s" }} onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 8px 30px rgba(124,58,237,0.08)"; e.currentTarget.style.transform = "translateY(-3px)"; }} onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "translateY(0)"; }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                  <div style={{ display: "flex", gap: 3 }}>{[1,2,3,4,5].map(s => <Star key={s} size={14} fill="#F59E0B" color="#F59E0B" />)}</div>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: tm.badgeColor, background: tm.badgeColor + "12", padding: "3px 10px", borderRadius: 100, border: `1px solid ${tm.badgeColor}20` }}>{tm.badge}</span>
+                </div>
+                <p style={{ fontSize: 13, color: C.textS, lineHeight: 1.7, marginBottom: 16, fontStyle: "italic", flex: 1 }}>"{lang === "nl" ? tm.textNl : tm.text}"</p>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, borderTop: `1px solid ${C.border}`, paddingTop: 14 }}>
+                  <div style={{ width: 36, height: 36, borderRadius: "50%", background: `${tm.badgeColor}15`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 800, color: tm.badgeColor }}>{tm.name[0]}</div>
+                  <div><div style={{ fontSize: 13, fontWeight: 700, color: C.dark }}>{tm.name}</div><div style={{ fontSize: 11, color: C.textT }}>{tm.role}</div></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Fade edges */}
+        <style>{`
+          @keyframes marqueeLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+          @keyframes marqueeRight { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
+        `}</style>
       </section>
 
       {/* ═══ PRICING ═══ */}
