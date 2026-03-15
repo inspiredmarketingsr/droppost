@@ -223,7 +223,8 @@ export default function App() {
   const [page, setPage] = useState("dashboard");
   const [showNewPost, setShowNewPost] = useState(false);
   const [showNewWS, setShowNewWS] = useState(false);
-  const [draft, setDraft] = useState({ content: "", platforms: [] as string[], date: "", time: "12:00", type: "post", image_url: "" });
+  const [draft, setDraft] = useState({ content: "", platforms: [] as string[], date: "", time: "12:00", type: "post", image_url: "", video_url: "" });
+  const [publishing, setPublishing] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [newWS, setNewWS] = useState({ name: "", industry: "", color: WORKSPACE_COLORS[0] });
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -294,6 +295,46 @@ export default function App() {
     return urlData.publicUrl;
   }
 
+  async function uploadVideo(file: File): Promise<string | null> {
+    setUploading(true);
+    const fileName = `${userEmail}/videos/${Date.now()}-${file.name}`;
+    const { error } = await supabase.storage.from("post-images").upload(fileName, file, { upsert: true });
+    setUploading(false);
+    if (error) { console.error(error); return null; }
+    const { data: urlData } = supabase.storage.from("post-images").getPublicUrl(fileName);
+    return urlData.publicUrl;
+  }
+
+  async function publishToYouTube(post: any) {
+    if (!post.video_url) { alert("No video attached to this post"); return; }
+    setPublishing(post.id);
+    try {
+      const res = await fetch("/api/youtube/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: post.content.slice(0, 100),
+          description: post.content,
+          privacyStatus: "public",
+          videoUrl: post.video_url,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        await supabase.from("posts").update({ status: "published", youtube_id: data.videoId }).eq("id", post.id);
+        if (activeWS) setPosts(prev => ({
+          ...prev, [activeWS]: prev[activeWS].map(p => p.id === post.id ? { ...p, status: "published", youtube_id: data.videoId } : p)
+        }));
+        alert(`Published! ${data.url}`);
+      } else {
+        alert(`YouTube error: ${data.error}`);
+      }
+    } catch (err: any) {
+      alert(`Upload failed: ${err.message}`);
+    }
+    setPublishing(null);
+  }
+
   async function addPost(asDraft = false) {
     if (!draft.content || (!asDraft && (!draft.date || draft.platforms.length === 0)) || !activeWS) return;
     const { data } = await supabase.from("posts").insert({
@@ -305,9 +346,10 @@ export default function App() {
       status: asDraft ? "draft" : "scheduled",
       approval: asDraft ? "none" : "pending",
       image_url: draft.image_url || null,
+      video_url: draft.video_url || null,
     }).select().single();
     if (data) setPosts(prev => ({ ...prev, [activeWS!]: [data, ...(prev[activeWS!] || [])] }));
-    setDraft({ content: "", platforms: [], date: "", time: "12:00", type: "post", image_url: "" });
+    setDraft({ content: "", platforms: [], date: "", time: "12:00", type: "post", image_url: "", video_url: "" });
     setShowNewPost(false);
   }
 
@@ -737,9 +779,17 @@ export default function App() {
                         <StatusTag status={post.status} approval={post.approval} />
                       </div>
                     </div>
-                    <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
-                      {post.approval === "pending" && post.status !== "draft" && <button onClick={() => approvePost(post.id, "approved")} style={{ fontSize: 12, background: darkMode ? "rgba(16,185,129,0.15)" : BRAND.greenL, color: BRAND.green, border: "none", borderRadius: 7, padding: "5px 10px", cursor: "pointer", fontWeight: 600 }}>✓</button>}
-                      <button onClick={() => deletePost(post.id)} style={{ fontSize: 12, background: darkMode ? "rgba(239,68,68,0.15)" : BRAND.redL, color: BRAND.red, border: "none", borderRadius: 7, padding: "5px 10px", cursor: "pointer", fontWeight: 600 }}>✕</button>
+                    <div style={{ display: "flex", gap: 6, flexShrink: 0, flexDirection: "column", alignItems: "flex-end" }}>
+                      <div style={{ display: "flex", gap: 6 }}>
+                        {post.platforms?.includes("youtube") && post.video_url && post.status !== "published" && (
+                          <button onClick={() => publishToYouTube(post)} disabled={publishing === post.id} style={{ fontSize: 12, background: "#FF000015", color: "#FF0000", border: "1px solid #FF000030", borderRadius: 7, padding: "5px 10px", cursor: "pointer", fontWeight: 600, opacity: publishing === post.id ? 0.5 : 1 }}>
+                            {publishing === post.id ? "Uploading..." : "▶ YouTube"}
+                          </button>
+                        )}
+                        {post.approval === "pending" && post.status !== "draft" && <button onClick={() => approvePost(post.id, "approved")} style={{ fontSize: 12, background: darkMode ? "rgba(16,185,129,0.15)" : BRAND.greenL, color: BRAND.green, border: "none", borderRadius: 7, padding: "5px 10px", cursor: "pointer", fontWeight: 600 }}>✓</button>}
+                        <button onClick={() => deletePost(post.id)} style={{ fontSize: 12, background: darkMode ? "rgba(239,68,68,0.15)" : BRAND.redL, color: BRAND.red, border: "none", borderRadius: 7, padding: "5px 10px", cursor: "pointer", fontWeight: 600 }}>✕</button>
+                      </div>
+                      {post.youtube_id && <a href={`https://www.youtube.com/watch?v=${post.youtube_id}`} target="_blank" rel="noopener" style={{ fontSize: 11, color: "#FF0000", fontWeight: 600, textDecoration: "none" }}>▶ View on YouTube</a>}
                     </div>
                   </div>
                 </div>
@@ -1125,18 +1175,71 @@ export default function App() {
             <div style={{ marginBottom: 14 }}>
               <label style={{ fontSize: 12, fontWeight: 700, color: theme.textS, display: "block", marginBottom: 6 }}>{t("IMAGE","AFBEELDING")}</label>
               {draft.image_url
-                ? <div style={{ position: "relative", marginBottom: 8 }}>
-                    <img src={draft.image_url} style={{ width: "100%", height: 160, objectFit: "cover", borderRadius: 10, border: `1px solid ${theme.border}` }} />
-                    <button onClick={() => setDraft(d => ({ ...d, image_url: "" }))} style={{ position: "absolute", top: 8, right: 8, background: BRAND.red, color: "#fff", border: "none", borderRadius: 6, padding: "4px 8px", cursor: "pointer", fontSize: 12 }}>✕</button>
+                ? <div style={{ borderRadius: 12, overflow: "hidden", border: `1px solid ${theme.border}`, background: theme.codeBg }}>
+                    <div style={{ position: "relative" }}>
+                      <img src={draft.image_url} style={{ width: "100%", height: 160, objectFit: "cover", display: "block" }} />
+                      <button onClick={() => setDraft(d => ({ ...d, image_url: "" }))} style={{ position: "absolute", top: 8, right: 8, background: BRAND.red, color: "#fff", border: "none", borderRadius: 8, padding: "5px 10px", cursor: "pointer", fontSize: 12, fontWeight: 600 }}>✕ {t("Remove","Verwijder")}</button>
+                    </div>
+                    <div style={{ padding: "10px 12px", display: "flex", alignItems: "center", gap: 8 }}>
+                      <div style={{ width: 8, height: 8, borderRadius: "50%", background: BRAND.green, flexShrink: 0 }} />
+                      <span style={{ fontSize: 12, color: BRAND.green, fontWeight: 600 }}>{t("Image ready","Afbeelding klaar")}</span>
+                    </div>
                   </div>
-                : <label style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "20px", borderRadius: 10, border: `2px dashed ${theme.border}`, cursor: "pointer", background: theme.codeBg }}>
-                    <span style={{ fontSize: 20 }}>📁</span>
-                    <span style={{ fontSize: 13, color: theme.textS }}>{uploading ? t("Uploading...","Uploaden...") : t("Click to upload image","Klik om afbeelding te uploaden")}</span>
-                    <input type="file" accept="image/*" style={{ display: "none" }} onChange={async e => {
-                      const file = e.target.files?.[0];
-                      if (file) { const url = await uploadImage(file); if (url) setDraft(d => ({ ...d, image_url: url })); }
-                    }} />
-                  </label>
+                : uploading && !draft.video_url
+                  ? <div style={{ borderRadius: 12, border: `1px solid ${BRAND.primary}40`, background: darkMode ? "rgba(124,58,237,0.1)" : BRAND.primaryL, padding: "20px", textAlign: "center" }}>
+                      <div style={{ marginBottom: 12 }}>
+                        <div style={{ width: 40, height: 40, margin: "0 auto", borderRadius: "50%", border: `3px solid ${BRAND.primary}30`, borderTopColor: BRAND.primary, animation: "spin 1s linear infinite" }} />
+                      </div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: BRAND.primary }}>{t("Uploading image...","Afbeelding uploaden...")}</div>
+                      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                    </div>
+                  : <label style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, padding: "24px", borderRadius: 12, border: `2px dashed ${theme.border}`, cursor: "pointer", background: theme.codeBg, transition: "border-color 0.2s" }}
+                      onMouseEnter={e => (e.currentTarget.style.borderColor = BRAND.primary)}
+                      onMouseLeave={e => (e.currentTarget.style.borderColor = theme.border)}>
+                      <div style={{ width: 48, height: 48, borderRadius: 12, background: darkMode ? "rgba(124,58,237,0.1)" : BRAND.primaryL, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>📷</div>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: theme.text }}>{t("Click to upload image","Klik om afbeelding te uploaden")}</span>
+                      <span style={{ fontSize: 11, color: theme.textT }}>PNG, JPG, GIF · max 10MB</span>
+                      <input type="file" accept="image/*" style={{ display: "none" }} onChange={async e => {
+                        const file = e.target.files?.[0];
+                        if (file) { const url = await uploadImage(file); if (url) setDraft(d => ({ ...d, image_url: url })); }
+                      }} />
+                    </label>
+              }
+            </div>
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ fontSize: 12, fontWeight: 700, color: theme.textS, display: "block", marginBottom: 6 }}>{t("VIDEO (for YouTube)","VIDEO (voor YouTube)")}</label>
+              {draft.video_url
+                ? <div style={{ borderRadius: 12, overflow: "hidden", border: `1px solid ${theme.border}`, background: theme.codeBg }}>
+                    <div style={{ position: "relative" }}>
+                      <video src={draft.video_url} controls style={{ width: "100%", height: 180, objectFit: "cover", display: "block", background: "#000" }} />
+                      <button onClick={() => setDraft(d => ({ ...d, video_url: "" }))} style={{ position: "absolute", top: 8, right: 8, background: BRAND.red, color: "#fff", border: "none", borderRadius: 8, padding: "5px 10px", cursor: "pointer", fontSize: 12, fontWeight: 600 }}>✕ {t("Remove","Verwijder")}</button>
+                    </div>
+                    <div style={{ padding: "10px 12px", display: "flex", alignItems: "center", gap: 8 }}>
+                      <div style={{ width: 8, height: 8, borderRadius: "50%", background: BRAND.green, flexShrink: 0 }} />
+                      <span style={{ fontSize: 12, color: BRAND.green, fontWeight: 600 }}>{t("Video ready","Video klaar")}</span>
+                      <span style={{ fontSize: 11, color: theme.textT, marginLeft: "auto" }}>MP4</span>
+                    </div>
+                  </div>
+                : uploading
+                  ? <div style={{ borderRadius: 12, border: `1px solid ${BRAND.primary}40`, background: darkMode ? "rgba(124,58,237,0.1)" : BRAND.primaryL, padding: "20px", textAlign: "center" }}>
+                      <div style={{ marginBottom: 12 }}>
+                        <div style={{ width: 40, height: 40, margin: "0 auto", borderRadius: "50%", border: `3px solid ${BRAND.primary}30`, borderTopColor: BRAND.primary, animation: "spin 1s linear infinite" }} />
+                      </div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: BRAND.primary, marginBottom: 4 }}>{t("Uploading video...","Video uploaden...")}</div>
+                      <div style={{ fontSize: 11, color: theme.textT }}>{t("This may take a moment","Dit kan even duren")}</div>
+                      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                    </div>
+                  : <label style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, padding: "24px", borderRadius: 12, border: `2px dashed ${theme.border}`, cursor: "pointer", background: theme.codeBg, transition: "border-color 0.2s" }}
+                      onMouseEnter={e => (e.currentTarget.style.borderColor = BRAND.primary)}
+                      onMouseLeave={e => (e.currentTarget.style.borderColor = theme.border)}>
+                      <div style={{ width: 48, height: 48, borderRadius: 12, background: darkMode ? "rgba(255,0,0,0.1)" : "#FFF0F0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>🎬</div>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: theme.text }}>{t("Click to upload video","Klik om video te uploaden")}</span>
+                      <span style={{ fontSize: 11, color: theme.textT }}>MP4, MOV, AVI · max 256MB</span>
+                      <input type="file" accept="video/mp4,video/quicktime,video/*" style={{ display: "none" }} onChange={async e => {
+                        const file = e.target.files?.[0];
+                        if (file) { const url = await uploadVideo(file); if (url) setDraft(d => ({ ...d, video_url: url })); }
+                      }} />
+                    </label>
               }
             </div>
             <div style={{ marginBottom: 14 }}>
