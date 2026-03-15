@@ -15,7 +15,7 @@ export default function Sidebar({ sidebarOpen, page, setPage, pendingCount, t }:
   const NAV = [
     { id: "dashboard", icon: <LayoutDashboard size={16} />, label: t("Dashboard", "Dashboard") },
     { id: "calendar", icon: <Calendar size={16} />, label: t("Calendar", "Kalender") },
-    { id: "posts", icon: <PenLine size={16} />, label: "Posts" },
+    { id: "posts", icon: <PenLine size={16} />, label: t("My Posts", "Mijn Posts") },
     { id: "queue", icon: <Clock size={16} />, label: t("Queue", "Wachtrij") },
     { id: "drafts", icon: <FileText size={16} />, label: t("Drafts", "Concepten") },
     { id: "approval", icon: <CheckSquare size={16} />, label: t("Approval", "Goedkeuring"), badge: pendingCount },
