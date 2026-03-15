@@ -1,6 +1,6 @@
 "use client";
 import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Calendar, Clock, CheckSquare, BarChart2, Users, Zap, Shield, Globe, ChevronRight, Play, Star, Menu, X, ArrowRight, Sparkles } from "lucide-react";
 import { FaYoutube, FaFacebookF, FaInstagram, FaTiktok, FaSnapchat, FaXTwitter } from "react-icons/fa6";
 
@@ -47,7 +47,21 @@ const PLANS = [
 export default function LandingPage() {
   const [lang, setLang] = useState<"en" | "nl">("en");
   const [mobileMenu, setMobileMenu] = useState(false);
+  const [roleIndex, setRoleIndex] = useState(0);
   const t = (en: string, nl: string) => lang === "nl" ? nl : en;
+
+  const roles = [
+    t("creators", "creators"),
+    t("influencers", "influencers"),
+    t("agencies", "agencies"),
+    t("teams", "teams"),
+    t("brands", "merken"),
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => setRoleIndex(i => (i + 1) % roles.length), 2500);
+    return () => clearInterval(interval);
+  }, [roles.length]);
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
@@ -147,7 +161,13 @@ export default function LandingPage() {
           </h1>
 
           <p style={{ fontSize: "clamp(16px, 2vw, 20px)", color: C.textS, maxWidth: 620, margin: "0 auto 40px", lineHeight: 1.7, animation: "fadeInUp 0.8s ease-out 0.4s both" }}>
-            {t("The all-in-one social media management tool for agencies and teams. Plan content, get approvals, and publish across all platforms — from one dashboard.", "De alles-in-één social media tool voor agencies en teams. Plan content, krijg goedkeuringen en publiceer op alle platformen — vanuit één dashboard.")}
+            {t("The all-in-one social media management tool for ", "De alles-in-één social media tool voor ")}
+            <span style={{ position: "relative", display: "inline-block", width: lang === "nl" ? 130 : 120, textAlign: "left" }}>
+              <span key={roleIndex} style={{ position: "absolute", left: 0, top: 0, background: C.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontWeight: 800, animation: "roleIn 0.5s ease-out forwards", whiteSpace: "nowrap" }}>{roles[roleIndex]}</span>
+              {/* Invisible placeholder for width */}
+              <span style={{ visibility: "hidden", fontWeight: 800 }}>{roles[roleIndex]}</span>
+            </span>
+            {t(". Plan content, get approvals, and publish across all platforms — from one dashboard.", ". Plan content, krijg goedkeuringen en publiceer op alle platformen — vanuit één dashboard.")}
           </p>
 
           <div style={{ display: "inline-flex", gap: 14, justifyContent: "center", marginBottom: 52, animation: "fadeInUp 0.8s ease-out 0.6s both" }}>
@@ -220,6 +240,7 @@ export default function LandingPage() {
           @keyframes fadeInDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
           @keyframes drawLine { to { stroke-dashoffset: 0; } }
           @keyframes gradientShift { 0%,100% { filter: hue-rotate(0deg); } 50% { filter: hue-rotate(15deg); } }
+          @keyframes roleIn { 0% { opacity: 0; transform: translateY(14px); } 100% { opacity: 1; transform: translateY(0); } }
         `}</style>
       </section>
 
