@@ -168,19 +168,80 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══ PLATFORMS ═══ */}
-      <section id="platforms" style={{ padding: "80px 24px", background: C.bg }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", textAlign: "center" }}>
-          <p style={{ fontSize: 13, fontWeight: 700, color: C.primary, letterSpacing: 1.5, marginBottom: 12 }}>{t("PLATFORMS", "PLATFORMEN")}</p>
-          <h2 style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 800, marginBottom: 16, color: C.dark }}>{t("All your channels, one dashboard", "Al je kanalen, één dashboard")}</h2>
-          <p style={{ fontSize: 16, color: C.textS, marginBottom: 48, maxWidth: 500, margin: "0 auto 48px" }}>{t("Connect and manage all major social platforms from a single place.", "Verbind en beheer alle grote social platformen vanuit één plek.")}</p>
-          <div style={{ display: "flex", justifyContent: "center", gap: 24, flexWrap: "wrap" }}>
-            {PLATFORMS_DISPLAY.map(p => (
-              <div key={p.name} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
-                <div style={{ width: 72, height: 72, borderRadius: 20, background: p.color + "12", border: `2px solid ${p.color}20`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, color: p.color, fontWeight: 800, transition: "transform 0.2s" }} onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.1)")} onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}>{p.icon}</div>
-                <span style={{ fontSize: 14, fontWeight: 600, color: C.text }}>{p.name}</span>
+      {/* ═══ INTEGRATIONS ═══ */}
+      <section id="platforms" style={{ padding: "100px 24px", background: "linear-gradient(180deg, #F8FAFC 0%, #EDE9FE22 40%, #CFFAFE18 70%, #F8FAFC 100%)", overflow: "hidden" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", gap: 60, flexWrap: "wrap", justifyContent: "center" }}>
+
+          {/* LEFT: Visual hub */}
+          <div style={{ position: "relative", width: 440, height: 440, flexShrink: 0 }}>
+            {/* Connection lines via SVG */}
+            <svg width="440" height="440" viewBox="0 0 440 440" style={{ position: "absolute", inset: 0 }}>
+              <defs>
+                <linearGradient id="lineGrad1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#7C3AED" stopOpacity="0.3" /><stop offset="100%" stopColor="#06B6D4" stopOpacity="0.3" /></linearGradient>
+                <linearGradient id="lineGrad2" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stopColor="#7C3AED" stopOpacity="0.2" /><stop offset="100%" stopColor="#06B6D4" stopOpacity="0.2" /></linearGradient>
+              </defs>
+              {/* Orbital rings */}
+              <circle cx="220" cy="220" r="140" fill="none" stroke="url(#lineGrad1)" strokeWidth="1" strokeDasharray="8 6" />
+              <circle cx="220" cy="220" r="195" fill="none" stroke="url(#lineGrad2)" strokeWidth="1" strokeDasharray="4 8" />
+              {/* Lines from center to icons */}
+              {[
+                { x: 100, y: 50 },   // YouTube
+                { x: 340, y: 80 },   // Facebook
+                { x: 60, y: 220 },   // Instagram
+                { x: 370, y: 260 },  // TikTok
+                { x: 140, y: 390 },  // Snapchat
+                { x: 330, y: 390 },  // X/Twitter
+              ].map((p, i) => (
+                <line key={i} x1="220" y1="220" x2={p.x} y2={p.y} stroke="url(#lineGrad1)" strokeWidth="1.5" strokeDasharray="6 4">
+                  <animate attributeName="stroke-dashoffset" from="0" to="20" dur={`${3 + i * 0.5}s`} repeatCount="indefinite" />
+                </line>
+              ))}
+              {/* Glow behind center */}
+              <circle cx="220" cy="220" r="60" fill="url(#lineGrad1)" opacity="0.08" />
+            </svg>
+
+            {/* CENTER: DropPost logo */}
+            <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%,-50%)", width: 80, height: 80, borderRadius: 22, background: C.grad, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 8px 32px rgba(124,58,237,0.3)", zIndex: 2 }}>
+              <span style={{ color: "#fff", fontWeight: 900, fontSize: 32 }}>D</span>
+            </div>
+
+            {/* Platform icons positioned around */}
+            {[
+              { name: "YouTube", color: "#FF0000", icon: "▶", x: 75, y: 25, size: 56 },
+              { name: "Facebook", color: "#1877F2", icon: "f", x: 315, y: 55, size: 52 },
+              { name: "Instagram", color: "#E1306C", icon: "ig", x: 30, y: 195, size: 54 },
+              { name: "TikTok", color: "#010101", icon: "♪", x: 345, y: 235, size: 50 },
+              { name: "Snapchat", color: "#FFCE00", icon: "👻", x: 115, y: 365, size: 50 },
+              { name: "X", color: "#000000", icon: "𝕏", x: 305, y: 365, size: 48 },
+            ].map((p, i) => (
+              <div key={p.name} style={{ position: "absolute", left: p.x, top: p.y, width: p.size, height: p.size, borderRadius: "50%", background: C.bg, border: `2.5px solid ${p.color}30`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: p.name === "Snapchat" ? 22 : 16, color: p.color, fontWeight: 800, boxShadow: `0 4px 16px ${p.color}15`, zIndex: 2, transition: "transform 0.3s, box-shadow 0.3s", cursor: "default", animation: `floatIcon${i} ${4 + i * 0.7}s ease-in-out infinite` }} onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.15)"; e.currentTarget.style.boxShadow = `0 6px 24px ${p.color}30`; }} onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 4px 16px ${p.color}15`; }}>
+                {p.icon}
               </div>
             ))}
+
+            <style>{`
+              @keyframes floatIcon0 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+              @keyframes floatIcon1 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+              @keyframes floatIcon2 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+              @keyframes floatIcon3 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+              @keyframes floatIcon4 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+              @keyframes floatIcon5 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+            `}</style>
+          </div>
+
+          {/* RIGHT: Text */}
+          <div style={{ flex: 1, minWidth: 320, maxWidth: 480 }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: C.primary, letterSpacing: 1.5, marginBottom: 12 }}>{t("INTEGRATIONS", "INTEGRATIES")}</p>
+            <h2 style={{ fontSize: "clamp(28px, 3.5vw, 42px)", fontWeight: 900, lineHeight: 1.15, marginBottom: 20, color: C.dark }}>
+              {t("Integrations that work with", "Integraties die werken met")}<br />
+              <span style={{ background: C.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{t("your social media", "jouw social media")}</span>
+            </h2>
+            <p style={{ fontSize: 16, color: C.textS, lineHeight: 1.8, marginBottom: 32 }}>
+              {t("Our integrations allow you to automate your social media posts and schedule your content across all platforms from one centralized dashboard. Streamline your workflow and save valuable time.", "Onze integraties stellen je in staat om je social media posts te automatiseren en je content in te plannen op alle platformen vanuit één centraal dashboard. Stroomlijn je workflow en bespaar waardevolle tijd.")}
+            </p>
+            <button onClick={() => signIn("google")} style={{ background: C.grad, color: "#fff", border: "none", borderRadius: 12, padding: "14px 32px", fontSize: 15, fontWeight: 700, cursor: "pointer", letterSpacing: 0.5, transition: "transform 0.2s, box-shadow 0.2s" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(124,58,237,0.3)"; }} onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
+              {t("START YOUR FREE TRIAL NOW!", "START JE GRATIS PROEF NU!")}
+            </button>
           </div>
         </div>
       </section>
