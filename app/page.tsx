@@ -225,7 +225,8 @@ export default function App() {
   const [showNewWS, setShowNewWS] = useState(false);
   const [draft, setDraft] = useState({ content: "", platforms: [] as string[], date: "", time: "12:00", type: "post", image_url: "", video_url: "" });
   const [publishing, setPublishing] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
   const [newWS, setNewWS] = useState({ name: "", industry: "", color: WORKSPACE_COLORS[0] });
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [calView, setCalView] = useState<"day"|"week"|"month">("month");
@@ -286,20 +287,20 @@ export default function App() {
   }
 
   async function uploadImage(file: File): Promise<string | null> {
-    setUploading(true);
+    setUploadingImage(true);
     const fileName = `${userEmail}/${Date.now()}-${file.name}`;
     const { error } = await supabase.storage.from("post-images").upload(fileName, file, { upsert: true });
-    setUploading(false);
+    setUploadingImage(false);
     if (error) { console.error(error); return null; }
     const { data: urlData } = supabase.storage.from("post-images").getPublicUrl(fileName);
     return urlData.publicUrl;
   }
 
   async function uploadVideo(file: File): Promise<string | null> {
-    setUploading(true);
+    setUploadingVideo(true);
     const fileName = `${userEmail}/videos/${Date.now()}-${file.name}`;
     const { error } = await supabase.storage.from("post-images").upload(fileName, file, { upsert: true });
-    setUploading(false);
+    setUploadingVideo(false);
     if (error) { console.error(error); return null; }
     const { data: urlData } = supabase.storage.from("post-images").getPublicUrl(fileName);
     return urlData.publicUrl;
@@ -1185,7 +1186,7 @@ export default function App() {
                       <span style={{ fontSize: 12, color: BRAND.green, fontWeight: 600 }}>{t("Image ready","Afbeelding klaar")}</span>
                     </div>
                   </div>
-                : uploading && !draft.video_url
+                : uploadingImage
                   ? <div style={{ borderRadius: 12, border: `1px solid ${BRAND.primary}40`, background: darkMode ? "rgba(124,58,237,0.1)" : BRAND.primaryL, padding: "20px", textAlign: "center" }}>
                       <div style={{ marginBottom: 12 }}>
                         <div style={{ width: 40, height: 40, margin: "0 auto", borderRadius: "50%", border: `3px solid ${BRAND.primary}30`, borderTopColor: BRAND.primary, animation: "spin 1s linear infinite" }} />
@@ -1207,7 +1208,7 @@ export default function App() {
               }
             </div>
             <div style={{ marginBottom: 14 }}>
-              <label style={{ fontSize: 12, fontWeight: 700, color: theme.textS, display: "block", marginBottom: 6 }}>{t("VIDEO (for YouTube)","VIDEO (voor YouTube)")}</label>
+              <label style={{ fontSize: 12, fontWeight: 700, color: theme.textS, display: "block", marginBottom: 6 }}>{t("VIDEO","VIDEO")}</label>
               {draft.video_url
                 ? <div style={{ borderRadius: 12, overflow: "hidden", border: `1px solid ${theme.border}`, background: theme.codeBg }}>
                     <div style={{ position: "relative" }}>
@@ -1220,7 +1221,7 @@ export default function App() {
                       <span style={{ fontSize: 11, color: theme.textT, marginLeft: "auto" }}>MP4</span>
                     </div>
                   </div>
-                : uploading
+                : uploadingVideo
                   ? <div style={{ borderRadius: 12, border: `1px solid ${BRAND.primary}40`, background: darkMode ? "rgba(124,58,237,0.1)" : BRAND.primaryL, padding: "20px", textAlign: "center" }}>
                       <div style={{ marginBottom: 12 }}>
                         <div style={{ width: 40, height: 40, margin: "0 auto", borderRadius: "50%", border: `3px solid ${BRAND.primary}30`, borderTopColor: BRAND.primary, animation: "spin 1s linear infinite" }} />
