@@ -186,12 +186,12 @@ export default function LandingPage() {
               <circle cx="220" cy="220" r="195" fill="none" stroke="url(#lineGrad2)" strokeWidth="1" strokeDasharray="4 8" />
               {/* Lines from center to icons */}
               {[
-                { x: 100, y: 50 },   // YouTube
-                { x: 340, y: 80 },   // Facebook
-                { x: 60, y: 220 },   // Instagram
-                { x: 370, y: 260 },  // TikTok
-                { x: 140, y: 390 },  // Snapchat
-                { x: 330, y: 390 },  // X/Twitter
+                { x: 103, y: 53 },   // YouTube (75+28, 25+28)
+                { x: 341, y: 81 },   // Facebook (315+26, 55+26)
+                { x: 57, y: 222 },   // Instagram (30+27, 195+27)
+                { x: 370, y: 260 },  // TikTok (345+25, 235+25)
+                { x: 140, y: 390 },  // Snapchat (115+25, 365+25)
+                { x: 329, y: 389 },  // X (305+24, 365+24)
               ].map((p, i) => (
                 <line key={i} x1="220" y1="220" x2={p.x} y2={p.y} stroke="url(#lineGrad1)" strokeWidth="1.5" strokeDasharray="6 4">
                   <animate attributeName="stroke-dashoffset" from="0" to="20" dur={`${3 + i * 0.5}s`} repeatCount="indefinite" />
