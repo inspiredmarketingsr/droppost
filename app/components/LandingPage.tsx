@@ -240,7 +240,7 @@ export default function LandingPage() {
           @keyframes fadeInDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
           @keyframes drawLine { to { stroke-dashoffset: 0; } }
           @keyframes gradientShift { 0%,100% { filter: hue-rotate(0deg); } 50% { filter: hue-rotate(15deg); } }
-          @keyframes roleIn { 0% { opacity: 0; transform: translateY(14px); } 100% { opacity: 1; transform: translateY(0); } }
+          @keyframes roleIn { 0% { opacity: 0; transform: scale(0.6); filter: blur(4px); } 50% { transform: scale(1.08); } 100% { opacity: 1; transform: scale(1); filter: blur(0); } }
         `}</style>
       </section>
 
