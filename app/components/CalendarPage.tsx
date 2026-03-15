@@ -53,6 +53,7 @@ function PostCard({ post, compact, darkMode, theme, onClick }: { post: any; comp
         .cal-cell:hover .cal-plus { opacity: 1 !important; }
         .cal-cell:hover .cal-plus:hover { transform: scale(1.15); }
         .cal-plus-wrap:hover .cal-tooltip { opacity: 1 !important; }
+        .week-plus-wrap:hover .week-tooltip { opacity: 1 !important; }
       `}</style>
     </div>
     );
@@ -260,10 +261,14 @@ export default function CalendarPage({ wsPosts, calDate, setCalDate, darkMode, t
                 {/* Bottom: count + add */}
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: 8, borderTop: `1px solid ${theme.border}`, marginTop: 8 }}>
                   <span style={{ fontSize: 10, color: theme.textT, fontWeight: 600 }}>{dp.length} {dp.length === 1 ? "post" : "posts"}</span>
-                  <button onClick={() => onNewPost(dateStr)} style={{ width: 22, height: 22, borderRadius: "50%", border: `1.5px dashed ${BRAND.primary}60`, background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}
-                    onMouseEnter={e => { e.currentTarget.style.background = BRAND.primary; e.currentTarget.style.borderColor = BRAND.primary; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = `${BRAND.primary}60`; }}>
+                  <button onClick={() => onNewPost(dateStr)} style={{ position: "relative", width: 22, height: 22, borderRadius: "50%", border: `1.5px dashed ${BRAND.primary}40`, background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }} className="week-plus-wrap"
+                    onMouseEnter={e => { e.currentTarget.style.background = `${BRAND.primary}15`; e.currentTarget.style.borderColor = BRAND.primary; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = `${BRAND.primary}40`; }}>
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={BRAND.primary} strokeWidth="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <div className="week-tooltip" style={{ position: "absolute", bottom: "calc(100% + 6px)", left: "50%", transform: "translateX(-50%)", background: "#1a1a2e", color: "#fff", fontSize: 10, fontWeight: 600, padding: "4px 10px", borderRadius: 6, whiteSpace: "nowrap", opacity: 0, pointerEvents: "none", transition: "opacity 0.15s" }}>
+                      {t("New Content", "Nieuwe Content")}
+                      <div style={{ position: "absolute", top: "100%", left: "50%", transform: "translateX(-50%)", width: 0, height: 0, borderLeft: "4px solid transparent", borderRight: "4px solid transparent", borderTop: "4px solid #1a1a2e" }} />
+                    </div>
                   </button>
                 </div>
               </div>
