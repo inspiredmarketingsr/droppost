@@ -3,7 +3,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 import { Settings, User, CreditCard, HelpCircle, Gift, LogOut, Headphones, Newspaper, Moon, Sun, Globe, LayoutDashboard, Calendar, PenLine, Clock, FileText, CheckSquare, BarChart2, Image, Users, CheckCircle, Clock3, AlertCircle, Upload, GripVertical } from "lucide-react";
-import LandingPage from "./components/LandingPage";
+import LandingPage from "./components/Landingpage";
 
 const BRAND = {
   primary: "#7C3AED", primaryD: "#5B21B6", primaryL: "#EDE9FE",
@@ -210,16 +210,57 @@ export default function App() {
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>{ws && <Avatar initials={ws.avatar} color={ws.color} size={32} />}<div><div style={{ fontSize: 14, fontWeight: 700, color: theme.text }}>{ws?.name}</div></div></div>
           <div style={{ flex: 1 }} />
           <button onClick={() => setShowNewPost(true)} style={{ background: BRAND.gradBtn, color: "#fff", border: "none", borderRadius: 9, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer", marginRight: 8 }}>+ {t("Create Post", "Maak Post")}</button>
+          <button onClick={() => { setShowSupport(o => !o); setShowNews(false); }} style={{ width: 34, height: 34, borderRadius: 8, border: "none", background: showSupport ? theme.tagBg : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><Headphones size={18} color={showSupport ? BRAND.primary : theme.textS} /></button>
+          <button onClick={() => { setShowNews(o => !o); setShowSupport(false); }} style={{ width: 34, height: 34, borderRadius: 8, border: "none", background: showNews ? theme.tagBg : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><Newspaper size={18} color={showNews ? BRAND.primary : theme.textS} /></button>
           <button onClick={() => setDarkMode(o => !o)} style={{ width: 34, height: 34, borderRadius: 8, border: "none", background: darkMode ? theme.tagBg : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>{darkMode ? <Sun size={18} color={BRAND.amber} /> : <Moon size={18} color={theme.textS} />}</button>
           <div style={{ position: "relative" }}>
             <button onClick={() => setShowLangMenu(o => !o)} style={{ width: 34, height: 34, borderRadius: 8, border: "none", background: showLangMenu ? theme.tagBg : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><Globe size={18} color={showLangMenu ? BRAND.primary : theme.textS} /></button>
             {showLangMenu && <div style={{ position: "absolute", right: 0, top: "calc(100% + 8px)", background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 10, boxShadow: "0 8px 30px rgba(0,0,0,0.18)", overflow: "hidden", zIndex: 200, minWidth: 150 }}>{[{ code: "en", label: "🇬🇧 English" }, { code: "nl", label: "🇳🇱 Nederlands" }].map(l => <button key={l.code} onClick={() => { setLanguage(l.code as any); setShowLangMenu(false); }} style={{ width: "100%", padding: "10px 16px", background: language === l.code ? theme.tagBg : "none", border: "none", cursor: "pointer", fontSize: 13, color: language === l.code ? BRAND.primary : theme.text, textAlign: "left", fontWeight: language === l.code ? 700 : 400 }}>{l.label}</button>)}</div>}
           </div>
-          <button onClick={() => signOut({ callbackUrl: "/" })} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: `1px solid ${theme.border}`, borderRadius: 10, padding: "5px 10px", cursor: "pointer", marginLeft: 4 }}>
-            {session.user?.image ? <img src={session.user.image} style={{ width: 30, height: 30, borderRadius: "50%" }} alt="" /> : <div style={{ width: 30, height: 30, borderRadius: "50%", background: BRAND.gradBtn, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, color: "#fff" }}>{userInitials}</div>}
-            <div style={{ textAlign: "left" }}><div style={{ fontSize: 12, fontWeight: 700, color: theme.text }}>{userName}</div><div style={{ fontSize: 10, color: theme.textT }}>{t("Sign out", "Uitloggen")}</div></div>
-          </button>
+          <div style={{ position: "relative", marginLeft: 4 }}>
+            <button onClick={() => setShowUserMenu(o => !o)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: `1px solid ${theme.border}`, borderRadius: 10, padding: "5px 10px", cursor: "pointer" }}>
+              {session.user?.image ? <img src={session.user.image} style={{ width: 30, height: 30, borderRadius: "50%" }} alt="" /> : <div style={{ width: 30, height: 30, borderRadius: "50%", background: BRAND.gradBtn, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, color: "#fff" }}>{userInitials}</div>}
+              <div style={{ textAlign: "left" }}><div style={{ fontSize: 12, fontWeight: 700, color: theme.text }}>{userName}</div><div style={{ fontSize: 10, color: theme.textT }}>{userEmail}</div></div>
+              <span style={{ fontSize: 12, color: theme.textT }}>▾</span>
+            </button>
+            {showUserMenu && <div style={{ position: "absolute", right: 0, top: "calc(100% + 8px)", background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 14, boxShadow: "0 8px 30px rgba(0,0,0,0.18)", width: 220, zIndex: 200, overflow: "hidden" }}>
+              <div style={{ padding: "14px 16px", borderBottom: `1px solid ${theme.border}`, display: "flex", alignItems: "center", gap: 10 }}>
+                {session.user?.image ? <img src={session.user.image} style={{ width: 38, height: 38, borderRadius: "50%" }} alt="" /> : <div style={{ width: 38, height: 38, borderRadius: "50%", background: BRAND.gradBtn, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: "#fff" }}>{userInitials}</div>}
+                <div><div style={{ fontSize: 13, fontWeight: 700, color: theme.text }}>{userName}</div><div style={{ fontSize: 11, color: theme.textT }}>{userEmail}</div></div>
+              </div>
+              {[{ icon: <Settings size={15} />, label: t("Company Settings", "Bedrijfsinstellingen") }, { icon: <User size={15} />, label: t("User Settings", "Gebruikersinstellingen") }, { icon: <CreditCard size={15} />, label: t("Billing", "Facturering") }, { icon: <HelpCircle size={15} />, label: t("Help", "Hulp") }, { icon: <Gift size={15} />, label: t("Affiliates", "Affiliates") }].map(item => (
+                <button key={item.label} onClick={() => setShowUserMenu(false)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", background: "none", border: "none", cursor: "pointer", fontSize: 13, color: theme.text, textAlign: "left" }} onMouseEnter={e => (e.currentTarget.style.background = theme.hoverBg)} onMouseLeave={e => (e.currentTarget.style.background = "none")}>{item.icon}{item.label}</button>
+              ))}
+              <div style={{ borderTop: `1px solid ${theme.border}` }}><button onClick={() => signOut({ callbackUrl: "/" })} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", background: "none", border: "none", cursor: "pointer", fontSize: 13, color: BRAND.red, textAlign: "left" }} onMouseEnter={e => (e.currentTarget.style.background = darkMode ? "rgba(239,68,68,0.1)" : BRAND.redL)} onMouseLeave={e => (e.currentTarget.style.background = "none")}><LogOut size={15} color={BRAND.red} />{t("Logout", "Uitloggen")}</button></div>
+            </div>}
+          </div>
         </div>
+
+        {/* SUPPORT PANEL */}
+        {showSupport && <div style={{ position: "fixed", right: 0, top: 58, width: 360, height: "calc(100vh - 58px)", background: theme.card, borderLeft: `1px solid ${theme.border}`, boxShadow: "-4px 0 20px rgba(0,0,0,0.12)", zIndex: 200, overflowY: "auto" }}>
+          <div style={{ padding: "20px", borderBottom: `1px solid ${theme.border}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}><div style={{ fontSize: 16, fontWeight: 800, color: theme.text }}>🎧 {t("Support", "Ondersteuning")}</div><button onClick={() => setShowSupport(false)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: theme.textT }}>✕</button></div>
+          <div style={{ padding: "16px" }}>
+            <div style={{ background: darkMode ? "rgba(124,58,237,0.15)" : BRAND.primaryL, borderRadius: 12, padding: "14px", marginBottom: 16 }}><div style={{ fontSize: 13, fontWeight: 700, color: BRAND.primary, marginBottom: 4 }}>📧 {t("Contact us", "Neem contact op")}</div><div style={{ fontSize: 12, color: theme.textS }}>inspiredmarketingsr@gmail.com</div></div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: theme.text, marginBottom: 12 }}>FAQ</div>
+            {[{ q: t("How do I create a post?", "Hoe maak ik een post?"), a: t("Click '+ Create Post' in the top bar.", "Klik op '+ Maak Post' bovenaan.") }, { q: t("How do I connect YouTube?", "Hoe koppel ik YouTube?"), a: t("Go to Settings → Connected accounts.", "Ga naar Instellingen → Gekoppelde accounts.") }, { q: t("How does approval work?", "Hoe werkt goedkeuring?"), a: t("Go to 'Approval' to review posts.", "Ga naar 'Goedkeuring' om posts te beoordelen.") }].map((faq, i) => (
+              <div key={i} style={{ background: theme.codeBg, borderRadius: 10, padding: "12px 14px", marginBottom: 8 }}><div style={{ fontSize: 13, fontWeight: 700, color: theme.text, marginBottom: 6 }}>❓ {faq.q}</div><div style={{ fontSize: 12, color: theme.textS, lineHeight: 1.6 }}>{faq.a}</div></div>
+            ))}
+          </div>
+        </div>}
+
+        {/* NEWS PANEL */}
+        {showNews && <div style={{ position: "fixed", right: 0, top: 58, width: 360, height: "calc(100vh - 58px)", background: theme.card, borderLeft: `1px solid ${theme.border}`, boxShadow: "-4px 0 20px rgba(0,0,0,0.12)", zIndex: 200, overflowY: "auto" }}>
+          <div style={{ padding: "20px", borderBottom: `1px solid ${theme.border}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}><div style={{ fontSize: 16, fontWeight: 800, color: theme.text }}>📰 {t("What's New", "Wat is er nieuw")}</div><button onClick={() => setShowNews(false)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: theme.textT }}>✕</button></div>
+          <div style={{ padding: "16px" }}>
+            {[{ date: "March 15, 2026", title: t("Landing page live", "Landing page live"), desc: t("Professional landing page on droppost.app", "Professionele landing page op droppost.app"), tag: "🆕 New" }, { date: "March 15, 2026", title: t("YouTube channel picker", "YouTube kanaal kiezer"), desc: t("Choose which YouTube channel to publish to", "Kies welk YouTube kanaal je wilt gebruiken"), tag: "🆕 New" }, { date: "March 14, 2026", title: t("Dark mode", "Donkere modus"), desc: t("Toggle dark mode from the top bar", "Schakel donkere modus in"), tag: "🌙 New" }, { date: "March 12, 2026", title: t("DropPost launched!", "DropPost gelanceerd!"), desc: t("The first version is live!", "De eerste versie is live!"), tag: "🚀 Launch" }].map((item, i) => (
+              <div key={i} style={{ borderLeft: `3px solid ${BRAND.primary}`, paddingLeft: 14, marginBottom: 20 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}><span style={{ fontSize: 11, background: theme.tagBg, color: BRAND.primary, borderRadius: 5, padding: "2px 8px", fontWeight: 700 }}>{item.tag}</span><span style={{ fontSize: 11, color: theme.textT }}>{item.date}</span></div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: theme.text, marginBottom: 4 }}>{item.title}</div>
+                <div style={{ fontSize: 12, color: theme.textS, lineHeight: 1.6 }}>{item.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>}
 
         <div style={{ flex: 1, overflowY: "auto", padding: "24px" }}>
           {/* DASHBOARD */}
