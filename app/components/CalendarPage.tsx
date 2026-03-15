@@ -10,6 +10,7 @@ type Props = {
   darkMode: boolean;
   theme: Theme;
   t: (en: string, nl: string) => string;
+  onNewPost: (date: string) => void;
 };
 
 const DAYS_SHORT = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -47,7 +48,12 @@ function PostCard({ post, compact, darkMode, theme, onClick }: { post: any; comp
         {!post.image_url && post.video_url && <Film size={10} color={sc} style={{ flexShrink: 0 }} />}
         <span style={{ fontSize: 10, color: theme.text, fontWeight: 500, overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis", flex: 1 }}>{post.content.slice(0, 18)}</span>
         <div style={{ display: "flex", gap: 1, flexShrink: 0 }}>{post.platforms?.slice(0, 2).map((p: string) => <PlatformDot key={p} id={p} />)}</div>
-      </div>
+        {/* CSS for hover effects */}
+      <style>{`
+        .cal-cell:hover .cal-plus { opacity: 1 !important; }
+        .cal-cell:hover .cal-plus:hover { transform: scale(1.15); }
+      `}</style>
+    </div>
     );
   }
   return (
@@ -74,7 +80,7 @@ function PostCard({ post, compact, darkMode, theme, onClick }: { post: any; comp
   );
 }
 
-export default function CalendarPage({ wsPosts, calDate, setCalDate, darkMode, theme, t }: Props) {
+export default function CalendarPage({ wsPosts, calDate, setCalDate, darkMode, theme, t, onNewPost }: Props) {
   const [view, setView] = useState<"month" | "week" | "day">("month");
   const [selectedPost, setSelectedPost] = useState<any | null>(null);
   const today = new Date();
@@ -182,16 +188,26 @@ export default function CalendarPage({ wsPosts, calDate, setCalDate, darkMode, t
                   <div key={i} style={{
                     minHeight: 100, padding: "6px", borderRight: `1px solid ${theme.border}`, borderBottom: `1px solid ${theme.border}`,
                     background: isToday ? (darkMode ? `${BRAND.primary}08` : `${BRAND.primary}05`) : "transparent",
-                    opacity: current ? 1 : 0.35,
-                  }}>
-                    <div style={{
-                      fontSize: 13, fontWeight: isToday ? 800 : 500,
-                      color: isToday ? "#fff" : current ? theme.textS : theme.textT,
-                      textAlign: "right", paddingRight: 4, marginBottom: 4,
-                    }}>
-                      {isToday ? (
-                        <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 26, height: 26, borderRadius: "50%", background: BRAND.primary }}>{day}</span>
-                      ) : day}
+                    opacity: current ? 1 : 0.35, position: "relative",
+                  }}
+                  className="cal-cell">
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4, paddingRight: 2 }}>
+                      <div />
+                      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                        {current && (
+                          <button onClick={() => onNewPost(dateStr)} className="cal-plus" style={{ width: 18, height: 18, borderRadius: "50%", border: "none", background: BRAND.primary, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", opacity: 0, transition: "opacity 0.15s", flexShrink: 0 }}>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                          </button>
+                        )}
+                        <span style={{
+                          fontSize: 13, fontWeight: isToday ? 800 : 500,
+                          color: isToday ? "#fff" : current ? theme.textS : theme.textT,
+                        }}>
+                          {isToday ? (
+                            <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 26, height: 26, borderRadius: "50%", background: BRAND.primary }}>{day}</span>
+                          ) : day}
+                        </span>
+                      </div>
                     </div>
                     {dp.slice(0, 3).map(post => <PostCard key={post.id} post={post} compact darkMode={darkMode} theme={theme} onClick={() => setSelectedPost(post)} />)}
                     {dp.length > 3 && <div style={{ fontSize: 9, color: BRAND.primary, fontWeight: 700, padding: "2px 6px", cursor: "pointer" }}>+{dp.length - 3} more</div>}
@@ -234,10 +250,15 @@ export default function CalendarPage({ wsPosts, calDate, setCalDate, darkMode, t
                   {dp.length === 0 && <div style={{ textAlign: "center", padding: "20px 0", opacity: 0.3 }}><Calendar size={18} color={theme.textT} /></div>}
                   {dp.map(post => <PostCard key={post.id} post={post} compact darkMode={darkMode} theme={theme} onClick={() => setSelectedPost(post)} />)}
                 </div>
-                {/* Post count */}
-                {dp.length > 0 && <div style={{ textAlign: "center", paddingTop: 8, borderTop: `1px solid ${theme.border}`, marginTop: 8 }}>
+                {/* Bottom: count + add */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: 8, borderTop: `1px solid ${theme.border}`, marginTop: 8 }}>
                   <span style={{ fontSize: 10, color: theme.textT, fontWeight: 600 }}>{dp.length} {dp.length === 1 ? "post" : "posts"}</span>
-                </div>}
+                  <button onClick={() => onNewPost(dateStr)} style={{ width: 22, height: 22, borderRadius: "50%", border: `1.5px dashed ${BRAND.primary}60`, background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}
+                    onMouseEnter={e => { e.currentTarget.style.background = BRAND.primary; e.currentTarget.style.borderColor = BRAND.primary; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = `${BRAND.primary}60`; }}>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={BRAND.primary} strokeWidth="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  </button>
+                </div>
               </div>
             );
           })}
@@ -273,7 +294,11 @@ export default function CalendarPage({ wsPosts, calDate, setCalDate, darkMode, t
               {dp.length === 0 ? (
                 <div style={{ textAlign: "center", padding: "40px 20px" }}>
                   <Calendar size={32} color={theme.textT} style={{ marginBottom: 8 }} />
-                  <div style={{ fontSize: 14, color: theme.textT }}>{t("No posts for this day", "Geen posts voor deze dag")}</div>
+                  <div style={{ fontSize: 14, color: theme.textT, marginBottom: 12 }}>{t("No posts for this day", "Geen posts voor deze dag")}</div>
+                  <button onClick={() => onNewPost(dateStr)} style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 18px", borderRadius: 10, border: "none", background: `linear-gradient(135deg, ${BRAND.primary}, #06B6D4)`, color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    {t("Create Post", "Maak Post")}
+                  </button>
                 </div>
               ) : (
                 <div style={{ padding: "12px 16px" }}>
