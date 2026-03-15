@@ -136,7 +136,7 @@ export default function App() {
         <div style={{ flex: 1, overflowY: "auto", padding: "24px" }}>
           {page === "dashboard" && <Dashboard wsPosts={wsPosts} scheduled={scheduled} published={published} pending={pending} darkMode={darkMode} theme={theme} t={t} />}
           {page === "posts" && <PostsPage wsPosts={wsPosts} darkMode={darkMode} theme={theme} publishing={publishing} onNewPost={() => setShowNewPost(true)} onDelete={deletePost} onPublishYT={publishToYouTube} t={t} />}
-          {page === "calendar" && <CalendarPage wsPosts={wsPosts} calDate={calDate} setCalDate={setCalDate} darkMode={darkMode} theme={theme} />}
+          {page === "calendar" && <CalendarPage wsPosts={wsPosts} calDate={calDate} setCalDate={setCalDate} darkMode={darkMode} theme={theme} t={t} />}
           {page === "queue" && <QueuePage scheduled={scheduled} dragIndex={dragIndex} dragOverIdx={dragOverIdx} onDragStart={handleDragStart} onDragOver={handleDragOver} onDrop={handleDrop} darkMode={darkMode} theme={theme} t={t} />}
           {page === "drafts" && <DraftsPage draftPosts={draftPosts} darkMode={darkMode} theme={theme} onDelete={deletePost} t={t} />}
           {page === "approval" && <ApprovalPage pending={pending} darkMode={darkMode} theme={theme} onApprove={approvePost} t={t} />}
