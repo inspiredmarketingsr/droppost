@@ -17,7 +17,7 @@ export const PLATFORMS = [
   { id: "facebook", label: "Facebook", short: "FB", color: "#1877F2", bg: "#EBF5FF" },
   { id: "instagram", label: "Instagram", short: "IG", color: "#E1306C", bg: "#FDE8F0" },
   { id: "tiktok", label: "TikTok", short: "TT", color: "#010101", bg: "#F3F3F3" },
-  { id: "snapchat", label: "Snapchat", short: "SC", color: "#FFCE00", bg: "#FFFBEB" },
+  { id: "linkedin", label: "LinkedIn", short: "LI", color: "#0A66C2", bg: "#E8F4FD" },
   { id: "youtube", label: "YouTube", short: "YT", color: "#FF0000", bg: "#FFF0F0" },
 ];
 

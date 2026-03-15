@@ -2,7 +2,7 @@
 import { signIn } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { Calendar, Clock, CheckSquare, BarChart2, Users, Zap, Shield, Globe, ChevronRight, Play, Star, Menu, X, ArrowRight, Sparkles, PenLine } from "lucide-react";
-import { FaYoutube, FaFacebookF, FaInstagram, FaTiktok, FaSnapchat, FaXTwitter } from "react-icons/fa6";
+import { FaYoutube, FaFacebookF, FaInstagram, FaTiktok, FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
 
 const C = {
   primary: "#7C3AED", primaryD: "#5B21B6", primaryL: "#EDE9FE",
@@ -108,7 +108,7 @@ export default function LandingPage() {
             { icon: <FaFacebookF size={18} />, color: "#1877F2", x: "88%", y: "22%", delay: "1s", dur: "7s" },
             { icon: <FaInstagram size={20} />, color: "#E1306C", x: "12%", y: "50%", delay: "0.5s", dur: "8s" },
             { icon: <FaTiktok size={18} />, color: "#010101", x: "82%", y: "52%", delay: "1.5s", dur: "6.5s" },
-            { icon: <FaSnapchat size={18} />, color: "#FFCE00", x: "18%", y: "12%", delay: "2s", dur: "7.5s" },
+            { icon: <FaLinkedinIn size={18} />, color: "#0A66C2", x: "18%", y: "12%", delay: "2s", dur: "7.5s" },
             { icon: <FaXTwitter size={16} />, color: "#000", x: "76%", y: "10%", delay: "0.8s", dur: "9s" },
           ].map((p, i) => (
             <div key={i} style={{ position: "absolute", left: p.x, top: p.y, width: 48, height: 48, borderRadius: "50%", background: `${C.bg}ee`, border: `2px solid ${p.color}25`, display: "flex", alignItems: "center", justifyContent: "center", color: p.color, boxShadow: `0 4px 20px ${p.color}15`, animation: `heroFloat ${p.dur} ease-in-out ${p.delay} infinite`, opacity: 0.85 }}>{p.icon}</div>
@@ -217,7 +217,7 @@ export default function LandingPage() {
                       <div style={{ flex: 1, fontSize: 10, color: C.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{post.text}</div>
                       <div style={{ display: "flex", gap: 3, flexShrink: 0 }}>
                         {post.platforms.map(p => {
-                          const colors: Record<string, string> = { FB: "#1877F2", IG: "#E1306C", TT: "#010101", YT: "#FF0000", SC: "#FFCE00" };
+                          const colors: Record<string, string> = { FB: "#1877F2", IG: "#E1306C", TT: "#010101", YT: "#FF0000", LI: "#0A66C2" };
                           return <span key={p} style={{ fontSize: 7, background: `${colors[p]}15`, color: colors[p], borderRadius: 3, padding: "1px 4px", fontWeight: 700, border: `1px solid ${colors[p]}20` }}>{p}</span>;
                         })}
                       </div>
@@ -272,7 +272,7 @@ export default function LandingPage() {
               { name: "Facebook", color: "#1877F2", icon: <FaFacebookF size={22} />, x: 315, y: 55, size: 52 },
               { name: "Instagram", color: "#E1306C", icon: <FaInstagram size={24} />, x: 30, y: 195, size: 54 },
               { name: "TikTok", color: "#010101", icon: <FaTiktok size={22} />, x: 345, y: 235, size: 50 },
-              { name: "Snapchat", color: "#FFCE00", icon: <FaSnapchat size={24} />, x: 115, y: 365, size: 50 },
+              { name: "LinkedIn", color: "#0A66C2", icon: <FaLinkedinIn size={22} />, x: 115, y: 365, size: 50 },
               { name: "X", color: "#000000", icon: <FaXTwitter size={20} />, x: 305, y: 365, size: 48 },
             ].map((p, i) => (
               <div key={p.name} style={{ position: "absolute", left: p.x, top: p.y, width: p.size, height: p.size, borderRadius: "50%", background: C.bg, border: `2.5px solid ${p.color}30`, display: "flex", alignItems: "center", justifyContent: "center", color: p.color, boxShadow: `0 4px 16px ${p.color}15`, zIndex: 2, transition: "transform 0.3s, box-shadow 0.3s", cursor: "default", animation: `floatIcon${i} ${4 + i * 0.7}s ease-in-out infinite` }} onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.15)"; e.currentTarget.style.boxShadow = `0 6px 24px ${p.color}30`; }} onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 4px 16px ${p.color}15`; }}>{p.icon}</div>
