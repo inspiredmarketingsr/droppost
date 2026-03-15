@@ -419,8 +419,8 @@ export default function LandingPage() {
         <div style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
           <h2 style={{ fontSize: "clamp(28px, 3.5vw, 44px)", fontWeight: 900, color: "#fff", marginBottom: 16, lineHeight: 1.2 }}>{t("Ready to streamline your social media?", "Klaar om je social media te stroomlijnen?")}</h2>
           <p style={{ fontSize: 17, color: "rgba(255,255,255,0.6)", marginBottom: 32, lineHeight: 1.7 }}>{t("Join thousands of agencies and teams using DropPost to save time and grow their presence.", "Sluit je aan bij duizenden agencies en teams die DropPost gebruiken om tijd te besparen.")}</p>
-          <button onClick={() => signIn("google")} style={{ background: C.grad, color: "#fff", border: "none", borderRadius: 14, padding: "16px 40px", fontSize: 17, fontWeight: 700, cursor: "pointer" }}>
-            {t("Get Started Free", "Gratis Starten")} <ArrowRight size={18} style={{ marginLeft: 8, verticalAlign: "middle" }} />
+          <button onClick={() => signIn("google")} style={{ background: C.grad, color: "#fff", border: "none", borderRadius: 14, padding: "16px 40px", fontSize: 17, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", whiteSpace: "nowrap", transition: "all 0.3s", boxShadow: "0 4px 20px rgba(124,58,237,0.3)" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(124,58,237,0.4)"; }} onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(124,58,237,0.3)"; }}>
+            {t("Get Started Free", "Gratis Starten")} <ArrowRight size={18} style={{ marginLeft: 8 }} />
           </button>
         </div>
       </section>
