@@ -336,7 +336,7 @@ export function CreatePostModal({ draft, setDraft, darkMode, theme, uploadingIma
           </div>
 
           {/* Platform tabs */}
-          <div style={{ display: "flex", alignItems: "center", gap: 6, paddingBottom: 12, overflowX: "auto" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, paddingBottom: 12, overflowX: "visible" }}>
             {draft.platforms.map((pid: string) => {
               const p = PLATFORMS.find(pl => pl.id === pid);
               const isActive = pid === activeTab;
@@ -359,7 +359,11 @@ export function CreatePostModal({ draft, setDraft, darkMode, theme, uploadingIma
                 </button>
               );
             })}
-            {draft.platforms.length > 0 && unselectedPlatforms.length > 0 && <AddPlatformDropdown platforms={unselectedPlatforms} onAdd={addPlatform} theme={theme} />}
+            {draft.platforms.length > 0 && unselectedPlatforms.length > 0 && (
+              <div style={{ position: "relative", flexShrink: 0 }}>
+                <AddPlatformDropdown platforms={unselectedPlatforms} onAdd={addPlatform} theme={theme} />
+              </div>
+            )}
           </div>
         </div>
 
@@ -511,15 +515,26 @@ export function CreatePostModal({ draft, setDraft, darkMode, theme, uploadingIma
 /* ── Add Platform Dropdown ── */
 function AddPlatformDropdown({ platforms, onAdd, theme }: { platforms: typeof PLATFORMS; onAdd: (id: string) => void; theme: Theme }) {
   const [open, setOpen] = useState(false);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+
+  function handleOpen() {
+    if (btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      setPos({ top: rect.bottom + 6, left: rect.left });
+    }
+    setOpen(v => !v);
+  }
+
   return (
     <>
-      <button onClick={() => setOpen(v => !v)} style={{ width: 36, height: 36, borderRadius: 10, border: `2px dashed ${theme.border}`, background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <button ref={btnRef} onClick={handleOpen} style={{ width: 36, height: 36, borderRadius: 10, border: `2px dashed ${theme.border}`, background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Plus size={16} color={theme.textT} />
       </button>
       {open && (
         <>
-          <div style={{ position: "fixed", inset: 0, zIndex: 10 }} onClick={() => setOpen(false)} />
-          <div style={{ position: "absolute", top: "100%", left: 0, marginTop: 6, background: theme.modalBg, border: `1px solid ${theme.border}`, borderRadius: 12, padding: "6px", zIndex: 20, boxShadow: "0 8px 32px rgba(0,0,0,0.15)", minWidth: 180 }}>
+          <div style={{ position: "fixed", inset: 0, zIndex: 100 }} onClick={() => setOpen(false)} />
+          <div style={{ position: "fixed", top: pos.top, left: pos.left, background: theme.modalBg, border: `1px solid ${theme.border}`, borderRadius: 12, padding: "6px", zIndex: 110, boxShadow: "0 8px 32px rgba(0,0,0,0.18)", minWidth: 180 }}>
             {platforms.map(p => (
               <button key={p.id} onClick={() => { onAdd(p.id); setOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", borderRadius: 8, border: "none", background: "transparent", cursor: "pointer", fontSize: 13, color: theme.text, width: "100%", textAlign: "left", fontWeight: 500 }} onMouseEnter={ev => (ev.currentTarget.style.background = theme.hoverBg)} onMouseLeave={ev => (ev.currentTarget.style.background = "transparent")}>
                 <PlatformIcon id={p.id} size={20} />{p.label}
