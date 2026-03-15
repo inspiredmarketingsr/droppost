@@ -359,15 +359,15 @@ export function CreatePostModal({ draft, setDraft, darkMode, theme, uploadingIma
                 </button>
               );
             })}
-            {unselectedPlatforms.length > 0 && <AddPlatformDropdown platforms={unselectedPlatforms} onAdd={addPlatform} theme={theme} />}
+            {draft.platforms.length > 0 && unselectedPlatforms.length > 0 && <AddPlatformDropdown platforms={unselectedPlatforms} onAdd={addPlatform} theme={theme} />}
           </div>
         </div>
 
         {/* ── MAIN CONTENT ── */}
         <div style={{ flex: 1, overflowY: "auto", padding: "0 20px 16px" }}>
           {draft.platforms.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "40px 20px" }}>
-              <Monitor size={40} color={theme.textT} style={{ marginBottom: 12 }} />
+            <div style={{ textAlign: "center", padding: "40px 20px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <Monitor size={36} color={theme.textT} style={{ marginBottom: 12 }} />
               <div style={{ fontSize: 15, fontWeight: 700, color: theme.text, marginBottom: 6 }}>{t("Select platforms","Kies platformen")}</div>
               <div style={{ fontSize: 13, color: theme.textT, marginBottom: 20 }}>{t("Choose where you want to publish","Kies waar je wilt publiceren")}</div>
               <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
