@@ -386,7 +386,7 @@ export default function LandingPage() {
 
         {/* Row 1 - scrolls left */}
         <div style={{ position: "relative", marginBottom: 20 }}>
-          <div style={{ display: "flex", gap: 20, animation: "marqueeLeft 60s linear infinite", width: "max-content" }}>
+          <div style={{ display: "flex", gap: 20, animation: "marqueeLeft 78s linear infinite", width: "max-content" }}>
             {[...TESTIMONIALS.slice(0, 6), ...TESTIMONIALS.slice(0, 6)].map((tm, i) => (
               <div key={i} style={{ width: 380, flexShrink: 0, background: C.bg, borderRadius: 16, padding: "24px 22px", border: `1px solid ${C.border}`, display: "flex", flexDirection: "column", transition: "box-shadow 0.3s, transform 0.3s" }} onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 8px 30px rgba(124,58,237,0.08)"; e.currentTarget.style.transform = "translateY(-3px)"; }} onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "translateY(0)"; }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
@@ -405,7 +405,7 @@ export default function LandingPage() {
 
         {/* Row 2 - scrolls right */}
         <div style={{ position: "relative" }}>
-          <div style={{ display: "flex", gap: 20, animation: "marqueeRight 65s linear infinite", width: "max-content" }}>
+          <div style={{ display: "flex", gap: 20, animation: "marqueeRight 85s linear infinite", width: "max-content" }}>
             {[...TESTIMONIALS.slice(6, 12), ...TESTIMONIALS.slice(6, 12)].map((tm, i) => (
               <div key={i} style={{ width: 380, flexShrink: 0, background: C.bg, borderRadius: 16, padding: "24px 22px", border: `1px solid ${C.border}`, display: "flex", flexDirection: "column", transition: "box-shadow 0.3s, transform 0.3s" }} onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 8px 30px rgba(124,58,237,0.08)"; e.currentTarget.style.transform = "translateY(-3px)"; }} onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "translateY(0)"; }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
