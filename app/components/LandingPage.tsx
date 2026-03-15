@@ -24,14 +24,6 @@ const FEATURES = [
   { icon: <Zap size={24} />, title: "AI Captions", titleNl: "AI Bijschriften", desc: "Generate engaging captions with AI. Save time while keeping your brand voice consistent.", descNl: "Genereer pakkende bijschriften met AI. Bespaar tijd en houd je merkstijl consistent." },
 ];
 
-const PLATFORMS_DISPLAY = [
-  { name: "YouTube", color: "#FF0000", icon: "▶" },
-  { name: "Facebook", color: "#1877F2", icon: "f" },
-  { name: "Instagram", color: "#E1306C", icon: "ig" },
-  { name: "TikTok", color: "#010101", icon: "tt" },
-  { name: "Snapchat", color: "#FFCE00", icon: "sc" },
-];
-
 const TESTIMONIALS = [
   { name: "Sarah J.", role: "Marketing Manager", badge: "Agency", badgeColor: "#7C3AED", text: "DropPost transformed how we manage social media for our clients. The approval workflow alone saves us hours every week.", textNl: "DropPost heeft veranderd hoe we social media beheren voor klanten. Alleen al de goedkeuringsflow bespaart ons uren per week." },
   { name: "Mark D.", role: "Agency Owner", badge: "Agency", badgeColor: "#7C3AED", text: "Finally a tool that understands agencies. Multi-workspace is a game changer for managing multiple clients.", textNl: "Eindelijk een tool die agencies begrijpt. Multi-workspace is een game changer voor meerdere klanten." },
@@ -59,25 +51,14 @@ export default function LandingPage() {
   const [roleIndex, setRoleIndex] = useState(0);
   const t = (en: string, nl: string) => lang === "nl" ? nl : en;
 
-  const [testimonialIndex, setTestimonialIndex] = useState(0);
-
-  const roles = [
-    t("creators", "creators"),
-    t("influencers", "influencers"),
-    t("agencies", "agencies"),
-    t("teams", "teams"),
-    t("brands", "merken"),
-  ];
+  const roles = [t("creators", "creators"), t("influencers", "influencers"), t("agencies", "agencies"), t("teams", "teams"), t("brands", "merken")];
 
   useEffect(() => {
     const interval = setInterval(() => setRoleIndex(i => (i + 1) % roles.length), 2500);
     return () => clearInterval(interval);
   }, [roles.length]);
 
-  const scrollTo = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+  const scrollTo = (id: string) => { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); };
 
   const navLinks = [
     { label: t("Features", "Functies"), id: "features" },
@@ -87,16 +68,11 @@ export default function LandingPage() {
   ];
 
   const btn = (primary: boolean, size: "sm" | "md" | "lg" = "md") => ({
-    background: primary ? C.grad : "transparent",
-    color: primary ? "#fff" : C.text,
-    border: primary ? "none" : `1.5px solid ${C.border}`,
-    borderRadius: size === "lg" ? 14 : 10,
+    background: primary ? C.grad : "transparent", color: primary ? "#fff" : C.text,
+    border: primary ? "none" : `1.5px solid ${C.border}`, borderRadius: size === "lg" ? 14 : 10,
     padding: size === "lg" ? "16px 36px" : size === "md" ? "11px 24px" : "8px 18px",
-    fontSize: size === "lg" ? 16 : size === "md" ? 14 : 13,
-    fontWeight: 700 as const,
-    cursor: "pointer" as const,
-    fontFamily: "inherit",
-    transition: "all 0.2s",
+    fontSize: size === "lg" ? 16 : size === "md" ? 14 : 13, fontWeight: 700 as const,
+    cursor: "pointer" as const, fontFamily: "inherit", transition: "all 0.2s",
   });
 
   return (
@@ -109,7 +85,7 @@ export default function LandingPage() {
             <div style={{ width: 34, height: 34, borderRadius: 10, background: C.grad, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontWeight: 900, fontSize: 17 }}>D</span></div>
             <span style={{ fontWeight: 800, fontSize: 18, color: C.dark }}>Drop<span style={{ background: C.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Post</span></span>
           </div>
-          <div style={{ display: "flex", gap: 32, flex: 1 }} className="nav-links-desktop">
+          <div style={{ display: "flex", gap: 32, flex: 1 }}>
             {navLinks.map(l => <button key={l.id} onClick={() => scrollTo(l.id)} style={{ fontSize: 14, color: C.textS, textDecoration: "none", fontWeight: 500, transition: "color 0.2s", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit" }} onMouseEnter={e => (e.currentTarget.style.color = C.primary)} onMouseLeave={e => (e.currentTarget.style.color = C.textS)}>{l.label}</button>)}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -122,15 +98,11 @@ export default function LandingPage() {
 
       {/* ═══ HERO ═══ */}
       <section style={{ position: "relative", overflow: "hidden", minHeight: "90vh", display: "flex", alignItems: "center" }}>
-        {/* Animated gradient background */}
         <div style={{ position: "absolute", inset: 0, background: C.gradSoft, opacity: 0.5 }} />
         <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
-          {/* Floating gradient orbs */}
           <div style={{ position: "absolute", top: "-10%", right: "-5%", width: 500, height: 500, borderRadius: "50%", background: "radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%)", animation: "orbFloat1 8s ease-in-out infinite" }} />
           <div style={{ position: "absolute", bottom: "-15%", left: "-10%", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(6,182,212,0.1) 0%, transparent 70%)", animation: "orbFloat2 10s ease-in-out infinite" }} />
           <div style={{ position: "absolute", top: "40%", left: "60%", width: 300, height: 300, borderRadius: "50%", background: "radial-gradient(circle, rgba(124,58,237,0.06) 0%, transparent 70%)", animation: "orbFloat3 12s ease-in-out infinite" }} />
-
-          {/* Floating platform icons */}
           {[
             { icon: <FaYoutube size={20} />, color: "#FF0000", x: "6%", y: "25%", delay: "0s", dur: "6s" },
             { icon: <FaFacebookF size={18} />, color: "#1877F2", x: "88%", y: "22%", delay: "1s", dur: "7s" },
@@ -139,17 +111,11 @@ export default function LandingPage() {
             { icon: <FaSnapchat size={18} />, color: "#FFCE00", x: "18%", y: "12%", delay: "2s", dur: "7.5s" },
             { icon: <FaXTwitter size={16} />, color: "#000", x: "76%", y: "10%", delay: "0.8s", dur: "9s" },
           ].map((p, i) => (
-            <div key={i} style={{ position: "absolute", left: p.x, top: p.y, width: 48, height: 48, borderRadius: "50%", background: `${C.bg}ee`, border: `2px solid ${p.color}25`, display: "flex", alignItems: "center", justifyContent: "center", color: p.color, boxShadow: `0 4px 20px ${p.color}15`, animation: `heroFloat ${p.dur} ease-in-out ${p.delay} infinite`, opacity: 0.85 }}>
-              {p.icon}
-            </div>
+            <div key={i} style={{ position: "absolute", left: p.x, top: p.y, width: 48, height: 48, borderRadius: "50%", background: `${C.bg}ee`, border: `2px solid ${p.color}25`, display: "flex", alignItems: "center", justifyContent: "center", color: p.color, boxShadow: `0 4px 20px ${p.color}15`, animation: `heroFloat ${p.dur} ease-in-out ${p.delay} infinite`, opacity: 0.85 }}>{p.icon}</div>
           ))}
-
-          {/* Animated particles */}
           {Array.from({ length: 20 }, (_, i) => (
             <div key={`p${i}`} style={{ position: "absolute", left: `${5 + (i * 4.7) % 90}%`, top: `${10 + (i * 7.3) % 80}%`, width: i % 3 === 0 ? 6 : 4, height: i % 3 === 0 ? 6 : 4, borderRadius: "50%", background: i % 2 === 0 ? C.primary : C.accent, opacity: 0.15, animation: `particle ${5 + (i % 4) * 2}s ease-in-out ${i * 0.3}s infinite` }} />
           ))}
-
-          {/* Grid pattern overlay */}
           <div style={{ position: "absolute", inset: 0, backgroundImage: `radial-gradient(${C.primary}08 1px, transparent 1px)`, backgroundSize: "32px 32px", opacity: 0.5 }} />
         </div>
 
@@ -163,7 +129,6 @@ export default function LandingPage() {
             {t("Schedule, approve &", "Plan, keur goed &")}<br />
             <span style={{ position: "relative", display: "inline-block" }}>
               <span style={{ background: C.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", animation: "gradientShift 4s ease-in-out infinite" }}>{t("publish with ease", "publiceer met gemak")}</span>
-              {/* Animated underline */}
               <svg style={{ position: "absolute", bottom: -4, left: 0, width: "100%", height: 12, overflow: "visible" }} viewBox="0 0 400 12">
                 <path d="M 0 8 Q 100 0, 200 8 Q 300 16, 400 8" fill="none" stroke="url(#heroUnderline)" strokeWidth="3" strokeLinecap="round" style={{ strokeDasharray: 500, strokeDashoffset: 500, animation: "drawLine 1.5s ease-out 1s forwards" }} />
                 <defs><linearGradient id="heroUnderline" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stopColor="#7C3AED" /><stop offset="100%" stopColor="#06B6D4" /></linearGradient></defs>
@@ -175,7 +140,6 @@ export default function LandingPage() {
             {t("The all-in-one social media management tool for ", "De alles-in-één social media tool voor ")}
             <span style={{ position: "relative", display: "inline-block", width: lang === "nl" ? 130 : 120, textAlign: "left" }}>
               <span key={roleIndex} style={{ position: "absolute", left: 0, top: 0, background: C.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontWeight: 800, animation: "roleIn 0.5s ease-out forwards", whiteSpace: "nowrap" }}>{roles[roleIndex]}</span>
-              {/* Invisible placeholder for width */}
               <span style={{ visibility: "hidden", fontWeight: 800 }}>{roles[roleIndex]}</span>
             </span>
             {t(". Plan content, get approvals, and publish across all platforms — from one dashboard.", ". Plan content, krijg goedkeuringen en publiceer op alle platformen — vanuit één dashboard.")}
@@ -190,22 +154,84 @@ export default function LandingPage() {
             </button>
           </div>
 
-          {/* APP PREVIEW - Real screenshot */}
-          <div style={{ maxWidth: 900, margin: "0 auto", borderRadius: 20, border: `1px solid ${C.border}`, overflow: "hidden", boxShadow: "0 25px 80px rgba(0,0,0,0.1), 0 0 0 1px rgba(124,58,237,0.05)", background: C.bg, animation: "fadeInUp 1s ease-out 0.8s both", position: "relative" }}>
-            {/* Glow effect on top */}
+          {/* APP PREVIEW - Rich mock dashboard */}
+          <div style={{ maxWidth: 940, margin: "0 auto", borderRadius: 20, border: `1px solid ${C.border}`, overflow: "hidden", boxShadow: "0 25px 80px rgba(0,0,0,0.1), 0 0 0 1px rgba(124,58,237,0.05)", background: C.bg, animation: "fadeInUp 1s ease-out 0.8s both", position: "relative" }}>
             <div style={{ position: "absolute", top: -1, left: "10%", right: "10%", height: 2, background: C.grad, borderRadius: 2 }} />
             <div style={{ background: C.dark, padding: "10px 16px", display: "flex", alignItems: "center", gap: 8 }}>
               <div style={{ display: "flex", gap: 6 }}><div style={{ width: 12, height: 12, borderRadius: "50%", background: "#EF4444" }} /><div style={{ width: 12, height: 12, borderRadius: "50%", background: "#F59E0B" }} /><div style={{ width: 12, height: 12, borderRadius: "50%", background: "#10B981" }} /></div>
               <div style={{ flex: 1, textAlign: "center" }}><span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", fontFamily: "monospace" }}>droppost.app</span></div>
             </div>
-            <img src="/images/dashboard-preview.png" alt="DropPost Dashboard" style={{ width: "100%", display: "block" }} />
+            <div style={{ display: "flex", minHeight: 380 }}>
+              {/* Sidebar */}
+              <div style={{ width: 180, background: "#13131F", padding: "14px 8px", display: "flex", flexDirection: "column", gap: 2, flexShrink: 0 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 8px", marginBottom: 10 }}>
+                  <div style={{ width: 28, height: 28, borderRadius: 8, background: C.grad, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontWeight: 900, fontSize: 13 }}>D</span></div>
+                  <span style={{ color: "#fff", fontWeight: 800, fontSize: 13 }}>Drop<span style={{ color: "#06B6D4" }}>Post</span></span>
+                </div>
+                <div style={{ fontSize: 8, color: "rgba(255,255,255,0.25)", fontWeight: 700, letterSpacing: 1, padding: "4px 8px" }}>WORKSPACES</div>
+                {[{ name: "Acme Agency", color: "#7C3AED", active: true }, { name: "FitBrand Co", color: "#10B981", active: false }].map(w => (
+                  <div key={w.name} style={{ display: "flex", alignItems: "center", gap: 6, padding: "5px 8px", borderRadius: 7, background: w.active ? "rgba(124,58,237,0.25)" : "transparent", border: w.active ? "1px solid rgba(124,58,237,0.35)" : "1px solid transparent" }}>
+                    <div style={{ width: 22, height: 22, borderRadius: "50%", background: w.color + "22", border: `1.5px solid ${w.color}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 8, fontWeight: 800, color: w.color }}>{w.name.slice(0, 2).toUpperCase()}</div>
+                    <span style={{ fontSize: 10, color: w.active ? "#fff" : "rgba(255,255,255,0.55)", fontWeight: w.active ? 600 : 400 }}>{w.name}</span>
+                  </div>
+                ))}
+                <div style={{ marginTop: 8 }}>
+                  {["Dashboard", "Calendar", "Posts", "Queue", "Drafts", "Approval", "Analytics"].map((n, i) => (
+                    <div key={n} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 8px", borderRadius: 7, background: i === 0 ? "rgba(124,58,237,0.2)" : "transparent", position: "relative" }}>
+                      {i === 0 && <div style={{ position: "absolute", left: 0, top: "20%", height: "60%", width: 2.5, background: "#7C3AED", borderRadius: "0 3px 3px 0" }} />}
+                      <span style={{ fontSize: 10, color: i === 0 ? "#fff" : "rgba(255,255,255,0.45)", fontWeight: i === 0 ? 600 : 400 }}>{n}</span>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ marginTop: "auto", padding: "6px 8px", display: "flex", gap: 4, justifyContent: "center" }}>
+                  {["Privacy", "Terms"].map(l => <span key={l} style={{ fontSize: 7, color: "rgba(255,255,255,0.2)" }}>{l}</span>)}
+                </div>
+              </div>
+              {/* Main content */}
+              <div style={{ flex: 1, background: "#F9FAFB", padding: 16, overflow: "hidden" }}>
+                <div style={{ display: "flex", alignItems: "center", marginBottom: 14, gap: 8 }}>
+                  <div style={{ width: 26, height: 26, borderRadius: "50%", background: "#7C3AED22", border: "1.5px solid #7C3AED", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 8, fontWeight: 800, color: "#7C3AED" }}>AC</div>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: C.dark }}>Acme Agency</span>
+                  <div style={{ flex: 1 }} />
+                  <div style={{ background: C.grad, color: "#fff", fontSize: 9, fontWeight: 700, padding: "5px 12px", borderRadius: 7 }}>+ Create Post</div>
+                </div>
+                <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+                  {[{ label: "TOTAL", value: "24", color: "#7C3AED" }, { label: "SCHEDULED", value: "12", color: "#0EA5E9" }, { label: "PUBLISHED", value: "9", color: "#10B981" }, { label: "PENDING", value: "3", color: "#F59E0B" }].map(s => (
+                    <div key={s.label} style={{ flex: 1, background: "#fff", borderRadius: 10, padding: "10px 12px", border: `1px solid ${C.border}` }}>
+                      <div style={{ fontSize: 7, fontWeight: 700, color: C.textT, marginBottom: 4 }}>{s.label}</div>
+                      <div style={{ fontSize: 20, fontWeight: 900, color: s.color }}>{s.value}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ background: "#fff", borderRadius: 12, border: `1px solid ${C.border}`, padding: "12px" }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: C.dark, marginBottom: 10 }}>Recent Posts</div>
+                  {[
+                    { text: "🚀 New product launch this Friday! Get ready for something amazing...", platforms: ["FB", "IG", "TT"], status: "Scheduled", statusColor: "#7C3AED", statusBg: "#EDE9FE" },
+                    { text: "Behind the scenes of our latest photoshoot 📸 #BrandLife", platforms: ["IG", "TT"], status: "Published", statusColor: "#10B981", statusBg: "#D1FAE5" },
+                    { text: "5 tips to boost your social media engagement in 2026", platforms: ["FB", "YT", "IG"], status: "Pending", statusColor: "#F59E0B", statusBg: "#FEF3C7" },
+                    { text: "Customer spotlight: How @acmeclient grew 300% with us", platforms: ["FB", "IG"], status: "Published", statusColor: "#10B981", statusBg: "#D1FAE5" },
+                    { text: "Join our live Q&A session tomorrow at 3 PM! 🎙️", platforms: ["YT", "FB", "IG", "TT"], status: "Scheduled", statusColor: "#7C3AED", statusBg: "#EDE9FE" },
+                    { text: "Weekly content tips: Carousel posts get 3x more reach", platforms: ["IG", "FB"], status: "Draft", statusColor: "#6B7280", statusBg: "#E5E7EB" },
+                  ].map((post, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 0", borderBottom: i < 5 ? `1px solid ${C.border}` : "none" }}>
+                      <div style={{ flex: 1, fontSize: 10, color: C.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{post.text}</div>
+                      <div style={{ display: "flex", gap: 3, flexShrink: 0 }}>
+                        {post.platforms.map(p => {
+                          const colors: Record<string, string> = { FB: "#1877F2", IG: "#E1306C", TT: "#010101", YT: "#FF0000", SC: "#FFCE00" };
+                          return <span key={p} style={{ fontSize: 7, background: `${colors[p]}15`, color: colors[p], borderRadius: 3, padding: "1px 4px", fontWeight: 700, border: `1px solid ${colors[p]}20` }}>{p}</span>;
+                        })}
+                      </div>
+                      <span style={{ fontSize: 8, background: post.statusBg, color: post.statusColor, borderRadius: 10, padding: "2px 7px", fontWeight: 600, flexShrink: 0 }}>{post.status}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
 
           <div style={{ display: "flex", justifyContent: "center", gap: 20, marginTop: 32, flexWrap: "wrap", animation: "fadeInUp 0.8s ease-out 1.8s both" }}>
             {[t("No credit card required", "Geen creditcard nodig"), t("Free plan available", "Gratis plan beschikbaar"), t("Cancel anytime", "Opzegbaar wanneer je wilt")].map(s => (
-              <span key={s} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: C.textS }}>
-                <Shield size={14} color={C.green} />{s}
-              </span>
+              <span key={s} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: C.textS }}><Shield size={14} color={C.green} />{s}</span>
             ))}
           </div>
         </div>
@@ -227,41 +253,20 @@ export default function LandingPage() {
       {/* ═══ INTEGRATIONS ═══ */}
       <section id="platforms" style={{ padding: "100px 24px", background: "linear-gradient(180deg, #F8FAFC 0%, #EDE9FE22 40%, #CFFAFE18 70%, #F8FAFC 100%)", overflow: "hidden" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", gap: 60, flexWrap: "wrap", justifyContent: "center" }}>
-
-          {/* LEFT: Visual hub */}
           <div style={{ position: "relative", width: 440, height: 440, flexShrink: 0 }}>
-            {/* Connection lines via SVG */}
             <svg width="440" height="440" viewBox="0 0 440 440" style={{ position: "absolute", inset: 0 }}>
               <defs>
                 <linearGradient id="lineGrad1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#7C3AED" stopOpacity="0.3" /><stop offset="100%" stopColor="#06B6D4" stopOpacity="0.3" /></linearGradient>
                 <linearGradient id="lineGrad2" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stopColor="#7C3AED" stopOpacity="0.2" /><stop offset="100%" stopColor="#06B6D4" stopOpacity="0.2" /></linearGradient>
               </defs>
-              {/* Orbital rings */}
               <circle cx="220" cy="220" r="140" fill="none" stroke="url(#lineGrad1)" strokeWidth="1" strokeDasharray="8 6" />
               <circle cx="220" cy="220" r="195" fill="none" stroke="url(#lineGrad2)" strokeWidth="1" strokeDasharray="4 8" />
-              {/* Lines from center to icons */}
-              {[
-                { x: 103, y: 53 },   // YouTube (75+28, 25+28)
-                { x: 341, y: 81 },   // Facebook (315+26, 55+26)
-                { x: 57, y: 222 },   // Instagram (30+27, 195+27)
-                { x: 370, y: 260 },  // TikTok (345+25, 235+25)
-                { x: 140, y: 390 },  // Snapchat (115+25, 365+25)
-                { x: 329, y: 389 },  // X (305+24, 365+24)
-              ].map((p, i) => (
-                <line key={i} x1="220" y1="220" x2={p.x} y2={p.y} stroke="url(#lineGrad1)" strokeWidth="1.5" strokeDasharray="6 4">
-                  <animate attributeName="stroke-dashoffset" from="0" to="20" dur={`${3 + i * 0.5}s`} repeatCount="indefinite" />
-                </line>
+              {[{ x: 103, y: 53 }, { x: 341, y: 81 }, { x: 57, y: 222 }, { x: 370, y: 260 }, { x: 140, y: 390 }, { x: 329, y: 389 }].map((p, i) => (
+                <line key={i} x1="220" y1="220" x2={p.x} y2={p.y} stroke="url(#lineGrad1)" strokeWidth="1.5" strokeDasharray="6 4"><animate attributeName="stroke-dashoffset" from="0" to="20" dur={`${3 + i * 0.5}s`} repeatCount="indefinite" /></line>
               ))}
-              {/* Glow behind center */}
               <circle cx="220" cy="220" r="60" fill="url(#lineGrad1)" opacity="0.08" />
             </svg>
-
-            {/* CENTER: DropPost logo */}
-            <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%,-50%)", width: 80, height: 80, borderRadius: 22, background: C.grad, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 8px 32px rgba(124,58,237,0.3)", zIndex: 2 }}>
-              <span style={{ color: "#fff", fontWeight: 900, fontSize: 32 }}>D</span>
-            </div>
-
-            {/* Platform icons positioned around */}
+            <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%,-50%)", width: 80, height: 80, borderRadius: 22, background: C.grad, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 8px 32px rgba(124,58,237,0.3)", zIndex: 2 }}><span style={{ color: "#fff", fontWeight: 900, fontSize: 32 }}>D</span></div>
             {[
               { name: "YouTube", color: "#FF0000", icon: <FaYoutube size={24} />, x: 75, y: 25, size: 56 },
               { name: "Facebook", color: "#1877F2", icon: <FaFacebookF size={22} />, x: 315, y: 55, size: 52 },
@@ -270,11 +275,8 @@ export default function LandingPage() {
               { name: "Snapchat", color: "#FFCE00", icon: <FaSnapchat size={24} />, x: 115, y: 365, size: 50 },
               { name: "X", color: "#000000", icon: <FaXTwitter size={20} />, x: 305, y: 365, size: 48 },
             ].map((p, i) => (
-              <div key={p.name} style={{ position: "absolute", left: p.x, top: p.y, width: p.size, height: p.size, borderRadius: "50%", background: C.bg, border: `2.5px solid ${p.color}30`, display: "flex", alignItems: "center", justifyContent: "center", color: p.color, boxShadow: `0 4px 16px ${p.color}15`, zIndex: 2, transition: "transform 0.3s, box-shadow 0.3s", cursor: "default", animation: `floatIcon${i} ${4 + i * 0.7}s ease-in-out infinite` }} onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.15)"; e.currentTarget.style.boxShadow = `0 6px 24px ${p.color}30`; }} onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 4px 16px ${p.color}15`; }}>
-                {p.icon}
-              </div>
+              <div key={p.name} style={{ position: "absolute", left: p.x, top: p.y, width: p.size, height: p.size, borderRadius: "50%", background: C.bg, border: `2.5px solid ${p.color}30`, display: "flex", alignItems: "center", justifyContent: "center", color: p.color, boxShadow: `0 4px 16px ${p.color}15`, zIndex: 2, transition: "transform 0.3s, box-shadow 0.3s", cursor: "default", animation: `floatIcon${i} ${4 + i * 0.7}s ease-in-out infinite` }} onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.15)"; e.currentTarget.style.boxShadow = `0 6px 24px ${p.color}30`; }} onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 4px 16px ${p.color}15`; }}>{p.icon}</div>
             ))}
-
             <style>{`
               @keyframes floatIcon0 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
               @keyframes floatIcon1 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
@@ -284,20 +286,14 @@ export default function LandingPage() {
               @keyframes floatIcon5 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
             `}</style>
           </div>
-
-          {/* RIGHT: Text */}
           <div style={{ flex: 1, minWidth: 320, maxWidth: 480 }}>
             <p style={{ fontSize: 13, fontWeight: 700, color: C.primary, letterSpacing: 1.5, marginBottom: 12 }}>{t("INTEGRATIONS", "INTEGRATIES")}</p>
             <h2 style={{ fontSize: "clamp(28px, 3.5vw, 42px)", fontWeight: 900, lineHeight: 1.15, marginBottom: 20, color: C.dark }}>
               {t("Integrations that work with ", "Integraties die werken met ")}
               <span style={{ background: C.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{t("your social media", "jouw social media")}</span>
             </h2>
-            <p style={{ fontSize: 16, color: C.textS, lineHeight: 1.8, marginBottom: 32 }}>
-              {t("Our integrations allow you to automate your social media posts and schedule your content across all platforms from one centralized dashboard. Streamline your workflow and save valuable time.", "Onze integraties stellen je in staat om je social media posts te automatiseren en je content in te plannen op alle platformen vanuit één centraal dashboard. Stroomlijn je workflow en bespaar waardevolle tijd.")}
-            </p>
-            <button onClick={() => signIn("google")} style={{ background: C.grad, color: "#fff", border: "none", borderRadius: 12, padding: "14px 32px", fontSize: 15, fontWeight: 700, cursor: "pointer", letterSpacing: 0.5, transition: "transform 0.2s, box-shadow 0.2s" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(124,58,237,0.3)"; }} onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
-              {t("START YOUR FREE TRIAL NOW!", "START JE GRATIS PROEF NU!")}
-            </button>
+            <p style={{ fontSize: 16, color: C.textS, lineHeight: 1.8, marginBottom: 32 }}>{t("Our integrations allow you to automate your social media posts and schedule your content across all platforms from one centralized dashboard. Streamline your workflow and save valuable time.", "Onze integraties stellen je in staat om je social media posts te automatiseren en je content in te plannen op alle platformen vanuit één centraal dashboard. Stroomlijn je workflow en bespaar waardevolle tijd.")}</p>
+            <button onClick={() => signIn("google")} style={{ background: C.grad, color: "#fff", border: "none", borderRadius: 12, padding: "14px 32px", fontSize: 15, fontWeight: 700, cursor: "pointer", letterSpacing: 0.5, transition: "transform 0.2s, box-shadow 0.2s" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(124,58,237,0.3)"; }} onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>{t("START YOUR FREE TRIAL NOW!", "START JE GRATIS PROEF NU!")}</button>
           </div>
         </div>
       </section>
@@ -329,32 +325,20 @@ export default function LandingPage() {
             <p style={{ fontSize: 13, fontWeight: 700, color: C.primary, letterSpacing: 1.5, marginBottom: 12 }}>{t("HOW IT WORKS", "HOE HET WERKT")}</p>
             <h2 style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 800, color: C.dark }}>{t("From idea to published in 3 steps", "Van idee tot gepubliceerd in 3 stappen")}</h2>
           </div>
-
           <div style={{ display: "flex", alignItems: "flex-start", position: "relative" }}>
-            {/* Connecting line behind the cards */}
             <div style={{ position: "absolute", top: 34, left: "16.66%", right: "16.66%", height: 3, background: C.gradSoft, zIndex: 0, borderRadius: 2 }} />
-
-            {/* Arrows on the line */}
-            <div style={{ position: "absolute", top: 22, left: "calc(33.33% - 14px)", zIndex: 3 }}>
-              <div style={{ width: 28, height: 28, borderRadius: "50%", background: C.bg, border: `2px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "center" }}><ArrowRight size={14} color={C.primary} /></div>
-            </div>
-            <div style={{ position: "absolute", top: 22, left: "calc(66.66% - 14px)", zIndex: 3 }}>
-              <div style={{ width: 28, height: 28, borderRadius: "50%", background: C.bg, border: `2px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "center" }}><ArrowRight size={14} color={C.primary} /></div>
-            </div>
-
+            <div style={{ position: "absolute", top: 22, left: "calc(33.33% - 14px)", zIndex: 3 }}><div style={{ width: 28, height: 28, borderRadius: "50%", background: C.bg, border: `2px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "center" }}><ArrowRight size={14} color={C.primary} /></div></div>
+            <div style={{ position: "absolute", top: 22, left: "calc(66.66% - 14px)", zIndex: 3 }}><div style={{ width: 28, height: 28, borderRadius: "50%", background: C.bg, border: `2px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "center" }}><ArrowRight size={14} color={C.primary} /></div></div>
             {[
               { step: "1", icon: <PenLine size={22} />, title: t("Create & Schedule", "Maak & Plan"), desc: t("Write your post, pick platforms, upload media, set date & time — all from one beautiful editor.", "Schrijf je post, kies platformen, upload media, stel datum & tijd in — vanuit één mooie editor."), color: C.primary },
               { step: "2", icon: <CheckSquare size={22} />, title: t("Review & Approve", "Review & Keur goed"), desc: t("Send posts for approval with one click. Clients and team members review, comment, and approve instantly.", "Stuur posts ter goedkeuring met één klik. Klanten en teamleden reviewen, reageren en keuren direct goed."), color: C.accent },
               { step: "3", icon: <Zap size={22} />, title: t("Publish & Grow", "Publiceer & Groei"), desc: t("Approved posts publish automatically across all platforms. Track performance and optimize your strategy.", "Goedgekeurde posts worden automatisch gepubliceerd. Volg prestaties en optimaliseer je strategie."), color: C.green },
-            ].map((s) => (
+            ].map(s => (
               <div key={s.step} style={{ flex: "1 1 0%", textAlign: "center", position: "relative", zIndex: 1, padding: "0 12px" }}>
-                {/* Step number + icon circle */}
                 <div style={{ width: 72, height: 72, borderRadius: "50%", background: C.bg, border: `3px solid ${s.color}30`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px", position: "relative" }}>
                   <div style={{ width: 56, height: 56, borderRadius: "50%", background: `${s.color}12`, display: "flex", alignItems: "center", justifyContent: "center", color: s.color }}>{s.icon}</div>
                   <div style={{ position: "absolute", top: -6, right: -6, width: 26, height: 26, borderRadius: "50%", background: s.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: "#fff", boxShadow: `0 2px 8px ${s.color}40` }}>{s.step}</div>
                 </div>
-
-                {/* Card */}
                 <div style={{ background: C.bgS, borderRadius: 16, padding: "24px 20px", border: `1px solid ${C.border}`, minHeight: 150, display: "flex", flexDirection: "column", justifyContent: "flex-start", transition: "all 0.3s" }} onMouseEnter={e => { e.currentTarget.style.boxShadow = `0 8px 30px ${s.color}12`; e.currentTarget.style.borderColor = `${s.color}30`; e.currentTarget.style.transform = "translateY(-4px)"; }} onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.borderColor = C.border; e.currentTarget.style.transform = "translateY(0)"; }}>
                   <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 10, color: C.dark }}>{s.title}</h3>
                   <p style={{ fontSize: 14, color: C.textS, lineHeight: 1.7, margin: 0 }}>{s.desc}</p>
@@ -374,8 +358,6 @@ export default function LandingPage() {
             <p style={{ fontSize: 16, color: C.textS }}>{t("See what our users have to say", "Bekijk wat onze gebruikers zeggen")}</p>
           </div>
         </div>
-
-        {/* Row 1 - scrolls left */}
         <div style={{ position: "relative", marginBottom: 20 }}>
           <div style={{ display: "flex", gap: 20, animation: "marqueeLeft 78s linear infinite", width: "max-content" }}>
             {[...TESTIMONIALS.slice(0, 6), ...TESTIMONIALS.slice(0, 6)].map((tm, i) => (
@@ -393,8 +375,6 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
-
-        {/* Row 2 - scrolls right */}
         <div style={{ position: "relative" }}>
           <div style={{ display: "flex", gap: 20, animation: "marqueeRight 85s linear infinite", width: "max-content" }}>
             {[...TESTIMONIALS.slice(6, 12), ...TESTIMONIALS.slice(6, 12)].map((tm, i) => (
@@ -412,8 +392,6 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
-
-        {/* Fade edges */}
         <style>{`
           @keyframes marqueeLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
           @keyframes marqueeRight { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
@@ -454,16 +432,13 @@ export default function LandingPage() {
         <div style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
           <h2 style={{ fontSize: "clamp(28px, 3.5vw, 44px)", fontWeight: 900, color: "#fff", marginBottom: 16, lineHeight: 1.2 }}>{t("Ready to streamline your social media?", "Klaar om je social media te stroomlijnen?")}</h2>
           <p style={{ fontSize: 17, color: "rgba(255,255,255,0.6)", marginBottom: 32, lineHeight: 1.7 }}>{t("Join thousands of agencies and teams using DropPost to save time and grow their presence.", "Sluit je aan bij duizenden agencies en teams die DropPost gebruiken om tijd te besparen.")}</p>
-          <button onClick={() => signIn("google")} style={{ background: C.grad, color: "#fff", border: "none", borderRadius: 14, padding: "16px 40px", fontSize: 17, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", whiteSpace: "nowrap", transition: "all 0.3s", boxShadow: "0 4px 20px rgba(124,58,237,0.3)" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(124,58,237,0.4)"; }} onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(124,58,237,0.3)"; }}>
-            {t("Get Started Free", "Gratis Starten")} <ArrowRight size={18} style={{ marginLeft: 8 }} />
-          </button>
+          <button onClick={() => signIn("google")} style={{ background: C.grad, color: "#fff", border: "none", borderRadius: 14, padding: "16px 40px", fontSize: 17, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", whiteSpace: "nowrap", transition: "all 0.3s", boxShadow: "0 4px 20px rgba(124,58,237,0.3)" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(124,58,237,0.4)"; }} onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(124,58,237,0.3)"; }}>{t("Get Started Free", "Gratis Starten")} <ArrowRight size={18} style={{ marginLeft: 8 }} /></button>
         </div>
       </section>
 
       {/* ═══ FOOTER ═══ */}
       <footer style={{ borderTop: `1px solid ${C.border}`, background: C.bgS }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "60px 24px 40px", display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr 1fr", gap: 48 }}>
-          {/* BRAND COL */}
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
               <div style={{ width: 34, height: 34, borderRadius: 10, background: C.grad, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontWeight: 900, fontSize: 17 }}>D</span></div>
@@ -479,8 +454,6 @@ export default function LandingPage() {
               ))}
             </div>
           </div>
-
-          {/* QUICK MENU */}
           <div>
             <h4 style={{ fontSize: 14, fontWeight: 700, color: C.dark, marginBottom: 16 }}>{t("Quick Menu", "Snelmenu")}</h4>
             {[
@@ -493,8 +466,6 @@ export default function LandingPage() {
               { label: "FAQs", action: () => {} },
             ].map(l => <button key={l.label} onClick={l.action} style={{ display: "block", fontSize: 14, color: C.textS, textDecoration: "none", marginBottom: 10, transition: "color 0.2s", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", padding: 0, textAlign: "left" }} onMouseEnter={e => (e.currentTarget.style.color = C.primary)} onMouseLeave={e => (e.currentTarget.style.color = C.textS)}>{l.label}</button>)}
           </div>
-
-          {/* FREE TOOLS */}
           <div>
             <h4 style={{ fontSize: 14, fontWeight: 700, color: C.dark, marginBottom: 16 }}>{t("Free Tools", "Gratis Tools")}</h4>
             {[
@@ -505,8 +476,6 @@ export default function LandingPage() {
               { label: t("Bio Generator", "Bio Generator"), href: "#" },
             ].map(l => <a key={l.label} href={l.href} style={{ display: "block", fontSize: 14, color: C.textS, textDecoration: "none", marginBottom: 10, transition: "color 0.2s" }} onMouseEnter={e => (e.currentTarget.style.color = C.primary)} onMouseLeave={e => (e.currentTarget.style.color = C.textS)}>{l.label}</a>)}
           </div>
-
-          {/* INFORMATION */}
           <div>
             <h4 style={{ fontSize: 14, fontWeight: 700, color: C.dark, marginBottom: 16 }}>{t("Information", "Informatie")}</h4>
             <p style={{ fontSize: 14, color: C.textS, marginBottom: 4, lineHeight: 1.6 }}>Inspired Marketing Agency</p>
@@ -518,8 +487,6 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-
-        {/* BOTTOM BAR */}
         <div style={{ borderTop: `1px solid ${C.border}`, maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ padding: "20px 24px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
             <span style={{ fontSize: 13, color: C.textT }}>Copyright© 2026 <a href="https://droppost.app" style={{ color: C.primary, textDecoration: "none", fontWeight: 600 }}>Inspired Marketing Agency</a></span>
