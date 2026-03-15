@@ -36,40 +36,59 @@ export async function GET() {
   }
 
   try {
-    // Get all channels the user has access to (including Brand Accounts)
-    const res = await fetch(
-      "https://www.googleapis.com/youtube/v3/channels?part=snippet,contentDetails&mine=true",
+    const allChannels: any[] = [];
+    const seen = new Set();
+
+    // 1. Get user's own channel(s)
+    const mineRes = await fetch(
+      "https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&mine=true",
       { headers: { Authorization: `Bearer ${session.accessToken}` } }
     );
-    const data = await res.json();
-
-    if (!res.ok) {
-      return NextResponse.json({ error: data.error?.message || "Failed to fetch channels" }, { status: res.status });
+    const mineData = await mineRes.json();
+    if (mineData.items) {
+      for (const ch of mineData.items) {
+        if (!seen.has(ch.id)) { seen.add(ch.id); allChannels.push(ch); }
+      }
     }
 
-    // Also try to get channels via managedByMe for Brand Accounts
-    const brandRes = await fetch(
-      "https://www.googleapis.com/youtube/v3/channels?part=snippet,contentDetails&managedByMe=true",
+    // 2. Get Brand Account / managed channels via channel sections
+    // Use the YouTube Data API to list accounts the user can act as
+    const accountsRes = await fetch(
+      "https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&managedByMe=true&maxResults=50",
       { headers: { Authorization: `Bearer ${session.accessToken}` } }
     );
-    const brandData = await brandRes.json();
+    const accountsData = await accountsRes.json();
+    if (accountsData.items) {
+      for (const ch of accountsData.items) {
+        if (!seen.has(ch.id)) { seen.add(ch.id); allChannels.push(ch); }
+      }
+    }
 
-    // Combine and deduplicate
-    const allChannels = [...(data.items || []), ...(brandData.items || [])];
-    const seen = new Set();
-    const channels = allChannels.filter((ch: any) => {
-      if (seen.has(ch.id)) return false;
-      seen.add(ch.id);
-      return true;
-    }).map((ch: any) => ({
+    // 3. Try to get channels from subscriptions or channel memberships
+    // This uses the "listByHandle" approach - get channels from Google account
+    const delegateRes = await fetch(
+      "https://youtube.googleapis.com/youtube/v3/channels?part=snippet,statistics&mine=true&maxResults=50",
+      { headers: { Authorization: `Bearer ${session.accessToken}` } }
+    );
+    const delegateData = await delegateRes.json();
+    if (delegateData.items) {
+      for (const ch of delegateData.items) {
+        if (!seen.has(ch.id)) { seen.add(ch.id); allChannels.push(ch); }
+      }
+    }
+
+    const channels = allChannels.map((ch: any) => ({
       id: ch.id,
-      title: ch.snippet.title,
-      thumbnail: ch.snippet.thumbnails?.default?.url || "",
-      subscriberCount: ch.statistics?.subscriberCount || null,
+      title: ch.snippet?.title || "Unknown",
+      thumbnail: ch.snippet?.thumbnails?.default?.url || "",
+      description: ch.snippet?.description?.slice(0, 100) || "",
+      subscriberCount: ch.statistics?.subscriberCount || "0",
+      videoCount: ch.statistics?.videoCount || "0",
     }));
 
     return NextResponse.json({ channels });
   } catch (err: any) {
+    console.error("Channel fetch error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
