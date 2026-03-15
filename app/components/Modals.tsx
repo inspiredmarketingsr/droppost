@@ -271,7 +271,7 @@ export function CreatePostModal({ draft, setDraft, darkMode, theme, uploadingIma
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999, padding: "1rem" }}>
-      <div style={{ background: theme.modalBg, borderRadius: 20, padding: "24px", width: showPreview ? "min(1020px,100%)" : "min(560px,100%)", boxSizing: "border-box", maxHeight: "90vh", overflowY: "auto", border: `1px solid ${theme.border}`, transition: "width 0.3s" }}>
+      <div style={{ background: theme.modalBg, borderRadius: 20, padding: "24px", width: showPreview ? "min(880px,100%)" : "min(560px,100%)", boxSizing: "border-box", maxHeight: "90vh", overflowY: "auto", border: `1px solid ${theme.border}`, transition: "width 0.3s" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
           <div style={{ fontSize: 18, fontWeight: 800, color: theme.text }}>{t("Create new post", "Nieuwe post")}</div>
           <div style={{ display: "flex", gap: 6 }}>
@@ -336,7 +336,7 @@ export function CreatePostModal({ draft, setDraft, darkMode, theme, uploadingIma
 
           {/* RIGHT: Platform previews */}
           {showPreview && draft.platforms.length > 0 && (
-            <div style={{ width: 380, flexShrink: 0, display: "flex", flexDirection: "column", gap: 16, overflowY: "auto", maxHeight: "75vh", paddingRight: 4 }}>
+            <div style={{ width: 280, flexShrink: 0, display: "flex", flexDirection: "column", gap: 16, overflowY: "auto", maxHeight: "75vh", paddingRight: 4 }}>
               <div style={{ fontSize: 13, fontWeight: 700, color: theme.textS, display: "flex", alignItems: "center", gap: 6 }}><Monitor size={14} /> {t("Live Preview", "Live Voorbeeld")}</div>
               {draft.platforms.map((pid: string) => (
                 <PlatformPreview key={pid} platformId={pid} content={draft.content} imageUrl={draft.image_url} videoUrl={draft.video_url} postType={draft.type} dark={darkMode} />
