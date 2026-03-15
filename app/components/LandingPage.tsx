@@ -49,11 +49,16 @@ export default function LandingPage() {
   const [mobileMenu, setMobileMenu] = useState(false);
   const t = (en: string, nl: string) => lang === "nl" ? nl : en;
 
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   const navLinks = [
-    { label: t("Features", "Functies"), href: "#features" },
-    { label: t("Platforms", "Platformen"), href: "#platforms" },
-    { label: t("Pricing", "Prijzen"), href: "#pricing" },
-    { label: t("Testimonials", "Reviews"), href: "#testimonials" },
+    { label: t("Features", "Functies"), id: "features" },
+    { label: t("Platforms", "Platformen"), id: "platforms" },
+    { label: t("Pricing", "Prijzen"), id: "pricing" },
+    { label: t("Testimonials", "Reviews"), id: "testimonials" },
   ];
 
   const btn = (primary: boolean, size: "sm" | "md" | "lg" = "md") => ({
@@ -80,7 +85,7 @@ export default function LandingPage() {
             <span style={{ fontWeight: 800, fontSize: 18, color: C.dark }}>Drop<span style={{ background: C.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Post</span></span>
           </div>
           <div style={{ display: "flex", gap: 32, flex: 1 }} className="nav-links-desktop">
-            {navLinks.map(l => <a key={l.href} href={l.href} style={{ fontSize: 14, color: C.textS, textDecoration: "none", fontWeight: 500, transition: "color 0.2s" }} onMouseEnter={e => (e.currentTarget.style.color = C.primary)} onMouseLeave={e => (e.currentTarget.style.color = C.textS)}>{l.label}</a>)}
+            {navLinks.map(l => <button key={l.id} onClick={() => scrollTo(l.id)} style={{ fontSize: 14, color: C.textS, textDecoration: "none", fontWeight: 500, transition: "color 0.2s", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit" }} onMouseEnter={e => (e.currentTarget.style.color = C.primary)} onMouseLeave={e => (e.currentTarget.style.color = C.textS)}>{l.label}</button>)}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <button onClick={() => setLang(l => l === "en" ? "nl" : "en")} style={{ background: "none", border: `1px solid ${C.border}`, borderRadius: 8, padding: "6px 10px", cursor: "pointer", fontSize: 13, color: C.textS, fontWeight: 600 }}>{lang === "en" ? "🇳🇱 NL" : "🇬🇧 EN"}</button>
@@ -423,14 +428,14 @@ export default function LandingPage() {
           <div>
             <h4 style={{ fontSize: 14, fontWeight: 700, color: C.dark, marginBottom: 16 }}>{t("Quick Menu", "Snelmenu")}</h4>
             {[
-              { label: t("Home", "Home"), href: "#" },
-              { label: t("Features", "Functies"), href: "#features" },
-              { label: t("Pricing", "Prijzen"), href: "#pricing" },
-              { label: t("Testimonials", "Reviews"), href: "#testimonials" },
-              { label: "Blog", href: "#" },
-              { label: "Affiliates", href: "#" },
-              { label: "FAQs", href: "#" },
-            ].map(l => <a key={l.label} href={l.href} style={{ display: "block", fontSize: 14, color: C.textS, textDecoration: "none", marginBottom: 10, transition: "color 0.2s" }} onMouseEnter={e => (e.currentTarget.style.color = C.primary)} onMouseLeave={e => (e.currentTarget.style.color = C.textS)}>{l.label}</a>)}
+              { label: t("Home", "Home"), action: () => window.scrollTo({ top: 0, behavior: "smooth" }) },
+              { label: t("Features", "Functies"), action: () => scrollTo("features") },
+              { label: t("Pricing", "Prijzen"), action: () => scrollTo("pricing") },
+              { label: t("Testimonials", "Reviews"), action: () => scrollTo("testimonials") },
+              { label: "Blog", action: () => {} },
+              { label: "Affiliates", action: () => {} },
+              { label: "FAQs", action: () => {} },
+            ].map(l => <button key={l.label} onClick={l.action} style={{ display: "block", fontSize: 14, color: C.textS, textDecoration: "none", marginBottom: 10, transition: "color 0.2s", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", padding: 0, textAlign: "left" }} onMouseEnter={e => (e.currentTarget.style.color = C.primary)} onMouseLeave={e => (e.currentTarget.style.color = C.textS)}>{l.label}</button>)}
           </div>
 
           {/* FREE TOOLS */}
