@@ -386,12 +386,12 @@ export default function LandingPage() {
 
           {/* Carousel */}
           <div style={{ position: "relative" }}>
-            <div style={{ overflow: "hidden" }}>
+            <div style={{ overflow: "hidden", margin: "0 -10px", padding: "0 10px" }}>
               <div style={{ display: "flex", transition: "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)", transform: `translateX(-${testimonialIndex * 100}%)` }}>
                 {Array.from({ length: Math.ceil(TESTIMONIALS.length / 3) }, (_, pageIdx) => (
-                  <div key={pageIdx} style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, minWidth: "100%", flexShrink: 0 }}>
+                  <div key={pageIdx} style={{ display: "flex", gap: 20, minWidth: "100%", flexShrink: 0, padding: "4px 0" }}>
                     {TESTIMONIALS.slice(pageIdx * 3, pageIdx * 3 + 3).map((tm, i) => (
-                      <div key={i} style={{ background: C.bg, borderRadius: 16, padding: "28px 24px", border: `1px solid ${C.border}`, display: "flex", flexDirection: "column", transition: "box-shadow 0.3s, transform 0.3s" }} onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 8px 30px rgba(124,58,237,0.08)"; e.currentTarget.style.transform = "translateY(-3px)"; }} onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "translateY(0)"; }}>
+                      <div key={i} style={{ flex: "1 1 0%", minWidth: 0, background: C.bg, borderRadius: 16, padding: "28px 24px", border: `1px solid ${C.border}`, display: "flex", flexDirection: "column", transition: "box-shadow 0.3s, transform 0.3s" }} onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 8px 30px rgba(124,58,237,0.08)"; e.currentTarget.style.transform = "translateY(-3px)"; }} onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "translateY(0)"; }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
                           <div style={{ display: "flex", gap: 3 }}>{[1,2,3,4,5].map(s => <Star key={s} size={15} fill="#F59E0B" color="#F59E0B" />)}</div>
                           <span style={{ fontSize: 11, fontWeight: 700, color: tm.badgeColor, background: tm.badgeColor + "12", padding: "3px 10px", borderRadius: 100, border: `1px solid ${tm.badgeColor}20` }}>{tm.badge}</span>
