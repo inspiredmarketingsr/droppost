@@ -2,6 +2,7 @@
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { Calendar, Clock, CheckSquare, BarChart2, Users, Zap, Shield, Globe, ChevronRight, Play, Star, Menu, X, ArrowRight, Sparkles } from "lucide-react";
+import { FaYoutube, FaFacebookF, FaInstagram, FaTiktok, FaSnapchat, FaXTwitter } from "react-icons/fa6";
 
 const C = {
   primary: "#7C3AED", primaryD: "#5B21B6", primaryL: "#EDE9FE",
@@ -207,14 +208,14 @@ export default function LandingPage() {
 
             {/* Platform icons positioned around */}
             {[
-              { name: "YouTube", color: "#FF0000", icon: "▶", x: 75, y: 25, size: 56 },
-              { name: "Facebook", color: "#1877F2", icon: "f", x: 315, y: 55, size: 52 },
-              { name: "Instagram", color: "#E1306C", icon: "ig", x: 30, y: 195, size: 54 },
-              { name: "TikTok", color: "#010101", icon: "♪", x: 345, y: 235, size: 50 },
-              { name: "Snapchat", color: "#FFCE00", icon: "👻", x: 115, y: 365, size: 50 },
-              { name: "X", color: "#000000", icon: "𝕏", x: 305, y: 365, size: 48 },
+              { name: "YouTube", color: "#FF0000", icon: <FaYoutube size={24} />, x: 75, y: 25, size: 56 },
+              { name: "Facebook", color: "#1877F2", icon: <FaFacebookF size={22} />, x: 315, y: 55, size: 52 },
+              { name: "Instagram", color: "#E1306C", icon: <FaInstagram size={24} />, x: 30, y: 195, size: 54 },
+              { name: "TikTok", color: "#010101", icon: <FaTiktok size={22} />, x: 345, y: 235, size: 50 },
+              { name: "Snapchat", color: "#FFCE00", icon: <FaSnapchat size={24} />, x: 115, y: 365, size: 50 },
+              { name: "X", color: "#000000", icon: <FaXTwitter size={20} />, x: 305, y: 365, size: 48 },
             ].map((p, i) => (
-              <div key={p.name} style={{ position: "absolute", left: p.x, top: p.y, width: p.size, height: p.size, borderRadius: "50%", background: C.bg, border: `2.5px solid ${p.color}30`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: p.name === "Snapchat" ? 22 : 16, color: p.color, fontWeight: 800, boxShadow: `0 4px 16px ${p.color}15`, zIndex: 2, transition: "transform 0.3s, box-shadow 0.3s", cursor: "default", animation: `floatIcon${i} ${4 + i * 0.7}s ease-in-out infinite` }} onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.15)"; e.currentTarget.style.boxShadow = `0 6px 24px ${p.color}30`; }} onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 4px 16px ${p.color}15`; }}>
+              <div key={p.name} style={{ position: "absolute", left: p.x, top: p.y, width: p.size, height: p.size, borderRadius: "50%", background: C.bg, border: `2.5px solid ${p.color}30`, display: "flex", alignItems: "center", justifyContent: "center", color: p.color, boxShadow: `0 4px 16px ${p.color}15`, zIndex: 2, transition: "transform 0.3s, box-shadow 0.3s", cursor: "default", animation: `floatIcon${i} ${4 + i * 0.7}s ease-in-out infinite` }} onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.15)"; e.currentTarget.style.boxShadow = `0 6px 24px ${p.color}30`; }} onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 4px 16px ${p.color}15`; }}>
                 {p.icon}
               </div>
             ))}
