@@ -58,49 +58,201 @@ function DraggableQueueItem({ post, index, onDragStart, onDragOver, onDrop, isDr
   );
 }
 
-function LoginPage({ onGoRegister }: any) {
-  const [email, setEmail] = useState(""); const [pass, setPass] = useState("");
+/* ══════════════════════════════════════════════════════════════
+   LANDING PAGE
+   ══════════════════════════════════════════════════════════════ */
+function LandingPage() {
+  const [faqOpen, setFaqOpen] = useState<number | null>(null);
+
+  const features = [
+    { icon: "📅", title: "Smart Scheduling", desc: "Plan and schedule posts across all platforms with our visual calendar. Set queue times and let DropPost handle the rest." },
+    { icon: "📱", title: "Multi-Platform", desc: "Publish to YouTube, Facebook, Instagram, TikTok, and Snapchat — all from one dashboard." },
+    { icon: "✅", title: "Approval Workflow", desc: "Team members submit posts for review. Admins approve or reject before anything goes live." },
+    { icon: "🎬", title: "Video & Shorts", desc: "Upload videos directly. DropPost auto-detects vertical (Shorts/Reels) and horizontal formats." },
+    { icon: "📊", title: "Analytics", desc: "Track your reach, engagement, and growth across all connected platforms in one place." },
+    { icon: "👥", title: "Team & Workspaces", desc: "Manage multiple brands with separate workspaces. Invite team members with role-based access." },
+    { icon: "🌙", title: "Dark Mode", desc: "Easy on the eyes. Switch between light and dark mode with one click." },
+    { icon: "🌍", title: "Multi-Language", desc: "Available in English and Nederlands, with more languages coming soon." },
+    { icon: "🔄", title: "Drag & Drop Queue", desc: "Reorder your scheduled posts by simply dragging them. Times are swapped automatically." },
+  ];
+
+  const testimonials = [
+    { name: "Priya R.", role: "Social Media Manager", company: "Beauty Brand SR", text: "DropPost saved me hours every week. Scheduling across 5 platforms used to take forever — now it's done in minutes.", avatar: "PR" },
+    { name: "Kevin M.", role: "Content Creator", company: "YouTube · 50K subs", text: "The YouTube upload feature is a game changer. I schedule my Shorts and videos directly from DropPost.", avatar: "KM" },
+    { name: "Anisa B.", role: "Marketing Director", company: "Retail Chain", text: "The approval workflow is exactly what we needed. Nothing goes live without my OK.", avatar: "AB" },
+  ];
+
+  const faqs = [
+    { q: "What platforms does DropPost support?", a: "DropPost currently supports YouTube (including Shorts), with Facebook, Instagram, TikTok, and Snapchat coming soon." },
+    { q: "Is there a free trial?", a: "Yes! 14-day free trial with full access. No credit card required." },
+    { q: "Can I manage multiple brands?", a: "Absolutely. DropPost supports multiple workspaces, each with their own accounts and team." },
+    { q: "How does approval work?", a: "Team members create posts marked as 'Pending'. Admins approve or reject before publishing." },
+    { q: "Is my data secure?", a: "Yes. Enterprise-grade security with Supabase, SSL encryption, and Row Level Security. We never sell your data." },
+    { q: "Can I cancel anytime?", a: "Yes. Cancel anytime. Data retained for 30 days, then permanently deleted." },
+  ];
+
+  const plans = [
+    { name: "Starter", price: "Free", period: "14 days", features: ["1 workspace", "All platforms", "5 scheduled posts", "Basic analytics"], cta: "Start Free Trial", hl: false },
+    { name: "Professional", price: "SRD 45", period: "/month", features: ["3 workspaces", "All platforms", "Unlimited posts", "Full analytics", "Approval workflow", "Team members"], cta: "Get Started", hl: true },
+    { name: "Agency", price: "SRD 120", period: "/month", features: ["Unlimited workspaces", "All platforms", "Unlimited posts", "Advanced analytics", "Priority support", "White-label reports"], cta: "Contact Us", hl: false },
+  ];
+
   return (
-    <div style={{ minHeight: "100vh", background: BRAND.dark, display: "flex" }}>
-      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
-        <div style={{ width: "100%", maxWidth: 420 }}>
-          <div style={{ marginBottom: 40 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 32 }}><div style={{ width: 40, height: 40, borderRadius: 12, background: BRAND.grad, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontWeight: 900, fontSize: 18 }}>D</span></div><span style={{ color: "#fff", fontWeight: 800, fontSize: 22 }}>Drop<span style={{ background: BRAND.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Post</span></span></div>
-            <h1 style={{ color: "#fff", fontSize: 28, fontWeight: 800, marginBottom: 8 }}>Welcome back</h1>
-            <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 15 }}>Sign in to manage your social media</p>
-          </div>
-          <div style={{ marginBottom: 16 }}><label style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.6)", display: "block", marginBottom: 6 }}>Email</label><input value={email} onChange={e => setEmail(e.target.value)} placeholder="you@company.com" type="email" style={{ width: "100%", padding: "12px 14px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.06)", color: "#fff", fontSize: 14, boxSizing: "border-box" }} /></div>
-          <div style={{ marginBottom: 24 }}><label style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.6)", display: "block", marginBottom: 6 }}>Password</label><input value={pass} onChange={e => setPass(e.target.value)} placeholder="••••••••" type="password" style={{ width: "100%", padding: "12px 14px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.06)", color: "#fff", fontSize: 14, boxSizing: "border-box" }} /></div>
-          <button onClick={() => signIn("credentials", { email, password: pass, callbackUrl: "/" })} style={{ width: "100%", padding: "13px", borderRadius: 10, border: "none", background: BRAND.gradBtn, color: "#fff", fontSize: 15, fontWeight: 700, cursor: "pointer", marginBottom: 16 }}>Sign in</button>
-          <button onClick={() => signIn("google", { callbackUrl: "/" })} style={{ width: "100%", padding: "11px", borderRadius: 10, border: "1px solid #dadce0", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}><span style={{ fontSize: 14, fontWeight: 600, color: "#3c4043" }}>Sign in with</span><img src="/google-logo.png" alt="Google" style={{ height: 20 }} /></button>
-          <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 13, textAlign: "center", marginTop: 24 }}>No account? <button onClick={onGoRegister} style={{ background: "none", border: "none", color: BRAND.accent, fontWeight: 700, cursor: "pointer", fontSize: 13 }}>Sign up free</button></p>
+    <div style={{ minHeight: "100vh", fontFamily: "'Segoe UI',system-ui,sans-serif", background: "#0F0F1A", color: "#fff" }}>
+      {/* NAV */}
+      <nav style={{ padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", maxWidth: 1200, margin: "0 auto" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ width: 36, height: 36, borderRadius: 10, background: BRAND.grad, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontWeight: 900, fontSize: 16 }}>D</span></div>
+          <span style={{ fontWeight: 800, fontSize: 20 }}>Drop<span style={{ background: BRAND.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Post</span></span>
         </div>
-      </div>
-      <div style={{ flex: 1, background: BRAND.gradBtn, display: "flex", alignItems: "center", justifyContent: "center", padding: "3rem", position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "relative", textAlign: "center" }}><div style={{ fontSize: 56, marginBottom: 20 }}>🚀</div><h2 style={{ color: "#fff", fontSize: 26, fontWeight: 800, marginBottom: 12 }}>Schedule smarter.</h2><p style={{ color: "rgba(255,255,255,0.65)", fontSize: 15, lineHeight: 1.7 }}>Plan, approve and publish across 5 platforms — all in one place.</p></div>
-      </div>
+        <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
+          <a href="#features" style={{ color: "rgba(255,255,255,0.6)", textDecoration: "none", fontSize: 14, fontWeight: 500 }}>Features</a>
+          <a href="#pricing" style={{ color: "rgba(255,255,255,0.6)", textDecoration: "none", fontSize: 14, fontWeight: 500 }}>Pricing</a>
+          <a href="#faq" style={{ color: "rgba(255,255,255,0.6)", textDecoration: "none", fontSize: 14, fontWeight: 500 }}>FAQ</a>
+          <button onClick={() => signIn("google", { callbackUrl: "/" })} style={{ background: BRAND.gradBtn, color: "#fff", border: "none", borderRadius: 10, padding: "10px 20px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>Sign In</button>
+        </div>
+      </nav>
+
+      {/* HERO */}
+      <section style={{ padding: "80px 24px 60px", textAlign: "center", maxWidth: 900, margin: "0 auto" }}>
+        <div style={{ display: "inline-block", background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.3)", borderRadius: 20, padding: "6px 16px", marginBottom: 24 }}>
+          <span style={{ fontSize: 13, color: "#A78BFA", fontWeight: 600 }}>🚀 Now with YouTube Shorts & Video uploads</span>
+        </div>
+        <h1 style={{ fontSize: 56, fontWeight: 900, lineHeight: 1.1, marginBottom: 20, letterSpacing: -1 }}>
+          Schedule smarter.{" "}<span style={{ background: BRAND.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Publish everywhere.</span>
+        </h1>
+        <p style={{ fontSize: 18, color: "rgba(255,255,255,0.55)", lineHeight: 1.7, maxWidth: 600, margin: "0 auto 36px" }}>Plan, approve, and publish content across YouTube, Facebook, Instagram, TikTok & Snapchat — all from one beautiful dashboard.</p>
+        <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+          <button onClick={() => signIn("google", { callbackUrl: "/" })} style={{ background: BRAND.gradBtn, color: "#fff", border: "none", borderRadius: 12, padding: "14px 32px", fontSize: 16, fontWeight: 700, cursor: "pointer" }}>Start Free — 14 Days</button>
+          <a href="#features" style={{ background: "rgba(255,255,255,0.08)", color: "#fff", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "14px 32px", fontSize: 16, fontWeight: 600, textDecoration: "none", display: "inline-block" }}>See Features ↓</a>
+        </div>
+        <div style={{ display: "flex", gap: 32, justifyContent: "center", marginTop: 48 }}>
+          {[{ label: "Active Users", value: "500+" }, { label: "Posts Scheduled", value: "25K+" }, { label: "Platforms", value: "5" }].map(s => (
+            <div key={s.label}><div style={{ fontSize: 28, fontWeight: 900, background: BRAND.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{s.value}</div><div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>{s.label}</div></div>
+          ))}
+        </div>
+      </section>
+
+      {/* PLATFORMS */}
+      <section style={{ padding: "40px 24px", textAlign: "center" }}>
+        <p style={{ fontSize: 13, color: "rgba(255,255,255,0.3)", marginBottom: 20, letterSpacing: 2, fontWeight: 600 }}>PUBLISH TO ALL MAJOR PLATFORMS</p>
+        <div style={{ display: "flex", gap: 24, justifyContent: "center", flexWrap: "wrap" }}>
+          {[{ name: "YouTube", color: "#FF0000" }, { name: "Facebook", color: "#1877F2" }, { name: "Instagram", color: "#E1306C" }, { name: "TikTok", color: "#fff" }, { name: "Snapchat", color: "#FFCE00" }].map(p => (
+            <div key={p.name} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "12px 24px", display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ width: 10, height: 10, borderRadius: "50%", background: p.color }} /><span style={{ fontSize: 14, fontWeight: 600, color: "rgba(255,255,255,0.7)" }}>{p.name}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* SCREENSHOT */}
+      <section style={{ padding: "40px 24px 80px", maxWidth: 1100, margin: "0 auto" }}>
+        <div style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.2), rgba(6,182,212,0.2))", borderRadius: 20, border: "1px solid rgba(124,58,237,0.2)", padding: 3 }}>
+          <div style={{ background: "#1A1A2E", borderRadius: 18, padding: "20px", minHeight: 400, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ textAlign: "center" }}><div style={{ fontSize: 48, marginBottom: 16 }}>📊</div><div style={{ fontSize: 16, color: "rgba(255,255,255,0.4)" }}>DropPost Dashboard Preview</div><div style={{ fontSize: 13, color: "rgba(255,255,255,0.25)", marginTop: 8 }}>Sign in to explore the full experience</div></div>
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURES */}
+      <section id="features" style={{ padding: "80px 24px", maxWidth: 1100, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 56 }}>
+          <p style={{ fontSize: 13, color: "#A78BFA", fontWeight: 700, letterSpacing: 2, marginBottom: 12 }}>FEATURES</p>
+          <h2 style={{ fontSize: 36, fontWeight: 800, marginBottom: 12 }}>Everything you need to manage social media</h2>
+          <p style={{ fontSize: 16, color: "rgba(255,255,255,0.45)", maxWidth: 500, margin: "0 auto" }}>Powerful tools for creators, agencies, and businesses.</p>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+          {features.map((f, i) => (
+            <div key={i} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "28px 24px" }}>
+              <div style={{ fontSize: 32, marginBottom: 14 }}>{f.icon}</div>
+              <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>{f.title}</div>
+              <div style={{ fontSize: 14, color: "rgba(255,255,255,0.45)", lineHeight: 1.7 }}>{f.desc}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* TESTIMONIALS */}
+      <section style={{ padding: "80px 24px", background: "rgba(255,255,255,0.02)" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 48 }}><p style={{ fontSize: 13, color: "#A78BFA", fontWeight: 700, letterSpacing: 2, marginBottom: 12 }}>TESTIMONIALS</p><h2 style={{ fontSize: 36, fontWeight: 800 }}>Loved by creators & agencies</h2></div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+            {testimonials.map((tm, i) => (
+              <div key={i} style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "28px 24px" }}>
+                <div style={{ fontSize: 14, color: "rgba(255,255,255,0.6)", lineHeight: 1.8, marginBottom: 20, fontStyle: "italic" }}>"{tm.text}"</div>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: "50%", background: BRAND.grad, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700 }}>{tm.avatar}</div>
+                  <div><div style={{ fontSize: 14, fontWeight: 700 }}>{tm.name}</div><div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>{tm.role} · {tm.company}</div></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* PRICING */}
+      <section id="pricing" style={{ padding: "80px 24px", maxWidth: 1100, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 48 }}><p style={{ fontSize: 13, color: "#A78BFA", fontWeight: 700, letterSpacing: 2, marginBottom: 12 }}>PRICING</p><h2 style={{ fontSize: 36, fontWeight: 800, marginBottom: 12 }}>Simple, transparent pricing</h2><p style={{ fontSize: 16, color: "rgba(255,255,255,0.45)" }}>Start free. Scale as you grow.</p></div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+          {plans.map((p, i) => (
+            <div key={i} style={{ background: p.hl ? "linear-gradient(135deg, rgba(124,58,237,0.15), rgba(6,182,212,0.1))" : "rgba(255,255,255,0.03)", border: p.hl ? "2px solid #7C3AED" : "1px solid rgba(255,255,255,0.06)", borderRadius: 20, padding: "32px 28px", position: "relative" }}>
+              {p.hl && <div style={{ position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)", background: BRAND.gradBtn, borderRadius: 20, padding: "4px 16px", fontSize: 12, fontWeight: 700 }}>Most Popular</div>}
+              <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>{p.name}</div>
+              <div style={{ marginBottom: 24 }}><span style={{ fontSize: 40, fontWeight: 900 }}>{p.price}</span><span style={{ fontSize: 14, color: "rgba(255,255,255,0.4)" }}>{p.period}</span></div>
+              {p.features.map((f, fi) => <div key={fi} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}><span style={{ color: "#10B981", fontSize: 16 }}>✓</span><span style={{ fontSize: 14, color: "rgba(255,255,255,0.6)" }}>{f}</span></div>)}
+              <button onClick={() => signIn("google", { callbackUrl: "/" })} style={{ width: "100%", marginTop: 20, padding: "12px", borderRadius: 10, border: p.hl ? "none" : "1px solid rgba(255,255,255,0.1)", background: p.hl ? BRAND.gradBtn : "transparent", color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>{p.cta}</button>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" style={{ padding: "80px 24px", maxWidth: 700, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 48 }}><p style={{ fontSize: 13, color: "#A78BFA", fontWeight: 700, letterSpacing: 2, marginBottom: 12 }}>FAQ</p><h2 style={{ fontSize: 36, fontWeight: 800 }}>Frequently asked questions</h2></div>
+        {faqs.map((faq, i) => (
+          <div key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", marginBottom: 4 }}>
+            <button onClick={() => setFaqOpen(faqOpen === i ? null : i)} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 0", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}>
+              <span style={{ fontSize: 15, fontWeight: 600, color: "#fff" }}>{faq.q}</span>
+              <span style={{ fontSize: 20, color: "rgba(255,255,255,0.3)", flexShrink: 0, marginLeft: 16, transform: faqOpen === i ? "rotate(45deg)" : "none", transition: "transform 0.2s" }}>+</span>
+            </button>
+            {faqOpen === i && <div style={{ fontSize: 14, color: "rgba(255,255,255,0.5)", lineHeight: 1.8, paddingBottom: 18 }}>{faq.a}</div>}
+          </div>
+        ))}
+      </section>
+
+      {/* CTA */}
+      <section style={{ padding: "80px 24px", textAlign: "center" }}>
+        <div style={{ maxWidth: 600, margin: "0 auto", background: "linear-gradient(135deg, rgba(124,58,237,0.2), rgba(6,182,212,0.15))", border: "1px solid rgba(124,58,237,0.2)", borderRadius: 24, padding: "48px 32px" }}>
+          <h2 style={{ fontSize: 32, fontWeight: 800, marginBottom: 12 }}>Ready to schedule smarter?</h2>
+          <p style={{ fontSize: 15, color: "rgba(255,255,255,0.5)", marginBottom: 28 }}>Join 500+ creators and businesses using DropPost.</p>
+          <button onClick={() => signIn("google", { callbackUrl: "/" })} style={{ background: BRAND.gradBtn, color: "#fff", border: "none", borderRadius: 12, padding: "14px 36px", fontSize: 16, fontWeight: 700, cursor: "pointer" }}>Start Your Free Trial</button>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer style={{ padding: "40px 24px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 28, height: 28, borderRadius: 8, background: BRAND.grad, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontWeight: 900, fontSize: 13 }}>D</span></div>
+            <span style={{ fontWeight: 700, fontSize: 15, color: "rgba(255,255,255,0.6)" }}>DropPost</span>
+          </div>
+          <div style={{ display: "flex", gap: 24 }}>
+            <a href="/privacy" style={{ color: "rgba(255,255,255,0.35)", textDecoration: "none", fontSize: 13 }}>Privacy Policy</a>
+            <a href="/terms" style={{ color: "rgba(255,255,255,0.35)", textDecoration: "none", fontSize: 13 }}>Terms of Service</a>
+            <a href="mailto:inspiredmarketingsr@gmail.com" style={{ color: "rgba(255,255,255,0.35)", textDecoration: "none", fontSize: 13 }}>Contact</a>
+          </div>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>© 2026 Inspired Marketing Agency · Paramaribo, Suriname</div>
+        </div>
+      </footer>
     </div>
   );
 }
 
-function RegisterPage({ onGoLogin }: any) {
-  return (
-    <div style={{ minHeight: "100vh", background: BRAND.dark, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
-      <div style={{ width: "100%", maxWidth: 480 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 32 }}><div style={{ width: 40, height: 40, borderRadius: 12, background: BRAND.grad, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontWeight: 900, fontSize: 18 }}>D</span></div><span style={{ color: "#fff", fontWeight: 800, fontSize: 22 }}>Drop<span style={{ background: BRAND.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Post</span></span></div>
-        <h1 style={{ color: "#fff", fontSize: 26, fontWeight: 800, marginBottom: 6 }}>Create your account</h1>
-        <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginBottom: 28 }}>14-day free trial. No credit card required.</p>
-        <div style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.3)", borderRadius: 10, padding: "10px 14px", marginBottom: 20, fontSize: 13, color: "rgba(255,255,255,0.6)" }}>🎁 14 days free — then from <strong style={{ color: "#fff" }}>SRD 45/month</strong></div>
-        <button onClick={() => signIn("google", { callbackUrl: "/" })} style={{ width: "100%", padding: "13px", borderRadius: 10, border: "none", background: BRAND.gradBtn, color: "#fff", fontSize: 15, fontWeight: 700, cursor: "pointer", marginBottom: 16 }}>Create free account</button>
-        <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 13, textAlign: "center" }}>Have an account? <button onClick={onGoLogin} style={{ background: "none", border: "none", color: BRAND.accent, fontWeight: 700, cursor: "pointer", fontSize: 13 }}>Sign in</button></p>
-      </div>
-    </div>
-  );
-}
-
+/* ══════════════════════════════════════════════════════════════
+   MAIN APP
+   ══════════════════════════════════════════════════════════════ */
 export default function App() {
   const { data: session, status } = useSession();
-  const [screen, setScreen] = useState<"login" | "register">("login");
   const [workspaces, setWorkspaces] = useState<any[]>([]);
   const [posts, setPosts] = useState<Record<string, any[]>>({});
   const [activeWS, setActiveWS] = useState<string | null>(null);
@@ -136,16 +288,10 @@ export default function App() {
   const t = (en: string, nl: string) => language === "nl" ? nl : en;
 
   useEffect(() => { if (session && workspaces.length === 0) loadWorkspaces(); }, [session]);
-
-  // Auto-open channel picker after Google login redirect
   useEffect(() => {
     if (session && typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      if (params.get("pickChannel") === "true") {
-        setPage("settings");
-        setTimeout(() => { fetchYouTubeChannels(); setShowChannelPicker(true); }, 500);
-        window.history.replaceState({}, "", "/");
-      }
+      if (params.get("pickChannel") === "true") { setPage("settings"); setTimeout(() => { fetchYouTubeChannels(); setShowChannelPicker(true); }, 500); window.history.replaceState({}, "", "/"); }
     }
   }, [session]);
 
@@ -174,80 +320,35 @@ export default function App() {
   async function publishToYouTube(post: any) {
     if (!post.video_url) { alert("No video attached"); return; }
     setPublishing(post.id);
-    try {
-      const wsData = workspaces.find(w => w.id === activeWS);
-      const res = await fetch("/api/youtube/upload", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: post.content.slice(0, 100), description: post.content, privacyStatus: "public", videoUrl: post.video_url, channelId: wsData?.youtube_channel_id || undefined }) });
-      const data = await res.json();
-      if (data.success) { await supabase.from("posts").update({ status: "published", youtube_id: data.videoId }).eq("id", post.id); if (activeWS) setPosts(prev => ({ ...prev, [activeWS]: prev[activeWS].map(p => p.id === post.id ? { ...p, status: "published", youtube_id: data.videoId } : p) })); alert(`Published! ${data.url}`); }
-      else { alert(`YouTube error: ${data.error}`); }
-    } catch (err: any) { alert(`Upload failed: ${err.message}`); }
+    try { const wsData = workspaces.find(w => w.id === activeWS); const res = await fetch("/api/youtube/upload", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: post.content.slice(0, 100), description: post.content, privacyStatus: "public", videoUrl: post.video_url, channelId: wsData?.youtube_channel_id || undefined }) }); const data = await res.json(); if (data.success) { await supabase.from("posts").update({ status: "published", youtube_id: data.videoId }).eq("id", post.id); if (activeWS) setPosts(prev => ({ ...prev, [activeWS]: prev[activeWS].map(p => p.id === post.id ? { ...p, status: "published", youtube_id: data.videoId } : p) })); alert(`Published! ${data.url}`); } else { alert(`YouTube error: ${data.error}`); } }
+    catch (err: any) { alert(`Upload failed: ${err.message}`); }
     setPublishing(null);
   }
 
-  async function fetchYouTubeChannels() {
-    setLoadingChannels(true);
-    try { const res = await fetch("/api/youtube/channels"); const data = await res.json(); if (data.channels) setYtChannels(data.channels); else alert(data.error || "Failed to load channels"); }
-    catch { alert("Failed to load channels"); }
-    setLoadingChannels(false);
-  }
-  async function selectYouTubeChannel(channel: any) {
-    if (!activeWS) return;
-    await supabase.from("workspaces").update({ youtube_channel_id: channel.id, youtube_channel_name: channel.title, youtube_channel_thumb: channel.thumbnail }).eq("id", activeWS);
-    setWorkspaces(prev => prev.map(w => w.id === activeWS ? { ...w, youtube_channel_id: channel.id, youtube_channel_name: channel.title, youtube_channel_thumb: channel.thumbnail } : w));
-    setShowChannelPicker(false); setYtChannels([]);
-  }
-  async function disconnectYouTube() {
-    if (!activeWS) return;
-    await supabase.from("workspaces").update({ youtube_channel_id: null, youtube_channel_name: null, youtube_channel_thumb: null }).eq("id", activeWS);
-    setWorkspaces(prev => prev.map(w => w.id === activeWS ? { ...w, youtube_channel_id: null, youtube_channel_name: null, youtube_channel_thumb: null } : w));
-  }
+  async function fetchYouTubeChannels() { setLoadingChannels(true); try { const res = await fetch("/api/youtube/channels"); const data = await res.json(); if (data.channels) setYtChannels(data.channels); else alert(data.error || "Failed"); } catch { alert("Failed to load channels"); } setLoadingChannels(false); }
+  async function selectYouTubeChannel(channel: any) { if (!activeWS) return; await supabase.from("workspaces").update({ youtube_channel_id: channel.id, youtube_channel_name: channel.title, youtube_channel_thumb: channel.thumbnail }).eq("id", activeWS); setWorkspaces(prev => prev.map(w => w.id === activeWS ? { ...w, youtube_channel_id: channel.id, youtube_channel_name: channel.title, youtube_channel_thumb: channel.thumbnail } : w)); setShowChannelPicker(false); setYtChannels([]); }
+  async function disconnectYouTube() { if (!activeWS) return; await supabase.from("workspaces").update({ youtube_channel_id: null, youtube_channel_name: null, youtube_channel_thumb: null }).eq("id", activeWS); setWorkspaces(prev => prev.map(w => w.id === activeWS ? { ...w, youtube_channel_id: null, youtube_channel_name: null, youtube_channel_thumb: null } : w)); }
 
   function resetDraft() { setDraft({ content: "", platforms: [], date: "", time: "12:00", type: "post", image_url: "", video_url: "" }); setVideoAspect(null); setShowNewPost(false); }
+  async function saveAsDraft() { if (!draft.content || !activeWS) return; const { data } = await supabase.from("posts").insert({ workspace_id: activeWS, content: draft.content, platforms: draft.platforms, scheduled_date: draft.date || null, scheduled_time: draft.time, status: "draft", approval: "none", image_url: draft.image_url || null, video_url: draft.video_url || null }).select().single(); if (data) setPosts(prev => ({ ...prev, [activeWS!]: [data, ...(prev[activeWS!] || [])] })); resetDraft(); }
+  async function schedulePost() { if (!draft.content || !draft.date || draft.platforms.length === 0 || !activeWS) return; const { data } = await supabase.from("posts").insert({ workspace_id: activeWS, content: draft.content, platforms: draft.platforms, scheduled_date: draft.date, scheduled_time: draft.time, status: "scheduled", approval: "pending", image_url: draft.image_url || null, video_url: draft.video_url || null }).select().single(); if (data) setPosts(prev => ({ ...prev, [activeWS!]: [data, ...(prev[activeWS!] || [])] })); resetDraft(); }
+  async function publishNow() { if (!draft.content || draft.platforms.length === 0 || !activeWS) return; const today = new Date().toISOString().split("T")[0]; const now = new Date().toTimeString().slice(0, 5); const { data } = await supabase.from("posts").insert({ workspace_id: activeWS, content: draft.content, platforms: draft.platforms, scheduled_date: today, scheduled_time: now, status: "publishing", approval: "approved", image_url: draft.image_url || null, video_url: draft.video_url || null }).select().single(); if (data) { setPosts(prev => ({ ...prev, [activeWS!]: [data, ...(prev[activeWS!] || [])] })); if (draft.platforms.includes("youtube") && draft.video_url) { const vid = draft.video_url; const cnt = draft.content; resetDraft(); await publishToYouTube({ ...data, video_url: vid, content: cnt }); return; } } resetDraft(); }
 
-  async function saveAsDraft() {
-    if (!draft.content || !activeWS) return;
-    const { data } = await supabase.from("posts").insert({ workspace_id: activeWS, content: draft.content, platforms: draft.platforms, scheduled_date: draft.date || null, scheduled_time: draft.time, status: "draft", approval: "none", image_url: draft.image_url || null, video_url: draft.video_url || null }).select().single();
-    if (data) setPosts(prev => ({ ...prev, [activeWS!]: [data, ...(prev[activeWS!] || [])] })); resetDraft();
-  }
-  async function schedulePost() {
-    if (!draft.content || !draft.date || draft.platforms.length === 0 || !activeWS) return;
-    const { data } = await supabase.from("posts").insert({ workspace_id: activeWS, content: draft.content, platforms: draft.platforms, scheduled_date: draft.date, scheduled_time: draft.time, status: "scheduled", approval: "pending", image_url: draft.image_url || null, video_url: draft.video_url || null }).select().single();
-    if (data) setPosts(prev => ({ ...prev, [activeWS!]: [data, ...(prev[activeWS!] || [])] })); resetDraft();
-  }
-  async function publishNow() {
-    if (!draft.content || draft.platforms.length === 0 || !activeWS) return;
-    const today = new Date().toISOString().split("T")[0]; const now = new Date().toTimeString().slice(0, 5);
-    const { data } = await supabase.from("posts").insert({ workspace_id: activeWS, content: draft.content, platforms: draft.platforms, scheduled_date: today, scheduled_time: now, status: "publishing", approval: "approved", image_url: draft.image_url || null, video_url: draft.video_url || null }).select().single();
-    if (data) { setPosts(prev => ({ ...prev, [activeWS!]: [data, ...(prev[activeWS!] || [])] })); if (draft.platforms.includes("youtube") && draft.video_url) { const vid = draft.video_url; const cnt = draft.content; resetDraft(); await publishToYouTube({ ...data, video_url: vid, content: cnt }); return; } }
-    resetDraft();
-  }
-
-  async function addWorkspace() {
-    if (!newWS.name) return; const ini = newWS.name.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase();
-    const { data } = await supabase.from("workspaces").insert({ user_id: userEmail, ...newWS, avatar: ini }).select().single();
-    if (data) { setWorkspaces(prev => [...prev, data]); setPosts(prev => ({ ...prev, [data.id]: [] })); setActiveWS(data.id); }
-    setNewWS({ name: "", industry: "", color: WORKSPACE_COLORS[0] }); setShowNewWS(false);
-  }
+  async function addWorkspace() { if (!newWS.name) return; const ini = newWS.name.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase(); const { data } = await supabase.from("workspaces").insert({ user_id: userEmail, ...newWS, avatar: ini }).select().single(); if (data) { setWorkspaces(prev => [...prev, data]); setPosts(prev => ({ ...prev, [data.id]: [] })); setActiveWS(data.id); } setNewWS({ name: "", industry: "", color: WORKSPACE_COLORS[0] }); setShowNewWS(false); }
   async function approvePost(id: string, decision: string) { await supabase.from("posts").update({ approval: decision }).eq("id", id); if (activeWS) setPosts(prev => ({ ...prev, [activeWS]: prev[activeWS].map(p => p.id === id ? { ...p, approval: decision } : p) })); }
   async function deletePost(id: string) { await supabase.from("posts").delete().eq("id", id); if (activeWS) setPosts(prev => ({ ...prev, [activeWS]: prev[activeWS].filter(p => p.id !== id) })); }
 
   function handleDragStart(e: any, idx: number) { setDragIndex(idx); e.dataTransfer.effectAllowed = "move"; }
   function handleDragOver(e: any, idx: number) { e.preventDefault(); e.dataTransfer.dropEffect = "move"; setDragOverIdx(idx); }
-  async function handleDrop(e: any, toIdx: number) {
-    e.preventDefault(); if (dragIndex === null || dragIndex === toIdx || !activeWS) { setDragIndex(null); setDragOverIdx(null); return; }
-    const sched = (posts[activeWS] || []).filter(p => p.status === "scheduled").sort((a: any, b: any) => `${a.scheduled_date}T${a.scheduled_time}`.localeCompare(`${b.scheduled_date}T${b.scheduled_time}`));
-    const reordered = [...sched]; const [moved] = reordered.splice(dragIndex, 1); reordered.splice(toIdx, 0, moved);
-    const allTimes = sched.map((p: any) => ({ date: p.scheduled_date, time: p.scheduled_time })).sort((a: any, b: any) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`));
-    const updates: PromiseLike<any>[] = [];
-    const updatedPosts = reordered.map((post: any, i: number) => { const slot = allTimes[i]; if (post.scheduled_date !== slot.date || post.scheduled_time !== slot.time) updates.push(supabase.from("posts").update({ scheduled_date: slot.date, scheduled_time: slot.time }).eq("id", post.id)); return { ...post, scheduled_date: slot.date, scheduled_time: slot.time }; });
-    const otherPosts = (posts[activeWS] || []).filter(p => p.status !== "scheduled");
-    setPosts(prev => ({ ...prev, [activeWS!]: [...updatedPosts, ...otherPosts] })); await Promise.all(updates); setDragIndex(null); setDragOverIdx(null);
-  }
+  async function handleDrop(e: any, toIdx: number) { e.preventDefault(); if (dragIndex === null || dragIndex === toIdx || !activeWS) { setDragIndex(null); setDragOverIdx(null); return; } const sched = (posts[activeWS] || []).filter(p => p.status === "scheduled").sort((a: any, b: any) => `${a.scheduled_date}T${a.scheduled_time}`.localeCompare(`${b.scheduled_date}T${b.scheduled_time}`)); const reordered = [...sched]; const [moved] = reordered.splice(dragIndex, 1); reordered.splice(toIdx, 0, moved); const allTimes = sched.map((p: any) => ({ date: p.scheduled_date, time: p.scheduled_time })).sort((a: any, b: any) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`)); const updates: PromiseLike<any>[] = []; const updatedPosts = reordered.map((post: any, i: number) => { const slot = allTimes[i]; if (post.scheduled_date !== slot.date || post.scheduled_time !== slot.time) updates.push(supabase.from("posts").update({ scheduled_date: slot.date, scheduled_time: slot.time }).eq("id", post.id)); return { ...post, scheduled_date: slot.date, scheduled_time: slot.time }; }); const otherPosts = (posts[activeWS] || []).filter(p => p.status !== "scheduled"); setPosts(prev => ({ ...prev, [activeWS!]: [...updatedPosts, ...otherPosts] })); await Promise.all(updates); setDragIndex(null); setDragOverIdx(null); }
 
   if (status === "loading") return null;
   if (session && loading && workspaces.length === 0) return <div style={{ minHeight: "100vh", background: BRAND.dark, display: "flex", alignItems: "center", justifyContent: "center" }}><div style={{ color: "#fff", fontSize: 16, fontWeight: 600 }}>Loading...</div></div>;
-  if (!session) { if (screen === "register") return <RegisterPage onGoLogin={() => setScreen("login")} />; return <LoginPage onGoRegister={() => setScreen("register")} />; }
 
+  // ── NOT LOGGED IN → SHOW LANDING PAGE ──
+  if (!session) return <LandingPage />;
+
+  // ── LOGGED IN → SHOW APP ──
   const ws = workspaces.find(w => w.id === activeWS);
   const wsPosts = activeWS ? (posts[activeWS] || []) : [];
   const scheduled = wsPosts.filter(p => p.status === "scheduled").sort((a: any, b: any) => `${a.scheduled_date}T${a.scheduled_time}`.localeCompare(`${b.scheduled_date}T${b.scheduled_time}`));
@@ -259,12 +360,12 @@ export default function App() {
   const NAV = [
     { id: "dashboard", icon: <LayoutDashboard size={16} />, label: t("Dashboard", "Dashboard") },
     { id: "calendar", icon: <Calendar size={16} />, label: t("Calendar", "Kalender") },
-    { id: "posts", icon: <PenLine size={16} />, label: t("Posts", "Posts") },
+    { id: "posts", icon: <PenLine size={16} />, label: "Posts" },
     { id: "queue", icon: <Clock size={16} />, label: t("Queue", "Wachtrij") },
     { id: "drafts", icon: <FileText size={16} />, label: t("Drafts", "Concepten") },
     { id: "approval", icon: <CheckSquare size={16} />, label: t("Approval", "Goedkeuring"), badge: pending.length },
     { id: "analytics", icon: <BarChart2 size={16} />, label: t("Analytics", "Statistieken") },
-    { id: "media", icon: <Image size={16} />, label: t("Media", "Media") },
+    { id: "media", icon: <Image size={16} />, label: "Media" },
     { id: "team", icon: <Users size={16} />, label: "Team" },
     { id: "settings", icon: <Settings size={16} />, label: t("Settings", "Instellingen") },
   ];
@@ -280,11 +381,10 @@ export default function App() {
         </div>
         <div style={{ padding: "10px 8px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           {sidebarOpen && <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.25)", letterSpacing: 1.5, marginBottom: 6, paddingLeft: 4 }}>WORKSPACES</div>}
-          {workspaces.map(w => { const wP = (posts[w.id] || []).filter((p: any) => p.approval === "pending" && p.status !== "draft").length; const act = w.id === activeWS; return <button key={w.id} onClick={() => switchWorkspace(w.id)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 8, padding: "7px 6px", borderRadius: 9, marginBottom: 2, background: act ? "rgba(124,58,237,0.25)" : "transparent", border: act ? "1px solid rgba(124,58,237,0.35)" : "1px solid transparent", cursor: "pointer" }}><Avatar initials={w.avatar} color={w.color} size={28} />{sidebarOpen && <><div style={{ flex: 1, textAlign: "left", overflow: "hidden" }}><div style={{ fontSize: 12, fontWeight: 600, color: act ? "#fff" : "rgba(255,255,255,0.65)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{w.name}</div></div>{wP > 0 && <span style={{ background: BRAND.primary, color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 10, padding: "1px 6px" }}>{wP}</span>}</>}</button>; })}
+          {workspaces.map(w => { const act = w.id === activeWS; return <button key={w.id} onClick={() => switchWorkspace(w.id)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 8, padding: "7px 6px", borderRadius: 9, marginBottom: 2, background: act ? "rgba(124,58,237,0.25)" : "transparent", border: act ? "1px solid rgba(124,58,237,0.35)" : "1px solid transparent", cursor: "pointer" }}><Avatar initials={w.avatar} color={w.color} size={28} />{sidebarOpen && <div style={{ flex: 1, textAlign: "left", overflow: "hidden" }}><div style={{ fontSize: 12, fontWeight: 600, color: act ? "#fff" : "rgba(255,255,255,0.65)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{w.name}</div></div>}</button>; })}
           <button onClick={() => setShowNewWS(true)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 8, padding: "6px", borderRadius: 9, marginTop: 2, background: "transparent", border: "1px dashed rgba(255,255,255,0.1)", cursor: "pointer" }}><div style={{ width: 28, height: 28, borderRadius: "50%", border: "1.5px dashed rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "rgba(255,255,255,0.3)", fontSize: 16 }}>+</span></div>{sidebarOpen && <span style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>{t("New workspace", "Nieuwe workspace")}</span>}</button>
         </div>
         <div style={{ padding: "8px", flex: 1, overflowY: "auto" }}>
-          {sidebarOpen && <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.25)", letterSpacing: 1.5, marginBottom: 6, paddingLeft: 4, marginTop: 4 }}>MENU</div>}
           {NAV.map(n => { const act = page === n.id; return <button key={n.id} onClick={() => setPage(n.id)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "8px", borderRadius: 9, marginBottom: 1, background: act ? "rgba(124,58,237,0.2)" : "transparent", border: "none", cursor: "pointer", position: "relative" }}><span style={{ flexShrink: 0, width: 20, display: "flex", alignItems: "center", justifyContent: "center", color: act ? "#fff" : "rgba(255,255,255,0.55)" }}>{n.icon}</span>{sidebarOpen && <span style={{ fontSize: 13, color: act ? "#fff" : "rgba(255,255,255,0.55)", fontWeight: act ? 600 : 400 }}>{n.label}</span>}{n.badge && n.badge > 0 ? <span style={{ marginLeft: "auto", background: BRAND.primary, color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 10, padding: "1px 6px" }}>{n.badge}</span> : null}{act && <div style={{ position: "absolute", left: 0, top: "20%", height: "60%", width: 3, background: BRAND.primary, borderRadius: "0 3px 3px 0" }} />}</button>; })}
         </div>
         <div style={{ padding: "10px 8px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
@@ -294,104 +394,59 @@ export default function App() {
 
       {/* MAIN */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-        {/* TOP BAR */}
         <div style={{ background: theme.headerBg, borderBottom: `1px solid ${theme.border}`, padding: "0 24px", display: "flex", alignItems: "center", height: 58, gap: 12, flexShrink: 0 }}>
           {!sidebarOpen && <button onClick={() => setSidebarOpen(true)} style={{ width: 36, height: 36, borderRadius: 8, border: `1px solid ${theme.border}`, background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", marginRight: 4 }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={theme.textS} strokeWidth="2.5"><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></svg></button>}
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>{ws && <Avatar initials={ws.avatar} color={ws.color} size={32} />}<div><div style={{ fontSize: 14, fontWeight: 700, color: theme.text }}>{ws?.name}</div><div style={{ fontSize: 11, color: theme.textT }}>{ws?.industry}</div></div></div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>{ws && <Avatar initials={ws.avatar} color={ws.color} size={32} />}<div><div style={{ fontSize: 14, fontWeight: 700, color: theme.text }}>{ws?.name}</div></div></div>
           <div style={{ flex: 1 }} />
           <button onClick={() => setShowNewPost(true)} style={{ background: BRAND.gradBtn, color: "#fff", border: "none", borderRadius: 9, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer", marginRight: 8 }}>+ {t("Create Post", "Maak Post")}</button>
-          <button onClick={() => { setShowSupport(o => !o); setShowNews(false); }} style={{ width: 34, height: 34, borderRadius: 8, border: "none", background: showSupport ? theme.tagBg : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><Headphones size={18} color={showSupport ? BRAND.primary : theme.textS} /></button>
-          <button onClick={() => { setShowNews(o => !o); setShowSupport(false); }} style={{ width: 34, height: 34, borderRadius: 8, border: "none", background: showNews ? theme.tagBg : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><Newspaper size={18} color={showNews ? BRAND.primary : theme.textS} /></button>
           <button onClick={() => setDarkMode(o => !o)} style={{ width: 34, height: 34, borderRadius: 8, border: "none", background: darkMode ? theme.tagBg : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>{darkMode ? <Sun size={18} color={BRAND.amber} /> : <Moon size={18} color={theme.textS} />}</button>
           <div style={{ position: "relative" }}>
             <button onClick={() => setShowLangMenu(o => !o)} style={{ width: 34, height: 34, borderRadius: 8, border: "none", background: showLangMenu ? theme.tagBg : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><Globe size={18} color={showLangMenu ? BRAND.primary : theme.textS} /></button>
             {showLangMenu && <div style={{ position: "absolute", right: 0, top: "calc(100% + 8px)", background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 10, boxShadow: "0 8px 30px rgba(0,0,0,0.18)", overflow: "hidden", zIndex: 200, minWidth: 150 }}>{[{ code: "en", label: "🇬🇧 English" }, { code: "nl", label: "🇳🇱 Nederlands" }].map(l => <button key={l.code} onClick={() => { setLanguage(l.code as any); setShowLangMenu(false); }} style={{ width: "100%", padding: "10px 16px", background: language === l.code ? theme.tagBg : "none", border: "none", cursor: "pointer", fontSize: 13, color: language === l.code ? BRAND.primary : theme.text, textAlign: "left", fontWeight: language === l.code ? 700 : 400 }}>{l.label}</button>)}</div>}
           </div>
-          <div style={{ position: "relative", marginLeft: 4 }}>
-            <button onClick={() => setShowUserMenu(o => !o)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: `1px solid ${theme.border}`, borderRadius: 10, padding: "5px 10px", cursor: "pointer" }}>
-              {session.user?.image ? <img src={session.user.image} style={{ width: 30, height: 30, borderRadius: "50%" }} alt="" /> : <div style={{ width: 30, height: 30, borderRadius: "50%", background: BRAND.gradBtn, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, color: "#fff" }}>{userInitials}</div>}
-              <div style={{ textAlign: "left" }}><div style={{ fontSize: 12, fontWeight: 700, color: theme.text }}>{userName}</div><div style={{ fontSize: 10, color: theme.textT }}>{userEmail}</div></div><span style={{ fontSize: 12, color: theme.textT }}>▾</span>
-            </button>
-            {showUserMenu && <div style={{ position: "absolute", right: 0, top: "calc(100% + 8px)", background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 14, boxShadow: "0 8px 30px rgba(0,0,0,0.18)", width: 220, zIndex: 200, overflow: "hidden" }}>
-              <div style={{ padding: "14px 16px", borderBottom: `1px solid ${theme.border}` }}><div style={{ fontSize: 13, fontWeight: 700, color: theme.text }}>{userName}</div><div style={{ fontSize: 11, color: theme.textT }}>{userEmail}</div></div>
-              {[{ icon: <Settings size={15} />, label: t("Settings", "Instellingen") }, { icon: <CreditCard size={15} />, label: t("Billing", "Facturering") }, { icon: <HelpCircle size={15} />, label: t("Help", "Hulp") }].map(item => <button key={item.label} onClick={() => setShowUserMenu(false)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", background: "none", border: "none", cursor: "pointer", fontSize: 13, color: theme.text, textAlign: "left" }}>{item.icon}{item.label}</button>)}
-              <div style={{ borderTop: `1px solid ${theme.border}` }}><button onClick={() => signOut({ callbackUrl: "/" })} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", background: "none", border: "none", cursor: "pointer", fontSize: 13, color: BRAND.red, textAlign: "left" }}><LogOut size={15} color={BRAND.red} />{t("Logout", "Uitloggen")}</button></div>
-            </div>}
-          </div>
+          <button onClick={() => signOut({ callbackUrl: "/" })} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: `1px solid ${theme.border}`, borderRadius: 10, padding: "5px 10px", cursor: "pointer", marginLeft: 4 }}>
+            {session.user?.image ? <img src={session.user.image} style={{ width: 30, height: 30, borderRadius: "50%" }} alt="" /> : <div style={{ width: 30, height: 30, borderRadius: "50%", background: BRAND.gradBtn, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, color: "#fff" }}>{userInitials}</div>}
+            <div style={{ textAlign: "left" }}><div style={{ fontSize: 12, fontWeight: 700, color: theme.text }}>{userName}</div><div style={{ fontSize: 10, color: theme.textT }}>{t("Sign out", "Uitloggen")}</div></div>
+          </button>
         </div>
 
-        {/* CONTENT */}
         <div style={{ flex: 1, overflowY: "auto", padding: "24px" }}>
-
           {/* DASHBOARD */}
           {page === "dashboard" && <div>
-            <h1 style={{ fontSize: 22, fontWeight: 800, color: theme.text, marginBottom: 4 }}>Dashboard</h1>
-            <p style={{ fontSize: 13, color: theme.textT, marginBottom: 20 }}>{t(`Welcome back, ${userName}`, `Welkom terug, ${userName}`)}</p>
+            <h1 style={{ fontSize: 22, fontWeight: 800, color: theme.text, marginBottom: 20 }}>Dashboard</h1>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginBottom: 24 }}>
-              {[{ label: t("Total", "Totaal"), value: wsPosts.length, color: BRAND.primary, icon: <PenLine size={16} color={BRAND.primary} /> }, { label: t("Scheduled", "Gepland"), value: scheduled.length, color: "#0EA5E9", icon: <Clock3 size={16} color="#0EA5E9" /> }, { label: t("Published", "Gepubliceerd"), value: published.length, color: BRAND.green, icon: <CheckCircle size={16} color={BRAND.green} /> }, { label: t("Pending", "In afwachting"), value: pending.length, color: BRAND.amber, icon: <AlertCircle size={16} color={BRAND.amber} /> }].map(s => <div key={s.label} style={{ background: theme.card, borderRadius: 14, padding: "18px 20px", border: `1px solid ${theme.border}` }}><div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}><div style={{ fontSize: 11, fontWeight: 700, color: theme.textT }}>{s.label.toUpperCase()}</div><div style={{ width: 32, height: 32, borderRadius: 9, background: darkMode ? s.color + "20" : s.color + "15", display: "flex", alignItems: "center", justifyContent: "center" }}>{s.icon}</div></div><div style={{ fontSize: 34, fontWeight: 900, color: s.color }}>{s.value}</div></div>)}
+              {[{ label: "Total", value: wsPosts.length, color: BRAND.primary, icon: <PenLine size={16} color={BRAND.primary} /> }, { label: "Scheduled", value: scheduled.length, color: "#0EA5E9", icon: <Clock3 size={16} color="#0EA5E9" /> }, { label: "Published", value: published.length, color: BRAND.green, icon: <CheckCircle size={16} color={BRAND.green} /> }, { label: "Pending", value: pending.length, color: BRAND.amber, icon: <AlertCircle size={16} color={BRAND.amber} /> }].map(s => <div key={s.label} style={{ background: theme.card, borderRadius: 14, padding: "18px 20px", border: `1px solid ${theme.border}` }}><div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}><div style={{ fontSize: 11, fontWeight: 700, color: theme.textT }}>{s.label.toUpperCase()}</div><div style={{ width: 32, height: 32, borderRadius: 9, background: darkMode ? s.color + "20" : s.color + "15", display: "flex", alignItems: "center", justifyContent: "center" }}>{s.icon}</div></div><div style={{ fontSize: 34, fontWeight: 900, color: s.color }}>{s.value}</div></div>)}
             </div>
             <div style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 14, padding: "20px" }}>
               <div style={{ fontSize: 14, fontWeight: 700, color: theme.text, marginBottom: 16 }}>{t("Recent Posts", "Recente Posts")}</div>
-              {wsPosts.slice(0, 5).map((post: any) => <div key={post.id} style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 12, paddingBottom: 12, borderBottom: `1px solid ${theme.border}` }}><div style={{ flex: 1, overflow: "hidden" }}><div style={{ fontSize: 13, color: theme.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{post.content}</div><div style={{ display: "flex", gap: 5, marginTop: 4 }}>{post.platforms?.map((pid: string) => <PBadge key={pid} pid={pid} dark={darkMode} />)}<span style={{ fontSize: 11, color: theme.textT }}>{post.scheduled_date}</span></div></div><StatusTag status={post.status} approval={post.approval} /></div>)}
+              {wsPosts.slice(0, 5).map((post: any) => <div key={post.id} style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 12, paddingBottom: 12, borderBottom: `1px solid ${theme.border}` }}><div style={{ flex: 1, overflow: "hidden" }}><div style={{ fontSize: 13, color: theme.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{post.content}</div><div style={{ display: "flex", gap: 5, marginTop: 4 }}>{post.platforms?.map((pid: string) => <PBadge key={pid} pid={pid} dark={darkMode} />)}</div></div><StatusTag status={post.status} approval={post.approval} /></div>)}
               {wsPosts.length === 0 && <p style={{ fontSize: 13, color: theme.textT }}>{t("No posts yet", "Nog geen posts")}</p>}
             </div>
           </div>}
 
           {/* POSTS */}
           {page === "posts" && <div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}><h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text }}>{t("All Posts", "Alle Posts")}</h1><button onClick={() => setShowNewPost(true)} style={{ background: BRAND.gradBtn, color: "#fff", border: "none", borderRadius: 9, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>+ {t("Create", "Maak")}</button></div>
-            {wsPosts.map((post: any) => <div key={post.id} style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 14, padding: "16px 18px", marginBottom: 10 }}><div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}><div style={{ flex: 1 }}><p style={{ margin: "0 0 10px", fontSize: 14, color: theme.text, lineHeight: 1.6 }}>{post.content}</p><div style={{ display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center" }}>{post.platforms?.map((pid: string) => <PBadge key={pid} pid={pid} dark={darkMode} />)}<span style={{ fontSize: 11, color: theme.textT }}>• {post.scheduled_date} {post.scheduled_time}</span><StatusTag status={post.status} approval={post.approval} /></div></div><div style={{ display: "flex", gap: 6, flexShrink: 0, flexDirection: "column", alignItems: "flex-end" }}><div style={{ display: "flex", gap: 6 }}>{post.platforms?.includes("youtube") && post.video_url && post.status !== "published" && <button onClick={() => publishToYouTube(post)} disabled={publishing === post.id} style={{ fontSize: 12, background: "#FF000015", color: "#FF0000", border: "1px solid #FF000030", borderRadius: 7, padding: "5px 10px", cursor: "pointer", fontWeight: 600, opacity: publishing === post.id ? 0.5 : 1 }}>{publishing === post.id ? "Uploading..." : "▶ YouTube"}</button>}{post.approval === "pending" && post.status !== "draft" && <button onClick={() => approvePost(post.id, "approved")} style={{ fontSize: 12, background: darkMode ? "rgba(16,185,129,0.15)" : BRAND.greenL, color: BRAND.green, border: "none", borderRadius: 7, padding: "5px 10px", cursor: "pointer", fontWeight: 600 }}>✓</button>}<button onClick={() => deletePost(post.id)} style={{ fontSize: 12, background: darkMode ? "rgba(239,68,68,0.15)" : BRAND.redL, color: BRAND.red, border: "none", borderRadius: 7, padding: "5px 10px", cursor: "pointer", fontWeight: 600 }}>✕</button></div>{post.youtube_id && <a href={`https://www.youtube.com/watch?v=${post.youtube_id}`} target="_blank" rel="noopener" style={{ fontSize: 11, color: "#FF0000", fontWeight: 600, textDecoration: "none" }}>▶ YouTube</a>}</div></div></div>)}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}><h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text }}>Posts</h1><button onClick={() => setShowNewPost(true)} style={{ background: BRAND.gradBtn, color: "#fff", border: "none", borderRadius: 9, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>+</button></div>
+            {wsPosts.map((post: any) => <div key={post.id} style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 14, padding: "16px 18px", marginBottom: 10 }}><div style={{ display: "flex", gap: 12 }}><div style={{ flex: 1 }}><p style={{ margin: "0 0 10px", fontSize: 14, color: theme.text, lineHeight: 1.6 }}>{post.content}</p><div style={{ display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center" }}>{post.platforms?.map((pid: string) => <PBadge key={pid} pid={pid} dark={darkMode} />)}<span style={{ fontSize: 11, color: theme.textT }}>{post.scheduled_date} {post.scheduled_time}</span><StatusTag status={post.status} approval={post.approval} /></div></div><div style={{ display: "flex", gap: 6, flexShrink: 0, flexDirection: "column", alignItems: "flex-end" }}><div style={{ display: "flex", gap: 6 }}>{post.platforms?.includes("youtube") && post.video_url && post.status !== "published" && <button onClick={() => publishToYouTube(post)} disabled={publishing === post.id} style={{ fontSize: 12, background: "#FF000015", color: "#FF0000", border: "1px solid #FF000030", borderRadius: 7, padding: "5px 10px", cursor: "pointer", fontWeight: 600 }}>{publishing === post.id ? "..." : "▶ YT"}</button>}<button onClick={() => deletePost(post.id)} style={{ fontSize: 12, background: darkMode ? "rgba(239,68,68,0.15)" : BRAND.redL, color: BRAND.red, border: "none", borderRadius: 7, padding: "5px 10px", cursor: "pointer" }}>✕</button></div>{post.youtube_id && <a href={`https://www.youtube.com/watch?v=${post.youtube_id}`} target="_blank" rel="noopener" style={{ fontSize: 11, color: "#FF0000", fontWeight: 600, textDecoration: "none" }}>▶ YouTube</a>}</div></div></div>)}
           </div>}
 
           {/* CALENDAR */}
-          {page === "calendar" && (() => {
-            const today = new Date(); const yr = calDate.getFullYear(); const mo = calDate.getMonth(); const DAYS_SHORT = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-            const firstDay = new Date(yr, mo, 1).getDay(); const daysInMonth = new Date(yr, mo + 1, 0).getDate();
-            const cells = Array.from({ length: 42 }, (_, i) => { const d = i - firstDay + 1; return d >= 1 && d <= daysInMonth ? d : null; });
-            function postsForDate(date: Date) { return wsPosts.filter((p: any) => p.scheduled_date === date.toISOString().split("T")[0]); }
-            return <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
-                <span style={{ fontSize: 16, fontWeight: 700, color: theme.text, minWidth: 160 }}>{calDate.toLocaleString("en", { month: "long" })} {yr}</span>
-                <button onClick={() => setCalDate(new Date())} style={{ padding: "7px 16px", borderRadius: 8, border: "none", background: darkMode ? "rgba(13,148,136,0.15)" : "#E0F2F1", color: "#0D9488", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>{t("Today", "Vandaag")}</button>
-                <button onClick={() => { const d = new Date(calDate); d.setMonth(mo - 1); setCalDate(d); }} style={{ width: 32, height: 32, borderRadius: 8, border: "none", background: darkMode ? "rgba(13,148,136,0.15)" : "#E0F2F1", color: "#0D9488", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>‹</button>
-                <button onClick={() => { const d = new Date(calDate); d.setMonth(mo + 1); setCalDate(d); }} style={{ width: 32, height: 32, borderRadius: 8, border: "none", background: darkMode ? "rgba(13,148,136,0.15)" : "#E0F2F1", color: "#0D9488", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>›</button>
-              </div>
-              <div style={{ background: theme.card, borderRadius: 16, border: `1px solid ${theme.border}`, overflow: "hidden" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", borderBottom: `1px solid ${theme.border}` }}>{DAYS_SHORT.map(d => <div key={d} style={{ padding: "10px 0", textAlign: "center", fontSize: 12, fontWeight: 700, color: theme.textT }}>{d}</div>)}</div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)" }}>
-                  {cells.map((day, i) => { const date = day ? new Date(yr, mo, day) : null; const isToday = date ? date.toDateString() === today.toDateString() : false; const dayPosts = date ? postsForDate(date) : []; return <div key={i} style={{ minHeight: 90, padding: "6px 4px", borderRight: `1px solid ${theme.border}`, borderBottom: `1px solid ${theme.border}`, background: theme.card }}>{day && <div style={{ fontSize: 13, fontWeight: isToday ? 800 : 500, color: isToday ? "#0D9488" : theme.textS, marginBottom: 4, textAlign: "right", paddingRight: 4 }}>{day}</div>}{dayPosts.slice(0, 2).map((post: any) => <div key={post.id} style={{ fontSize: 10, background: darkMode ? "rgba(124,58,237,0.15)" : BRAND.primaryL, color: BRAND.primary, borderRadius: 4, padding: "2px 4px", marginBottom: 2, overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>{post.content.slice(0, 20)}</div>)}</div>; })}
-                </div>
-              </div>
-            </div>;
-          })()}
+          {page === "calendar" && (() => { const today = new Date(); const yr = calDate.getFullYear(); const mo = calDate.getMonth(); const DS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]; const fd = new Date(yr, mo, 1).getDay(); const dim = new Date(yr, mo + 1, 0).getDate(); const cells = Array.from({ length: 42 }, (_, i) => { const d = i - fd + 1; return d >= 1 && d <= dim ? d : null; }); const pfd = (date: Date) => wsPosts.filter((p: any) => p.scheduled_date === date.toISOString().split("T")[0]); return <div><div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}><span style={{ fontSize: 16, fontWeight: 700, color: theme.text, minWidth: 160 }}>{calDate.toLocaleString("en", { month: "long" })} {yr}</span><button onClick={() => { const d = new Date(calDate); d.setMonth(mo - 1); setCalDate(d); }} style={{ width: 32, height: 32, borderRadius: 8, border: "none", background: darkMode ? "rgba(13,148,136,0.15)" : "#E0F2F1", color: "#0D9488", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>‹</button><button onClick={() => { const d = new Date(calDate); d.setMonth(mo + 1); setCalDate(d); }} style={{ width: 32, height: 32, borderRadius: 8, border: "none", background: darkMode ? "rgba(13,148,136,0.15)" : "#E0F2F1", color: "#0D9488", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>›</button></div><div style={{ background: theme.card, borderRadius: 16, border: `1px solid ${theme.border}`, overflow: "hidden" }}><div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", borderBottom: `1px solid ${theme.border}` }}>{DS.map(d => <div key={d} style={{ padding: "10px 0", textAlign: "center", fontSize: 12, fontWeight: 700, color: theme.textT }}>{d}</div>)}</div><div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)" }}>{cells.map((day, i) => { const date = day ? new Date(yr, mo, day) : null; const isToday = date ? date.toDateString() === today.toDateString() : false; const dp = date ? pfd(date) : []; return <div key={i} style={{ minHeight: 90, padding: "6px 4px", borderRight: `1px solid ${theme.border}`, borderBottom: `1px solid ${theme.border}` }}>{day && <div style={{ fontSize: 13, fontWeight: isToday ? 800 : 500, color: isToday ? "#0D9488" : theme.textS, textAlign: "right", paddingRight: 4, marginBottom: 4 }}>{day}</div>}{dp.slice(0,2).map((post: any) => <div key={post.id} style={{ fontSize: 10, background: darkMode ? "rgba(124,58,237,0.15)" : BRAND.primaryL, color: BRAND.primary, borderRadius: 4, padding: "2px 4px", marginBottom: 2, overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>{post.content.slice(0,20)}</div>)}</div>; })}</div></div></div>; })()}
 
           {/* QUEUE */}
-          {page === "queue" && <div>
-            <h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text, marginBottom: 6 }}>{t("Queue", "Wachtrij")}</h1>
-            <p style={{ fontSize: 13, color: theme.textT, marginBottom: 20 }}>{t("Drag to reorder.", "Sleep om te herordenen.")}</p>
-            {scheduled.length === 0 && <div style={{ textAlign: "center", padding: "3rem 0" }}><div style={{ fontSize: 44, marginBottom: 10 }}>📭</div><div style={{ fontSize: 15, fontWeight: 600, color: theme.textS }}>{t("No scheduled posts", "Geen geplande posts")}</div></div>}
-            <div onDragOver={(e: any) => e.preventDefault()}>{scheduled.map((post: any, idx: number) => <DraggableQueueItem key={post.id} post={post} index={idx} onDragStart={handleDragStart} onDragOver={handleDragOver} onDrop={handleDrop} isDragging={dragIndex} dragOverIndex={dragOverIdx} theme={theme} dark={darkMode} />)}</div>
-          </div>}
+          {page === "queue" && <div><h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text, marginBottom: 20 }}>{t("Queue", "Wachtrij")}</h1>{scheduled.length === 0 && <div style={{ textAlign: "center", padding: "3rem 0" }}>📭 {t("No scheduled posts", "Geen geplande posts")}</div>}<div onDragOver={(e: any) => e.preventDefault()}>{scheduled.map((post: any, idx: number) => <DraggableQueueItem key={post.id} post={post} index={idx} onDragStart={handleDragStart} onDragOver={handleDragOver} onDrop={handleDrop} isDragging={dragIndex} dragOverIndex={dragOverIdx} theme={theme} dark={darkMode} />)}</div></div>}
 
           {/* DRAFTS */}
-          {page === "drafts" && <div>
-            <h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text, marginBottom: 20 }}>{t("Drafts", "Concepten")}</h1>
-            {draftPosts.length === 0 ? <div style={{ textAlign: "center", padding: "3rem 0", color: theme.textT }}>📝 {t("No drafts", "Geen concepten")}</div>
-              : draftPosts.map((post: any) => <div key={post.id} style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 12, padding: "14px 16px", marginBottom: 8, display: "flex", gap: 12, alignItems: "center" }}><div style={{ flex: 1 }}><div style={{ fontSize: 13, color: theme.text }}>{post.content}</div></div><button onClick={() => deletePost(post.id)} style={{ fontSize: 12, background: darkMode ? "rgba(239,68,68,0.15)" : BRAND.redL, color: BRAND.red, border: "none", borderRadius: 7, padding: "5px 10px", cursor: "pointer" }}>{t("Delete", "Verwijder")}</button></div>)}
-          </div>}
+          {page === "drafts" && <div><h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text, marginBottom: 20 }}>{t("Drafts", "Concepten")}</h1>{draftPosts.length === 0 ? <div style={{ textAlign: "center", padding: "3rem 0", color: theme.textT }}>📝 {t("No drafts", "Geen concepten")}</div> : draftPosts.map((post: any) => <div key={post.id} style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 12, padding: "14px 16px", marginBottom: 8, display: "flex", alignItems: "center" }}><div style={{ flex: 1, fontSize: 13, color: theme.text }}>{post.content}</div><button onClick={() => deletePost(post.id)} style={{ fontSize: 12, background: darkMode ? "rgba(239,68,68,0.15)" : BRAND.redL, color: BRAND.red, border: "none", borderRadius: 7, padding: "5px 10px", cursor: "pointer" }}>✕</button></div>)}</div>}
 
           {/* APPROVAL */}
-          {page === "approval" && <div>
-            <h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text, marginBottom: 20 }}>{t("Approval", "Goedkeuring")}</h1>
-            {pending.length === 0 ? <div style={{ textAlign: "center", padding: "4rem 0" }}>🎉 <span style={{ fontSize: 16, fontWeight: 700, color: theme.text }}>{t("All caught up!", "Alles bijgewerkt!")}</span></div>
-              : pending.map((post: any) => <div key={post.id} style={{ background: theme.card, border: `1.5px solid ${BRAND.amber}50`, borderRadius: 16, padding: "18px", marginBottom: 14 }}><p style={{ margin: "0 0 12px", fontSize: 14, color: theme.text }}>{post.content}</p><div style={{ display: "flex", gap: 6, marginBottom: 16 }}>{post.platforms?.map((pid: string) => <PBadge key={pid} pid={pid} dark={darkMode} />)}<span style={{ fontSize: 12, color: theme.textT }}>{post.scheduled_date}</span></div><div style={{ display: "flex", gap: 10 }}><button onClick={() => approvePost(post.id, "approved")} style={{ flex: 1, padding: "10px", background: darkMode ? "rgba(16,185,129,0.15)" : BRAND.greenL, color: BRAND.green, border: `1px solid ${BRAND.green}40`, borderRadius: 10, cursor: "pointer", fontSize: 14, fontWeight: 700 }}>✓ {t("Approve", "Goedkeuren")}</button><button onClick={() => approvePost(post.id, "rejected")} style={{ flex: 1, padding: "10px", background: darkMode ? "rgba(239,68,68,0.15)" : BRAND.redL, color: BRAND.red, border: `1px solid ${BRAND.red}40`, borderRadius: 10, cursor: "pointer", fontSize: 14, fontWeight: 700 }}>✕ {t("Reject", "Afwijzen")}</button></div></div>)}
-          </div>}
+          {page === "approval" && <div><h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text, marginBottom: 20 }}>{t("Approval", "Goedkeuring")}</h1>{pending.length === 0 ? <div style={{ textAlign: "center", padding: "4rem 0" }}>🎉 {t("All caught up!", "Alles bijgewerkt!")}</div> : pending.map((post: any) => <div key={post.id} style={{ background: theme.card, border: `1.5px solid ${BRAND.amber}50`, borderRadius: 16, padding: "18px", marginBottom: 14 }}><p style={{ margin: "0 0 12px", fontSize: 14, color: theme.text }}>{post.content}</p><div style={{ display: "flex", gap: 10 }}><button onClick={() => approvePost(post.id, "approved")} style={{ flex: 1, padding: "10px", background: darkMode ? "rgba(16,185,129,0.15)" : BRAND.greenL, color: BRAND.green, border: `1px solid ${BRAND.green}40`, borderRadius: 10, cursor: "pointer", fontWeight: 700 }}>✓</button><button onClick={() => approvePost(post.id, "rejected")} style={{ flex: 1, padding: "10px", background: darkMode ? "rgba(239,68,68,0.15)" : BRAND.redL, color: BRAND.red, border: `1px solid ${BRAND.red}40`, borderRadius: 10, cursor: "pointer", fontWeight: 700 }}>✕</button></div></div>)}</div>}
 
           {/* ANALYTICS */}
-          {page === "analytics" && <div><h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text, marginBottom: 20 }}>{t("Analytics", "Statistieken")}</h1><div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14 }}>{[{ label: "Reach", value: "12,450", color: BRAND.primary }, { label: "Engagement", value: "4.8%", color: BRAND.green }, { label: "Posts", value: String(wsPosts.length), color: "#0EA5E9" }].map(s => <div key={s.label} style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 14, padding: "18px 20px" }}><div style={{ fontSize: 11, fontWeight: 700, color: theme.textT, marginBottom: 10 }}>{s.label.toUpperCase()}</div><div style={{ fontSize: 30, fontWeight: 900, color: s.color }}>{s.value}</div></div>)}</div></div>}
+          {page === "analytics" && <div><h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text, marginBottom: 20 }}>Analytics</h1><div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14 }}>{[{ l: "Reach", v: "12,450", c: BRAND.primary }, { l: "Engagement", v: "4.8%", c: BRAND.green }, { l: "Posts", v: String(wsPosts.length), c: "#0EA5E9" }].map(s => <div key={s.l} style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 14, padding: "18px 20px" }}><div style={{ fontSize: 11, fontWeight: 700, color: theme.textT, marginBottom: 10 }}>{s.l.toUpperCase()}</div><div style={{ fontSize: 30, fontWeight: 900, color: s.c }}>{s.v}</div></div>)}</div></div>}
 
           {/* MEDIA */}
-          {page === "media" && <div><h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text, marginBottom: 20 }}>{t("Media", "Media")}</h1><div style={{ background: theme.card, border: `2px dashed ${theme.border}`, borderRadius: 14, padding: "40px", textAlign: "center" }}><Upload size={36} color={theme.textT} /><div style={{ fontSize: 14, fontWeight: 600, color: theme.text, marginTop: 12 }}>{t("Drop files here", "Sleep bestanden hierheen")}</div></div></div>}
+          {page === "media" && <div><h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text, marginBottom: 20 }}>Media</h1><div style={{ background: theme.card, border: `2px dashed ${theme.border}`, borderRadius: 14, padding: "40px", textAlign: "center" }}><Upload size={36} color={theme.textT} /><div style={{ fontSize: 14, fontWeight: 600, color: theme.text, marginTop: 12 }}>{t("Drop files here", "Sleep bestanden hierheen")}</div></div></div>}
 
           {/* TEAM */}
           {page === "team" && <div><h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text, marginBottom: 20 }}>Team</h1><div style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 12, padding: "14px 16px", display: "flex", gap: 12, alignItems: "center" }}><Avatar initials={userInitials} color={BRAND.primary} size={40} /><div style={{ flex: 1 }}><div style={{ fontSize: 14, fontWeight: 700, color: theme.text }}>{userName}</div><div style={{ fontSize: 12, color: theme.textT }}>{userEmail}</div></div><Tag label="Admin" color={BRAND.primary} bg={darkMode ? "rgba(124,58,237,0.2)" : BRAND.primaryL} /></div></div>}
@@ -401,24 +456,13 @@ export default function App() {
             <h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text, marginBottom: 20 }}>{t("Settings", "Instellingen")}</h1>
             <div style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 14, padding: "18px", marginBottom: 14 }}>
               <div style={{ fontSize: 14, fontWeight: 700, color: theme.text, marginBottom: 12 }}>{t("Connected accounts", "Gekoppelde accounts")}</div>
-              {[{ id: "youtube", label: "YouTube", color: "#FF0000", icon: "▶", desc: t("Videos & Shorts", "Video's & Shorts") }, { id: "facebook", label: "Facebook", color: "#1877F2", icon: "f", desc: "Pages" }, { id: "instagram", label: "Instagram", color: "#E1306C", icon: "ig", desc: "Reels" }, { id: "tiktok", label: "TikTok", color: "#010101", icon: "tt", desc: t("Videos", "Video's") }, { id: "snapchat", label: "Snapchat", color: "#FFCE00", icon: "sc", desc: "Stories" }].map(p => (
+              {[{ id: "youtube", label: "YouTube", color: "#FF0000", icon: "▶", desc: "Videos & Shorts" }, { id: "facebook", label: "Facebook", color: "#1877F2", icon: "f", desc: "Pages" }, { id: "instagram", label: "Instagram", color: "#E1306C", icon: "ig", desc: "Reels" }, { id: "tiktok", label: "TikTok", color: "#010101", icon: "tt", desc: "Videos" }, { id: "snapchat", label: "Snapchat", color: "#FFCE00", icon: "sc", desc: "Stories" }].map(p => (
                 <div key={p.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: `1px solid ${darkMode ? "#2A2A40" : "#F3F4F6"}` }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                     <div style={{ width: 36, height: 36, borderRadius: 9, background: p.color + "15", border: `1px solid ${p.color}30`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, color: p.color, fontWeight: 700 }}>{p.icon}</div>
-                    <div>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: theme.text }}>{p.label}</div>
-                      <div style={{ fontSize: 11, color: theme.textT }}>{p.desc}</div>
-                      {p.id === "youtube" && ws?.youtube_channel_name && <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>{ws.youtube_channel_thumb && <img src={ws.youtube_channel_thumb} style={{ width: 20, height: 20, borderRadius: "50%" }} alt="" />}<span style={{ fontSize: 12, color: BRAND.green, fontWeight: 600 }}>{ws.youtube_channel_name}</span></div>}
-                    </div>
+                    <div><div style={{ fontSize: 13, fontWeight: 600, color: theme.text }}>{p.label}</div><div style={{ fontSize: 11, color: theme.textT }}>{p.desc}</div>{p.id === "youtube" && ws?.youtube_channel_name && <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>{ws.youtube_channel_thumb && <img src={ws.youtube_channel_thumb} style={{ width: 20, height: 20, borderRadius: "50%" }} alt="" />}<span style={{ fontSize: 12, color: BRAND.green, fontWeight: 600 }}>{ws.youtube_channel_name}</span></div>}</div>
                   </div>
-                  {p.id === "youtube" ? (
-                    ws?.youtube_channel_id ? (
-                      <div style={{ display: "flex", gap: 6 }}>
-                        <button onClick={() => { fetchYouTubeChannels(); setShowChannelPicker(true); }} style={{ fontSize: 12, padding: "6px 12px", borderRadius: 8, border: `1px solid ${p.color}`, background: p.color + "10", color: p.color, cursor: "pointer", fontWeight: 600 }}>{t("Switch", "Wissel")}</button>
-                        <button onClick={disconnectYouTube} style={{ fontSize: 12, padding: "6px 12px", borderRadius: 8, border: `1px solid ${BRAND.red}`, background: BRAND.red + "10", color: BRAND.red, cursor: "pointer", fontWeight: 600 }}>{t("Disconnect", "Ontkoppel")}</button>
-                      </div>
-                    ) : <button onClick={() => signIn("google", { callbackUrl: "/?pickChannel=true" })} style={{ fontSize: 12, padding: "6px 14px", borderRadius: 8, border: `1px solid ${p.color}`, background: p.color + "10", color: p.color, cursor: "pointer", fontWeight: 600 }}>Connect →</button>
-                  ) : <button style={{ fontSize: 12, padding: "6px 14px", borderRadius: 8, border: `1px solid ${theme.border}`, background: "transparent", color: theme.textT, cursor: "default", fontWeight: 600 }}>{t("Coming soon", "Binnenkort")}</button>}
+                  {p.id === "youtube" ? (ws?.youtube_channel_id ? <div style={{ display: "flex", gap: 6 }}><button onClick={() => { fetchYouTubeChannels(); setShowChannelPicker(true); }} style={{ fontSize: 12, padding: "6px 12px", borderRadius: 8, border: `1px solid ${p.color}`, background: p.color + "10", color: p.color, cursor: "pointer", fontWeight: 600 }}>{t("Switch", "Wissel")}</button><button onClick={disconnectYouTube} style={{ fontSize: 12, padding: "6px 12px", borderRadius: 8, border: `1px solid ${BRAND.red}`, background: BRAND.red + "10", color: BRAND.red, cursor: "pointer", fontWeight: 600 }}>{t("Disconnect", "Ontkoppel")}</button></div> : <button onClick={() => signIn("google", { callbackUrl: "/?pickChannel=true" })} style={{ fontSize: 12, padding: "6px 14px", borderRadius: 8, border: `1px solid ${p.color}`, background: p.color + "10", color: p.color, cursor: "pointer", fontWeight: 600 }}>Connect →</button>) : <button style={{ fontSize: 12, padding: "6px 14px", borderRadius: 8, border: `1px solid ${theme.border}`, background: "transparent", color: theme.textT, cursor: "default", fontWeight: 600 }}>{t("Coming soon", "Binnenkort")}</button>}
                 </div>
               ))}
             </div>
@@ -432,62 +476,24 @@ export default function App() {
           <div style={{ fontSize: 18, fontWeight: 800, marginBottom: 18, color: theme.text }}>{t("Create new post", "Nieuwe post")}</div>
           <div style={{ marginBottom: 14 }}><label style={{ fontSize: 12, fontWeight: 700, color: theme.textS, display: "block", marginBottom: 6 }}>TYPE</label><div style={{ display: "flex", gap: 8 }}>{["post", "story", "reel", "video"].map(tp => <button key={tp} onClick={() => setDraft(d => ({ ...d, type: tp }))} style={{ padding: "6px 14px", borderRadius: 8, border: draft.type === tp ? `2px solid ${BRAND.primary}` : `1px solid ${theme.border}`, background: draft.type === tp ? (darkMode ? "rgba(124,58,237,0.2)" : BRAND.primaryL) : "transparent", color: draft.type === tp ? BRAND.primary : theme.textS, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>{tp.charAt(0).toUpperCase() + tp.slice(1)}</button>)}</div></div>
           <div style={{ marginBottom: 14 }}><label style={{ fontSize: 12, fontWeight: 700, color: theme.textS, display: "block", marginBottom: 6 }}>PLATFORMS</label><div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>{PLATFORMS.map(p => <button key={p.id} onClick={() => setDraft(d => ({ ...d, platforms: d.platforms.includes(p.id) ? d.platforms.filter(x => x !== p.id) : [...d.platforms, p.id] }))} style={{ border: draft.platforms.includes(p.id) ? `2px solid ${p.color}` : `1px solid ${theme.border}`, background: draft.platforms.includes(p.id) ? (darkMode ? p.color + "20" : p.bg) : "transparent", color: draft.platforms.includes(p.id) ? p.color : theme.textS, borderRadius: 9, padding: "7px 14px", fontSize: 13, cursor: "pointer", fontWeight: draft.platforms.includes(p.id) ? 700 : 400 }}>{p.label}</button>)}</div></div>
-
-          {/* IMAGE UPLOAD */}
-          <div style={{ marginBottom: 14 }}>
-            <label style={{ fontSize: 12, fontWeight: 700, color: theme.textS, display: "block", marginBottom: 6 }}>{t("IMAGE", "AFBEELDING")}</label>
-            {draft.image_url ? <div style={{ borderRadius: 12, overflow: "hidden", border: `1px solid ${theme.border}` }}><div style={{ position: "relative" }}><img src={draft.image_url} style={{ width: "100%", height: 160, objectFit: "cover", display: "block" }} /><button onClick={() => setDraft(d => ({ ...d, image_url: "" }))} style={{ position: "absolute", top: 8, right: 8, background: BRAND.red, color: "#fff", border: "none", borderRadius: 8, padding: "5px 10px", cursor: "pointer", fontSize: 12 }}>✕</button></div><div style={{ padding: "10px 12px", display: "flex", alignItems: "center", gap: 8, background: theme.codeBg }}><div style={{ width: 8, height: 8, borderRadius: "50%", background: BRAND.green }} /><span style={{ fontSize: 12, color: BRAND.green, fontWeight: 600 }}>{t("Ready", "Klaar")}</span></div></div>
-              : uploadingImage ? <div style={{ borderRadius: 12, border: `1px solid ${BRAND.primary}40`, background: darkMode ? "rgba(124,58,237,0.1)" : BRAND.primaryL, padding: "20px", textAlign: "center" }}><div style={{ width: 40, height: 40, margin: "0 auto 12px", borderRadius: "50%", border: `3px solid ${BRAND.primary}30`, borderTopColor: BRAND.primary, animation: "spin 1s linear infinite" }} /><div style={{ fontSize: 13, fontWeight: 600, color: BRAND.primary }}>{t("Uploading...", "Uploaden...")}</div><style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style></div>
-              : <label style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, padding: "24px", borderRadius: 12, border: `2px dashed ${theme.border}`, cursor: "pointer", background: theme.codeBg }}><span style={{ fontSize: 24 }}>📷</span><span style={{ fontSize: 13, fontWeight: 600, color: theme.text }}>{t("Upload image", "Upload afbeelding")}</span><input type="file" accept="image/*" style={{ display: "none" }} onChange={async e => { const f = e.target.files?.[0]; if (f) { const u = await uploadImage(f); if (u) setDraft(d => ({ ...d, image_url: u })); } }} /></label>}
-          </div>
-
-          {/* VIDEO UPLOAD */}
-          <div style={{ marginBottom: 14 }}>
-            <label style={{ fontSize: 12, fontWeight: 700, color: theme.textS, display: "block", marginBottom: 6 }}>VIDEO</label>
-            {draft.video_url ? <div style={{ borderRadius: 12, overflow: "hidden", border: `1px solid ${theme.border}`, background: "#000" }}>
-              <div style={{ position: "relative", width: videoAspect === "vertical" ? 180 : "100%", margin: videoAspect === "vertical" ? "0 auto" : undefined }}>
-                <video src={draft.video_url} controls onLoadedMetadata={(e: any) => { const v = e.currentTarget; setVideoAspect(v.videoHeight > v.videoWidth ? "vertical" : "horizontal"); }} style={{ width: "100%", height: videoAspect === "vertical" ? 320 : 180, objectFit: "contain", display: "block", background: "#000" }} />
-                <button onClick={() => { setDraft(d => ({ ...d, video_url: "" })); setVideoAspect(null); }} style={{ position: "absolute", top: 8, right: 8, background: BRAND.red, color: "#fff", border: "none", borderRadius: 8, padding: "5px 10px", cursor: "pointer", fontSize: 12 }}>✕</button>
-              </div>
-              <div style={{ padding: "10px 12px", display: "flex", alignItems: "center", gap: 8, background: theme.codeBg }}><div style={{ width: 8, height: 8, borderRadius: "50%", background: BRAND.green }} /><span style={{ fontSize: 12, color: BRAND.green, fontWeight: 600 }}>{t("Ready", "Klaar")}</span><span style={{ fontSize: 11, marginLeft: "auto", background: videoAspect === "vertical" ? "#FF000015" : BRAND.primary + "15", padding: "2px 8px", borderRadius: 5, fontWeight: 700, color: videoAspect === "vertical" ? "#FF0000" : BRAND.primary }}>{videoAspect === "vertical" ? "Short / Reel" : "Video"}</span></div>
-            </div>
-              : uploadingVideo ? <div style={{ borderRadius: 12, border: `1px solid ${BRAND.primary}40`, background: darkMode ? "rgba(124,58,237,0.1)" : BRAND.primaryL, padding: "20px", textAlign: "center" }}><div style={{ width: 40, height: 40, margin: "0 auto 12px", borderRadius: "50%", border: `3px solid ${BRAND.primary}30`, borderTopColor: BRAND.primary, animation: "spin 1s linear infinite" }} /><div style={{ fontSize: 13, fontWeight: 600, color: BRAND.primary }}>{t("Uploading video...", "Video uploaden...")}</div><style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style></div>
-              : <label style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, padding: "24px", borderRadius: 12, border: `2px dashed ${theme.border}`, cursor: "pointer", background: theme.codeBg }}><span style={{ fontSize: 24 }}>🎬</span><span style={{ fontSize: 13, fontWeight: 600, color: theme.text }}>{t("Upload video", "Upload video")}</span><span style={{ fontSize: 11, color: theme.textT }}>MP4, MOV · max 256MB</span><input type="file" accept="video/mp4,video/*" style={{ display: "none" }} onChange={async e => { const f = e.target.files?.[0]; if (f) { const u = await uploadVideo(f); if (u) setDraft(d => ({ ...d, video_url: u })); } }} /></label>}
-          </div>
-
-          <div style={{ marginBottom: 14 }}><label style={{ fontSize: 12, fontWeight: 700, color: theme.textS, display: "block", marginBottom: 6 }}>{t("CONTENT", "INHOUD")}</label><textarea value={draft.content} onChange={e => setDraft(d => ({ ...d, content: e.target.value }))} placeholder={t("Write your post...", "Schrijf je post...")} style={{ width: "100%", minHeight: 120, boxSizing: "border-box", borderRadius: 10, border: `1px solid ${theme.inputBorder}`, padding: "10px 12px", fontSize: 14, resize: "vertical", fontFamily: "inherit", background: theme.inputBg, color: theme.text }} /><div style={{ fontSize: 12, color: draft.content.length > 280 ? BRAND.red : theme.textT, textAlign: "right", marginTop: 4 }}>{draft.content.length}/280</div></div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 18 }}><div><label style={{ fontSize: 12, fontWeight: 700, color: theme.textS, display: "block", marginBottom: 6 }}>{t("DATE", "DATUM")}</label><input type="date" value={draft.date} onChange={e => setDraft(d => ({ ...d, date: e.target.value }))} style={{ width: "100%", padding: "10px 12px", borderRadius: 9, border: `1px solid ${theme.inputBorder}`, fontSize: 14, boxSizing: "border-box", background: theme.inputBg, color: theme.text }} /></div><div><label style={{ fontSize: 12, fontWeight: 700, color: theme.textS, display: "block", marginBottom: 6 }}>{t("TIME", "TIJD")}</label><input type="time" value={draft.time} onChange={e => setDraft(d => ({ ...d, time: e.target.value }))} style={{ width: "100%", padding: "10px 12px", borderRadius: 9, border: `1px solid ${theme.inputBorder}`, fontSize: 14, boxSizing: "border-box", background: theme.inputBg, color: theme.text }} /></div></div>
+          <div style={{ marginBottom: 14 }}><label style={{ fontSize: 12, fontWeight: 700, color: theme.textS, display: "block", marginBottom: 6 }}>IMAGE</label>{draft.image_url ? <div style={{ borderRadius: 12, overflow: "hidden", border: `1px solid ${theme.border}` }}><div style={{ position: "relative" }}><img src={draft.image_url} style={{ width: "100%", height: 160, objectFit: "cover", display: "block" }} /><button onClick={() => setDraft(d => ({ ...d, image_url: "" }))} style={{ position: "absolute", top: 8, right: 8, background: BRAND.red, color: "#fff", border: "none", borderRadius: 8, padding: "5px 10px", cursor: "pointer", fontSize: 12 }}>✕</button></div><div style={{ padding: "8px 12px", background: theme.codeBg, display: "flex", alignItems: "center", gap: 6 }}><div style={{ width: 8, height: 8, borderRadius: "50%", background: BRAND.green }} /><span style={{ fontSize: 12, color: BRAND.green, fontWeight: 600 }}>Ready</span></div></div> : uploadingImage ? <div style={{ borderRadius: 12, background: darkMode ? "rgba(124,58,237,0.1)" : BRAND.primaryL, padding: "20px", textAlign: "center" }}><div style={{ width: 40, height: 40, margin: "0 auto 12px", borderRadius: "50%", border: `3px solid ${BRAND.primary}30`, borderTopColor: BRAND.primary, animation: "spin 1s linear infinite" }} /><div style={{ fontSize: 13, color: BRAND.primary, fontWeight: 600 }}>Uploading...</div><style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style></div> : <label style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, padding: "24px", borderRadius: 12, border: `2px dashed ${theme.border}`, cursor: "pointer", background: theme.codeBg }}><span style={{ fontSize: 24 }}>📷</span><span style={{ fontSize: 13, fontWeight: 600, color: theme.text }}>Upload image</span><input type="file" accept="image/*" style={{ display: "none" }} onChange={async e => { const f = e.target.files?.[0]; if (f) { const u = await uploadImage(f); if (u) setDraft(d => ({ ...d, image_url: u })); } }} /></label>}</div>
+          <div style={{ marginBottom: 14 }}><label style={{ fontSize: 12, fontWeight: 700, color: theme.textS, display: "block", marginBottom: 6 }}>VIDEO</label>{draft.video_url ? <div style={{ borderRadius: 12, overflow: "hidden", border: `1px solid ${theme.border}`, background: "#000" }}><div style={{ position: "relative", width: videoAspect === "vertical" ? 180 : "100%", margin: videoAspect === "vertical" ? "0 auto" : undefined }}><video src={draft.video_url} controls onLoadedMetadata={(e: any) => { const v = e.currentTarget; setVideoAspect(v.videoHeight > v.videoWidth ? "vertical" : "horizontal"); }} style={{ width: "100%", height: videoAspect === "vertical" ? 320 : 180, objectFit: "contain", display: "block", background: "#000" }} /><button onClick={() => { setDraft(d => ({ ...d, video_url: "" })); setVideoAspect(null); }} style={{ position: "absolute", top: 8, right: 8, background: BRAND.red, color: "#fff", border: "none", borderRadius: 8, padding: "5px 10px", cursor: "pointer", fontSize: 12 }}>✕</button></div><div style={{ padding: "8px 12px", background: theme.codeBg, display: "flex", alignItems: "center", gap: 6 }}><div style={{ width: 8, height: 8, borderRadius: "50%", background: BRAND.green }} /><span style={{ fontSize: 12, color: BRAND.green, fontWeight: 600 }}>Ready</span><span style={{ fontSize: 11, marginLeft: "auto", background: videoAspect === "vertical" ? "#FF000015" : BRAND.primary + "15", padding: "2px 8px", borderRadius: 5, fontWeight: 700, color: videoAspect === "vertical" ? "#FF0000" : BRAND.primary }}>{videoAspect === "vertical" ? "Short/Reel" : "Video"}</span></div></div> : uploadingVideo ? <div style={{ borderRadius: 12, background: darkMode ? "rgba(124,58,237,0.1)" : BRAND.primaryL, padding: "20px", textAlign: "center" }}><div style={{ width: 40, height: 40, margin: "0 auto 12px", borderRadius: "50%", border: `3px solid ${BRAND.primary}30`, borderTopColor: BRAND.primary, animation: "spin 1s linear infinite" }} /><div style={{ fontSize: 13, color: BRAND.primary, fontWeight: 600 }}>Uploading video...</div><style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style></div> : <label style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, padding: "24px", borderRadius: 12, border: `2px dashed ${theme.border}`, cursor: "pointer", background: theme.codeBg }}><span style={{ fontSize: 24 }}>🎬</span><span style={{ fontSize: 13, fontWeight: 600, color: theme.text }}>Upload video</span><span style={{ fontSize: 11, color: theme.textT }}>MP4, MOV · max 256MB</span><input type="file" accept="video/mp4,video/*" style={{ display: "none" }} onChange={async e => { const f = e.target.files?.[0]; if (f) { const u = await uploadVideo(f); if (u) setDraft(d => ({ ...d, video_url: u })); } }} /></label>}</div>
+          <div style={{ marginBottom: 14 }}><label style={{ fontSize: 12, fontWeight: 700, color: theme.textS, display: "block", marginBottom: 6 }}>CONTENT</label><textarea value={draft.content} onChange={e => setDraft(d => ({ ...d, content: e.target.value }))} placeholder={t("Write your post...", "Schrijf je post...")} style={{ width: "100%", minHeight: 120, boxSizing: "border-box", borderRadius: 10, border: `1px solid ${theme.inputBorder}`, padding: "10px 12px", fontSize: 14, resize: "vertical", fontFamily: "inherit", background: theme.inputBg, color: theme.text }} /><div style={{ fontSize: 12, color: draft.content.length > 280 ? BRAND.red : theme.textT, textAlign: "right", marginTop: 4 }}>{draft.content.length}/280</div></div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 18 }}><div><label style={{ fontSize: 12, fontWeight: 700, color: theme.textS, display: "block", marginBottom: 6 }}>DATE</label><input type="date" value={draft.date} onChange={e => setDraft(d => ({ ...d, date: e.target.value }))} style={{ width: "100%", padding: "10px 12px", borderRadius: 9, border: `1px solid ${theme.inputBorder}`, fontSize: 14, boxSizing: "border-box", background: theme.inputBg, color: theme.text }} /></div><div><label style={{ fontSize: 12, fontWeight: 700, color: theme.textS, display: "block", marginBottom: 6 }}>TIME</label><input type="time" value={draft.time} onChange={e => setDraft(d => ({ ...d, time: e.target.value }))} style={{ width: "100%", padding: "10px 12px", borderRadius: 9, border: `1px solid ${theme.inputBorder}`, fontSize: 14, boxSizing: "border-box", background: theme.inputBg, color: theme.text }} /></div></div>
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-            <button onClick={() => setShowNewPost(false)} style={{ flex: 1, padding: "11px", borderRadius: 10, border: `1px solid ${theme.border}`, background: "transparent", cursor: "pointer", fontSize: 14, color: theme.textS }}>{t("Cancel", "Annuleren")}</button>
-            <button onClick={saveAsDraft} style={{ flex: 1, padding: "11px", borderRadius: 10, border: `1px solid ${theme.border}`, background: "transparent", cursor: "pointer", fontSize: 14, color: theme.textS, fontWeight: 600 }}>{t("Draft", "Concept")}</button>
-            <button onClick={schedulePost} disabled={!draft.content || !draft.date || draft.platforms.length === 0} style={{ flex: 1.5, padding: "11px", borderRadius: 10, border: "none", background: BRAND.gradBtn, color: "#fff", cursor: "pointer", fontSize: 14, fontWeight: 700, opacity: (!draft.content || !draft.date || draft.platforms.length === 0) ? 0.45 : 1 }}>{t("Schedule", "Inplannen")}</button>
-            <button onClick={publishNow} disabled={!draft.content || draft.platforms.length === 0} style={{ flex: 1.5, padding: "11px", borderRadius: 10, border: "none", background: BRAND.green, color: "#fff", cursor: "pointer", fontSize: 14, fontWeight: 700, opacity: (!draft.content || draft.platforms.length === 0) ? 0.45 : 1 }}>{t("Publish now", "Nu publiceren")}</button>
+            <button onClick={() => setShowNewPost(false)} style={{ flex: 1, padding: "11px", borderRadius: 10, border: `1px solid ${theme.border}`, background: "transparent", cursor: "pointer", fontSize: 14, color: theme.textS }}>Cancel</button>
+            <button onClick={saveAsDraft} style={{ flex: 1, padding: "11px", borderRadius: 10, border: `1px solid ${theme.border}`, background: "transparent", cursor: "pointer", fontSize: 14, color: theme.textS, fontWeight: 600 }}>Draft</button>
+            <button onClick={schedulePost} disabled={!draft.content || !draft.date || draft.platforms.length === 0} style={{ flex: 1.5, padding: "11px", borderRadius: 10, border: "none", background: BRAND.gradBtn, color: "#fff", cursor: "pointer", fontSize: 14, fontWeight: 700, opacity: (!draft.content || !draft.date || draft.platforms.length === 0) ? 0.45 : 1 }}>Schedule</button>
+            <button onClick={publishNow} disabled={!draft.content || draft.platforms.length === 0} style={{ flex: 1.5, padding: "11px", borderRadius: 10, border: "none", background: BRAND.green, color: "#fff", cursor: "pointer", fontSize: 14, fontWeight: 700, opacity: (!draft.content || draft.platforms.length === 0) ? 0.45 : 1 }}>Publish now</button>
           </div>
         </div>
       </div>}
 
-      {/* NEW WORKSPACE MODAL */}
-      {showNewWS && <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999, padding: "1rem" }}>
-        <div style={{ background: theme.modalBg, borderRadius: 20, padding: "24px", width: "min(440px,100%)", boxSizing: "border-box", border: `1px solid ${theme.border}` }}>
-          <div style={{ fontSize: 18, fontWeight: 800, marginBottom: 18, color: theme.text }}>{t("New workspace", "Nieuwe workspace")}</div>
-          <input value={newWS.name} onChange={e => setNewWS(w => ({ ...w, name: e.target.value }))} placeholder={t("Company name", "Bedrijfsnaam")} style={{ width: "100%", marginBottom: 12, padding: "11px 13px", borderRadius: 9, border: `1px solid ${theme.inputBorder}`, fontSize: 14, boxSizing: "border-box", background: theme.inputBg, color: theme.text }} />
-          <input value={newWS.industry} onChange={e => setNewWS(w => ({ ...w, industry: e.target.value }))} placeholder={t("Industry", "Industrie")} style={{ width: "100%", marginBottom: 16, padding: "11px 13px", borderRadius: 9, border: `1px solid ${theme.inputBorder}`, fontSize: 14, boxSizing: "border-box", background: theme.inputBg, color: theme.text }} />
-          <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>{WORKSPACE_COLORS.map(col => <button key={col} onClick={() => setNewWS(w => ({ ...w, color: col }))} style={{ width: 32, height: 32, borderRadius: "50%", background: col, border: newWS.color === col ? `3px solid ${theme.text}` : "3px solid transparent", cursor: "pointer", padding: 0 }} />)}</div>
-          <div style={{ display: "flex", gap: 10 }}><button onClick={() => setShowNewWS(false)} style={{ flex: 1, padding: "11px", borderRadius: 10, border: `1px solid ${theme.border}`, background: "transparent", cursor: "pointer", fontSize: 14, color: theme.textS }}>{t("Cancel", "Annuleren")}</button><button onClick={addWorkspace} disabled={!newWS.name} style={{ flex: 1, padding: "11px", borderRadius: 10, border: "none", background: BRAND.gradBtn, color: "#fff", cursor: "pointer", fontSize: 14, fontWeight: 700, opacity: !newWS.name ? 0.45 : 1 }}>{t("Create", "Aanmaken")}</button></div>
-        </div>
-      </div>}
+      {/* NEW WORKSPACE */}
+      {showNewWS && <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999, padding: "1rem" }}><div style={{ background: theme.modalBg, borderRadius: 20, padding: "24px", width: "min(440px,100%)", boxSizing: "border-box", border: `1px solid ${theme.border}` }}><div style={{ fontSize: 18, fontWeight: 800, marginBottom: 18, color: theme.text }}>{t("New workspace", "Nieuwe workspace")}</div><input value={newWS.name} onChange={e => setNewWS(w => ({ ...w, name: e.target.value }))} placeholder="Name" style={{ width: "100%", marginBottom: 12, padding: "11px 13px", borderRadius: 9, border: `1px solid ${theme.inputBorder}`, fontSize: 14, boxSizing: "border-box", background: theme.inputBg, color: theme.text }} /><input value={newWS.industry} onChange={e => setNewWS(w => ({ ...w, industry: e.target.value }))} placeholder="Industry" style={{ width: "100%", marginBottom: 16, padding: "11px 13px", borderRadius: 9, border: `1px solid ${theme.inputBorder}`, fontSize: 14, boxSizing: "border-box", background: theme.inputBg, color: theme.text }} /><div style={{ display: "flex", gap: 10, marginBottom: 20 }}>{WORKSPACE_COLORS.map(col => <button key={col} onClick={() => setNewWS(w => ({ ...w, color: col }))} style={{ width: 32, height: 32, borderRadius: "50%", background: col, border: newWS.color === col ? `3px solid ${theme.text}` : "3px solid transparent", cursor: "pointer", padding: 0 }} />)}</div><div style={{ display: "flex", gap: 10 }}><button onClick={() => setShowNewWS(false)} style={{ flex: 1, padding: "11px", borderRadius: 10, border: `1px solid ${theme.border}`, background: "transparent", cursor: "pointer", fontSize: 14, color: theme.textS }}>Cancel</button><button onClick={addWorkspace} disabled={!newWS.name} style={{ flex: 1, padding: "11px", borderRadius: 10, border: "none", background: BRAND.gradBtn, color: "#fff", cursor: "pointer", fontSize: 14, fontWeight: 700, opacity: !newWS.name ? 0.45 : 1 }}>Create</button></div></div></div>}
 
-      {/* CHANNEL PICKER MODAL */}
-      {showChannelPicker && <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999, padding: "1rem" }}>
-        <div style={{ background: theme.modalBg, borderRadius: 20, padding: "24px", width: "min(440px,100%)", boxSizing: "border-box", border: `1px solid ${theme.border}` }}>
-          <div style={{ fontSize: 18, fontWeight: 800, marginBottom: 6, color: theme.text }}>{t("Select YouTube Channel", "Kies YouTube Kanaal")}</div>
-          <p style={{ fontSize: 13, color: theme.textT, marginBottom: 18 }}>{t("Choose which channel to connect.", "Kies welk kanaal je wilt koppelen.")}</p>
-          {loadingChannels ? <div style={{ textAlign: "center", padding: "30px 0" }}><div style={{ width: 40, height: 40, margin: "0 auto 12px", borderRadius: "50%", border: `3px solid ${BRAND.primary}30`, borderTopColor: BRAND.primary, animation: "spin 1s linear infinite" }} /><div style={{ fontSize: 13, color: BRAND.primary, fontWeight: 600 }}>{t("Loading...", "Laden...")}</div><style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style></div>
-            : ytChannels.length === 0 ? <div style={{ textAlign: "center", padding: "20px 0" }}><div style={{ fontSize: 36, marginBottom: 8 }}>📺</div><div style={{ fontSize: 14, fontWeight: 600, color: theme.text }}>{t("No channels found", "Geen kanalen gevonden")}</div><div style={{ display: "flex", gap: 8, justifyContent: "center", marginTop: 12 }}><button onClick={() => signIn("google", { callbackUrl: "/?pickChannel=true" })} style={{ padding: "8px 16px", borderRadius: 8, border: "none", background: BRAND.gradBtn, color: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>{t("Re-login & retry", "Opnieuw inloggen")}</button><button onClick={fetchYouTubeChannels} style={{ padding: "8px 16px", borderRadius: 8, border: `1px solid ${theme.border}`, background: "transparent", color: theme.text, cursor: "pointer", fontSize: 13, fontWeight: 600 }}>{t("Retry", "Opnieuw")}</button></div><div style={{ marginTop: 16, borderTop: `1px solid ${theme.border}`, paddingTop: 16 }}><div style={{ fontSize: 13, fontWeight: 600, color: theme.text, marginBottom: 8 }}>{t("Or add manually", "Of handmatig toevoegen")}</div><div style={{ display: "flex", gap: 8 }}><input id="manual-channel" placeholder={t("YouTube Channel ID (UCxxxx...)", "YouTube Kanaal ID (UCxxxx...)")} style={{ flex: 1, padding: "8px 12px", borderRadius: 8, border: `1px solid ${theme.inputBorder}`, fontSize: 13, background: theme.inputBg, color: theme.text }} /><button onClick={async () => { const input = document.getElementById("manual-channel") as HTMLInputElement; const cid = input?.value?.trim(); if (!cid) return; await selectYouTubeChannel({ id: cid, title: cid, thumbnail: "" }); }} style={{ padding: "8px 14px", borderRadius: 8, border: "none", background: BRAND.green, color: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>{t("Add", "Toevoegen")}</button></div></div></div>
-            : <div>{ytChannels.map((ch: any) => <button key={ch.id} onClick={() => selectYouTubeChannel(ch)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "12px", borderRadius: 12, border: ws?.youtube_channel_id === ch.id ? `2px solid ${BRAND.green}` : `1px solid ${theme.border}`, background: ws?.youtube_channel_id === ch.id ? (darkMode ? "rgba(16,185,129,0.1)" : BRAND.greenL) : theme.card, cursor: "pointer", marginBottom: 8, textAlign: "left" }}>{ch.thumbnail ? <img src={ch.thumbnail} style={{ width: 44, height: 44, borderRadius: "50%" }} alt="" /> : <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#FF000015", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>▶</div>}<div style={{ flex: 1 }}><div style={{ fontSize: 14, fontWeight: 700, color: theme.text }}>{ch.title}</div><div style={{ fontSize: 11, color: theme.textT }}>{ch.id}</div></div>{ws?.youtube_channel_id === ch.id && <div style={{ width: 24, height: 24, borderRadius: "50%", background: BRAND.green, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 14 }}>✓</div>}</button>)}</div>}
-          <button onClick={() => { setShowChannelPicker(false); setYtChannels([]); }} style={{ width: "100%", padding: "11px", borderRadius: 10, border: `1px solid ${theme.border}`, background: "transparent", cursor: "pointer", fontSize: 14, color: theme.textS, marginTop: 8 }}>{t("Cancel", "Annuleren")}</button>
-        </div>
-      </div>}
+      {/* CHANNEL PICKER */}
+      {showChannelPicker && <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999, padding: "1rem" }}><div style={{ background: theme.modalBg, borderRadius: 20, padding: "24px", width: "min(440px,100%)", boxSizing: "border-box", border: `1px solid ${theme.border}` }}><div style={{ fontSize: 18, fontWeight: 800, marginBottom: 6, color: theme.text }}>Select YouTube Channel</div><p style={{ fontSize: 13, color: theme.textT, marginBottom: 18 }}>Choose which channel to connect.</p>{loadingChannels ? <div style={{ textAlign: "center", padding: "30px 0" }}><div style={{ width: 40, height: 40, margin: "0 auto 12px", borderRadius: "50%", border: `3px solid ${BRAND.primary}30`, borderTopColor: BRAND.primary, animation: "spin 1s linear infinite" }} /><style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style></div> : ytChannels.length === 0 ? <div style={{ textAlign: "center", padding: "20px 0" }}>📺 <div style={{ fontSize: 14, fontWeight: 600, color: theme.text, marginTop: 8 }}>No channels found</div><div style={{ display: "flex", gap: 8, justifyContent: "center", marginTop: 12 }}><button onClick={() => signIn("google", { callbackUrl: "/?pickChannel=true" })} style={{ padding: "8px 16px", borderRadius: 8, border: "none", background: BRAND.gradBtn, color: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>Re-login</button><button onClick={fetchYouTubeChannels} style={{ padding: "8px 16px", borderRadius: 8, border: `1px solid ${theme.border}`, background: "transparent", color: theme.text, cursor: "pointer", fontSize: 13 }}>Retry</button></div><div style={{ marginTop: 16, borderTop: `1px solid ${theme.border}`, paddingTop: 16 }}><div style={{ fontSize: 13, fontWeight: 600, color: theme.text, marginBottom: 8 }}>Or add manually</div><div style={{ display: "flex", gap: 8 }}><input id="manual-ch" placeholder="Channel ID (UCxxxx...)" style={{ flex: 1, padding: "8px 12px", borderRadius: 8, border: `1px solid ${theme.inputBorder}`, fontSize: 13, background: theme.inputBg, color: theme.text }} /><button onClick={() => { const el = document.getElementById("manual-ch") as HTMLInputElement; const v = el?.value?.trim(); if (v) selectYouTubeChannel({ id: v, title: v, thumbnail: "" }); }} style={{ padding: "8px 14px", borderRadius: 8, border: "none", background: BRAND.green, color: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>Add</button></div></div></div> : <div>{ytChannels.map((ch: any) => <button key={ch.id} onClick={() => selectYouTubeChannel(ch)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "12px", borderRadius: 12, border: ws?.youtube_channel_id === ch.id ? `2px solid ${BRAND.green}` : `1px solid ${theme.border}`, background: ws?.youtube_channel_id === ch.id ? (darkMode ? "rgba(16,185,129,0.1)" : BRAND.greenL) : theme.card, cursor: "pointer", marginBottom: 8, textAlign: "left" }}>{ch.thumbnail ? <img src={ch.thumbnail} style={{ width: 44, height: 44, borderRadius: "50%" }} alt="" /> : <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#FF000015", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>▶</div>}<div style={{ flex: 1 }}><div style={{ fontSize: 14, fontWeight: 700, color: theme.text }}>{ch.title}</div><div style={{ fontSize: 11, color: theme.textT }}>{ch.id}</div></div>{ws?.youtube_channel_id === ch.id && <div style={{ width: 24, height: 24, borderRadius: "50%", background: BRAND.green, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 14 }}>✓</div>}</button>)}</div>}<button onClick={() => { setShowChannelPicker(false); setYtChannels([]); }} style={{ width: "100%", padding: "11px", borderRadius: 10, border: `1px solid ${theme.border}`, background: "transparent", cursor: "pointer", fontSize: 14, color: theme.textS, marginTop: 8 }}>Cancel</button></div></div>}
     </div>
   );
 }
