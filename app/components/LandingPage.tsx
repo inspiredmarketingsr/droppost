@@ -10,6 +10,7 @@ const BRAND = {
 
 export default function LandingPage() {
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
+  const [showLogin, setShowLogin] = useState(false);
 
   const features = [
     { icon: "📅", title: "Smart Scheduling", desc: "Plan and schedule posts across all platforms with our visual calendar. Set queue times and let DropPost handle the rest." },
@@ -55,9 +56,29 @@ export default function LandingPage() {
           <a href="#features" style={{ color: "rgba(255,255,255,0.6)", textDecoration: "none", fontSize: 14, fontWeight: 500 }}>Features</a>
           <a href="#pricing" style={{ color: "rgba(255,255,255,0.6)", textDecoration: "none", fontSize: 14, fontWeight: 500 }}>Pricing</a>
           <a href="#faq" style={{ color: "rgba(255,255,255,0.6)", textDecoration: "none", fontSize: 14, fontWeight: 500 }}>FAQ</a>
-          <button onClick={() => signIn("google", { callbackUrl: "/" })} style={{ background: BRAND.gradBtn, color: "#fff", border: "none", borderRadius: 10, padding: "10px 20px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>Sign In</button>
+          <button onClick={() => setShowLogin(true)} style={{ background: BRAND.gradBtn, color: "#fff", border: "none", borderRadius: 10, padding: "10px 20px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>Sign In</button>
         </div>
       </nav>
+
+      {/* LOGIN MODAL */}
+      {showLogin && <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999, padding: "1rem" }} onClick={() => setShowLogin(false)}>
+        <div onClick={e => e.stopPropagation()} style={{ background: "#1A1A2E", borderRadius: 24, padding: "40px 32px", width: "min(420px,100%)", boxSizing: "border-box", border: "1px solid rgba(255,255,255,0.08)", textAlign: "center" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 28 }}>
+            <div style={{ width: 40, height: 40, borderRadius: 12, background: BRAND.grad, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontWeight: 900, fontSize: 18 }}>D</span></div>
+            <span style={{ fontWeight: 800, fontSize: 22, color: "#fff" }}>Drop<span style={{ background: BRAND.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Post</span></span>
+          </div>
+          <h2 style={{ fontSize: 24, fontWeight: 800, color: "#fff", marginBottom: 8 }}>Welcome to DropPost</h2>
+          <p style={{ fontSize: 14, color: "rgba(255,255,255,0.45)", marginBottom: 28 }}>Sign in to start scheduling your social media content.</p>
+          <button onClick={() => signIn("google", { callbackUrl: "/" })} style={{ width: "100%", padding: "13px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.15)", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: 12 }}>
+            <img src="/google-logo.png" alt="Google" style={{ height: 20 }} />
+            <span style={{ fontSize: 15, fontWeight: 600, color: "#333" }}>Continue with Google</span>
+          </button>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginTop: 20, lineHeight: 1.6 }}>
+            By signing in, you agree to our <a href="/terms" style={{ color: "#A78BFA", textDecoration: "none" }}>Terms of Service</a> and <a href="/privacy" style={{ color: "#A78BFA", textDecoration: "none" }}>Privacy Policy</a>
+          </div>
+          <div style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.25)", borderRadius: 10, padding: "10px 14px", marginTop: 16, fontSize: 13, color: "rgba(255,255,255,0.5)" }}>🎁 14 days free — no credit card required</div>
+        </div>
+      </div>}
 
       <section style={{ padding: "80px 24px 60px", textAlign: "center", maxWidth: 900, margin: "0 auto" }}>
         <div style={{ display: "inline-block", background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.3)", borderRadius: 20, padding: "6px 16px", marginBottom: 24 }}>
@@ -68,7 +89,7 @@ export default function LandingPage() {
         </h1>
         <p style={{ fontSize: 18, color: "rgba(255,255,255,0.55)", lineHeight: 1.7, maxWidth: 600, margin: "0 auto 36px" }}>Plan, approve, and publish content across YouTube, Facebook, Instagram, TikTok & Snapchat — all from one beautiful dashboard.</p>
         <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-          <button onClick={() => signIn("google", { callbackUrl: "/" })} style={{ background: BRAND.gradBtn, color: "#fff", border: "none", borderRadius: 12, padding: "14px 32px", fontSize: 16, fontWeight: 700, cursor: "pointer" }}>Start Free — 14 Days</button>
+          <button onClick={() => setShowLogin(true)} style={{ background: BRAND.gradBtn, color: "#fff", border: "none", borderRadius: 12, padding: "14px 32px", fontSize: 16, fontWeight: 700, cursor: "pointer" }}>Start Free — 14 Days</button>
           <a href="#features" style={{ background: "rgba(255,255,255,0.08)", color: "#fff", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "14px 32px", fontSize: 16, fontWeight: 600, textDecoration: "none", display: "inline-block" }}>See Features ↓</a>
         </div>
         <div style={{ display: "flex", gap: 32, justifyContent: "center", marginTop: 48 }}>
@@ -140,7 +161,7 @@ export default function LandingPage() {
               <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>{p.name}</div>
               <div style={{ marginBottom: 24 }}><span style={{ fontSize: 40, fontWeight: 900 }}>{p.price}</span><span style={{ fontSize: 14, color: "rgba(255,255,255,0.4)" }}>{p.period}</span></div>
               {p.features.map((f, fi) => <div key={fi} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}><span style={{ color: "#10B981", fontSize: 16 }}>✓</span><span style={{ fontSize: 14, color: "rgba(255,255,255,0.6)" }}>{f}</span></div>)}
-              <button onClick={() => signIn("google", { callbackUrl: "/" })} style={{ width: "100%", marginTop: 20, padding: "12px", borderRadius: 10, border: p.hl ? "none" : "1px solid rgba(255,255,255,0.1)", background: p.hl ? BRAND.gradBtn : "transparent", color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>{p.cta}</button>
+              <button onClick={() => setShowLogin(true)} style={{ width: "100%", marginTop: 20, padding: "12px", borderRadius: 10, border: p.hl ? "none" : "1px solid rgba(255,255,255,0.1)", background: p.hl ? BRAND.gradBtn : "transparent", color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>{p.cta}</button>
             </div>
           ))}
         </div>
@@ -163,7 +184,7 @@ export default function LandingPage() {
         <div style={{ maxWidth: 600, margin: "0 auto", background: "linear-gradient(135deg, rgba(124,58,237,0.2), rgba(6,182,212,0.15))", border: "1px solid rgba(124,58,237,0.2)", borderRadius: 24, padding: "48px 32px" }}>
           <h2 style={{ fontSize: 32, fontWeight: 800, marginBottom: 12 }}>Ready to schedule smarter?</h2>
           <p style={{ fontSize: 15, color: "rgba(255,255,255,0.5)", marginBottom: 28 }}>Join 500+ creators and businesses using DropPost.</p>
-          <button onClick={() => signIn("google", { callbackUrl: "/" })} style={{ background: BRAND.gradBtn, color: "#fff", border: "none", borderRadius: 12, padding: "14px 36px", fontSize: 16, fontWeight: 700, cursor: "pointer" }}>Start Your Free Trial</button>
+          <button onClick={() => setShowLogin(true)} style={{ background: BRAND.gradBtn, color: "#fff", border: "none", borderRadius: 12, padding: "14px 36px", fontSize: 16, fontWeight: 700, cursor: "pointer" }}>Start Your Free Trial</button>
         </div>
       </section>
 
