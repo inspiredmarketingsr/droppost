@@ -134,9 +134,9 @@ const IconGlobe = ({ size = 12, color = "currentColor" }: { size?: number; color
    PREVIEW CONSTANTS
    Fixed dimensions for consistent sizing
    ═══════════════════════════════════════════ */
-const PREVIEW_WIDTH = 300;
-const FEED_MEDIA_H = 220;
-const VERTICAL_MAX_H = 480;
+const PREVIEW_WIDTH = 340;
+const FEED_MEDIA_H = 240;
+const VERTICAL_MAX_H = 520;
 
 /* ═══════════════════════════════════════════
    PLATFORM PREVIEW COMPONENT
@@ -207,7 +207,7 @@ function PlatformPreview({ platformId, content, imageUrl, videoUrl, postType, da
   if (platformId === "instagram") {
     if (isVertical) {
       return (
-        <div style={{ background: "#000", borderRadius: 20, overflow: "hidden", position: "relative", width: "100%", maxHeight: VERTICAL_MAX_H, aspectRatio: "9/16", border: "2px solid #333" }}>
+        <div style={{ background: "#000", borderRadius: 20, overflow: "hidden", position: "relative", width: "100%", height: VERTICAL_MAX_H, border: "2px solid #333" }}>
           {mediaUrl ? (
             videoUrl
               ? <video src={videoUrl} style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0 }} />
@@ -217,12 +217,10 @@ function PlatformPreview({ platformId, content, imageUrl, videoUrl, postType, da
               <span style={{ fontSize: 36, opacity: 0.5 }}>📷</span>
             </div>
           )}
-          {/* Top bar */}
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, padding: "10px 14px", display: "flex", justifyContent: "space-between", alignItems: "center", background: "linear-gradient(rgba(0,0,0,0.4), transparent)", zIndex: 2 }}>
             <span style={{ color: "#fff", fontSize: 14, fontWeight: 700 }}>Reels</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
           </div>
-          {/* Right icons */}
           <div style={{ position: "absolute", right: 10, bottom: 60, display: "flex", flexDirection: "column", gap: 16, alignItems: "center", zIndex: 2 }}>
             {[
               { icon: <IconHeartIG size={26} color="#fff" />, count: "0" },
@@ -237,7 +235,6 @@ function PlatformPreview({ platformId, content, imageUrl, videoUrl, postType, da
             ))}
             <div style={{ width: 24, height: 24, borderRadius: 6, border: "2px solid #fff", background: "linear-gradient(135deg, #7C3AED, #06B6D4)" }} />
           </div>
-          {/* Bottom */}
           <div style={{ position: "absolute", bottom: 0, left: 0, right: 50, padding: "14px", background: "linear-gradient(transparent, rgba(0,0,0,0.65))", zIndex: 2 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
               <div style={{ width: 28, height: 28, borderRadius: "50%", background: "linear-gradient(135deg, #7C3AED, #06B6D4)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 10, fontWeight: 800 }}>D</div>
@@ -297,7 +294,7 @@ function PlatformPreview({ platformId, content, imageUrl, videoUrl, postType, da
 
   /* ── TIKTOK ── */
   if (platformId === "tiktok") return (
-    <div style={{ background: "#000", borderRadius: 20, overflow: "hidden", position: "relative", width: "100%", maxHeight: VERTICAL_MAX_H, aspectRatio: "9/16", border: "2px solid #333" }}>
+    <div style={{ background: "#000", borderRadius: 20, overflow: "hidden", position: "relative", width: "100%", height: VERTICAL_MAX_H, border: "2px solid #333" }}>
       {mediaUrl ? (
         videoUrl
           ? <video src={videoUrl} style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0 }} />
@@ -420,7 +417,7 @@ function PlatformPreview({ platformId, content, imageUrl, videoUrl, postType, da
   if (platformId === "youtube") {
     if (isVertical) {
       return (
-        <div style={{ background: "#000", borderRadius: 20, overflow: "hidden", position: "relative", width: "100%", maxHeight: VERTICAL_MAX_H, aspectRatio: "9/16", border: "2px solid #333" }}>
+        <div style={{ background: "#000", borderRadius: 20, overflow: "hidden", position: "relative", width: "100%", height: VERTICAL_MAX_H, border: "2px solid #333" }}>
           {mediaUrl ? (
             videoUrl
               ? <video src={videoUrl} style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0 }} />
@@ -557,7 +554,7 @@ export function CreatePostModal({ draft, setDraft, darkMode, theme, uploadingIma
         background: theme.modalBg,
         borderRadius: 20,
         padding: "24px",
-        width: showPreview ? "min(920px,100%)" : "min(560px,100%)",
+        width: showPreview ? "min(980px,100%)" : "min(560px,100%)",
         boxSizing: "border-box",
         maxHeight: "92vh",
         display: "flex",
