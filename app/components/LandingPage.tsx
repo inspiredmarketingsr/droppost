@@ -1,7 +1,7 @@
 "use client";
 import { signIn } from "next-auth/react";
 import { useState, useEffect } from "react";
-import { Calendar, Clock, CheckSquare, BarChart2, Users, Zap, Shield, Globe, ChevronRight, Play, Star, Menu, X, ArrowRight, Sparkles } from "lucide-react";
+import { Calendar, Clock, CheckSquare, BarChart2, Users, Zap, Shield, Globe, ChevronRight, Play, Star, Menu, X, ArrowRight, Sparkles, PenLine } from "lucide-react";
 import { FaYoutube, FaFacebookF, FaInstagram, FaTiktok, FaSnapchat, FaXTwitter } from "react-icons/fa6";
 
 const C = {
@@ -355,19 +355,41 @@ export default function LandingPage() {
 
       {/* ═══ HOW IT WORKS ═══ */}
       <section style={{ padding: "80px 24px", background: C.bg }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", textAlign: "center" }}>
-          <p style={{ fontSize: 13, fontWeight: 700, color: C.primary, letterSpacing: 1.5, marginBottom: 12 }}>{t("HOW IT WORKS", "HOE HET WERKT")}</p>
-          <h2 style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 800, marginBottom: 56, color: C.dark }}>{t("Three steps to social media success", "Drie stappen naar social media succes")}</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 32 }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 56 }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: C.primary, letterSpacing: 1.5, marginBottom: 12 }}>{t("HOW IT WORKS", "HOE HET WERKT")}</p>
+            <h2 style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 800, color: C.dark }}>{t("From idea to published in 3 steps", "Van idee tot gepubliceerd in 3 stappen")}</h2>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "stretch", gap: 0, position: "relative" }}>
+            {/* Connecting line behind the cards */}
+            <div style={{ position: "absolute", top: 52, left: "16.66%", right: "16.66%", height: 3, background: C.gradSoft, zIndex: 0, borderRadius: 2 }} />
+
             {[
-              { step: "1", title: t("Create & Schedule", "Maak & Plan"), desc: t("Write your post, pick your platforms, upload media, and schedule it — all in one place.", "Schrijf je post, kies je platformen, upload media en plan het in — allemaal op één plek.") },
-              { step: "2", title: t("Review & Approve", "Review & Keur goed"), desc: t("Send posts for approval. Clients and team members review and approve with one click.", "Stuur posts ter goedkeuring. Klanten en teamleden reviewen en keuren goed met één klik.") },
-              { step: "3", title: t("Publish & Analyze", "Publiceer & Analyseer"), desc: t("Approved posts publish automatically. Track performance and optimize your strategy.", "Goedgekeurde posts worden automatisch gepubliceerd. Volg prestaties en optimaliseer je strategie.") },
-            ].map(s => (
-              <div key={s.step} style={{ textAlign: "center" }}>
-                <div style={{ width: 56, height: 56, borderRadius: "50%", background: C.grad, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px", fontSize: 22, fontWeight: 900, color: "#fff" }}>{s.step}</div>
-                <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 10, color: C.dark }}>{s.title}</h3>
-                <p style={{ fontSize: 14, color: C.textS, lineHeight: 1.7, margin: 0 }}>{s.desc}</p>
+              { step: "1", icon: <PenLine size={22} />, title: t("Create & Schedule", "Maak & Plan"), desc: t("Write your post, pick platforms, upload media, set date & time — all from one beautiful editor.", "Schrijf je post, kies platformen, upload media, stel datum & tijd in — vanuit één mooie editor."), color: C.primary },
+              { step: "2", icon: <CheckSquare size={22} />, title: t("Review & Approve", "Review & Keur goed"), desc: t("Send posts for approval with one click. Clients and team members review, comment, and approve instantly.", "Stuur posts ter goedkeuring met één klik. Klanten en teamleden reviewen, reageren en keuren direct goed."), color: C.accent },
+              { step: "3", icon: <Zap size={22} />, title: t("Publish & Grow", "Publiceer & Groei"), desc: t("Approved posts publish automatically across all platforms. Track performance and optimize your strategy.", "Goedgekeurde posts worden automatisch gepubliceerd. Volg prestaties en optimaliseer je strategie."), color: C.green },
+            ].map((s, i) => (
+              <div key={s.step} style={{ flex: 1, textAlign: "center", position: "relative", zIndex: 1, padding: "0 16px" }}>
+                {/* Step number + icon circle */}
+                <div style={{ width: 72, height: 72, borderRadius: "50%", background: C.bg, border: `3px solid ${s.color}30`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px", position: "relative", transition: "all 0.3s" }}>
+                  <div style={{ width: 56, height: 56, borderRadius: "50%", background: `${s.color}12`, display: "flex", alignItems: "center", justifyContent: "center", color: s.color }}>{s.icon}</div>
+                  {/* Step badge */}
+                  <div style={{ position: "absolute", top: -6, right: -6, width: 26, height: 26, borderRadius: "50%", background: s.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: "#fff", boxShadow: `0 2px 8px ${s.color}40` }}>{s.step}</div>
+                </div>
+
+                {/* Card */}
+                <div style={{ background: C.bgS, borderRadius: 16, padding: "24px 20px", border: `1px solid ${C.border}`, transition: "all 0.3s" }} onMouseEnter={e => { e.currentTarget.style.boxShadow = `0 8px 30px ${s.color}12`; e.currentTarget.style.borderColor = `${s.color}30`; e.currentTarget.style.transform = "translateY(-4px)"; }} onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.borderColor = C.border; e.currentTarget.style.transform = "translateY(0)"; }}>
+                  <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 10, color: C.dark }}>{s.title}</h3>
+                  <p style={{ fontSize: 14, color: C.textS, lineHeight: 1.7, margin: 0 }}>{s.desc}</p>
+                </div>
+
+                {/* Arrow between steps */}
+                {i < 2 && <div style={{ position: "absolute", right: -14, top: 48, zIndex: 3 }}>
+                  <div style={{ width: 28, height: 28, borderRadius: "50%", background: C.bg, border: `2px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <ArrowRight size={14} color={C.primary} />
+                  </div>
+                </div>}
               </div>
             ))}
           </div>
