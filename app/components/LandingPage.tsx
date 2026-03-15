@@ -234,7 +234,7 @@ export default function LandingPage() {
           <div style={{ flex: 1, minWidth: 320, maxWidth: 480 }}>
             <p style={{ fontSize: 13, fontWeight: 700, color: C.primary, letterSpacing: 1.5, marginBottom: 12 }}>{t("INTEGRATIONS", "INTEGRATIES")}</p>
             <h2 style={{ fontSize: "clamp(28px, 3.5vw, 42px)", fontWeight: 900, lineHeight: 1.15, marginBottom: 20, color: C.dark }}>
-              {t("Integrations that work with", "Integraties die werken met")}<br />
+              {t("Integrations that work with ", "Integraties die werken met ")}
               <span style={{ background: C.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{t("your social media", "jouw social media")}</span>
             </h2>
             <p style={{ fontSize: 16, color: C.textS, lineHeight: 1.8, marginBottom: 32 }}>
