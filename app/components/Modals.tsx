@@ -25,107 +25,206 @@ const HASHTAG_SUGGESTIONS = [
   "#motivation", "#success", "#lifestyle", "#creative", "#design",
 ];
 
+/* ═══ SVG ICONS FOR PREVIEWS ═══ */
+const SvgHeart = ({ size = 22, color = "currentColor" }: { size?: number; color?: string }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>;
+const SvgComment = ({ size = 22, color = "currentColor" }: { size?: number; color?: string }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>;
+const SvgShare = ({ size = 22, color = "currentColor" }: { size?: number; color?: string }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>;
+const SvgBookmark = ({ size = 22, color = "currentColor" }: { size?: number; color?: string }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>;
+const SvgMore = ({ size = 20, color = "currentColor" }: { size?: number; color?: string }) => <svg width={size} height={size} viewBox="0 0 24 24" fill={color}><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>;
+const SvgThumbUp = ({ size = 18, color = "currentColor" }: { size?: number; color?: string }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>;
+const SvgMusic = ({ size = 14, color = "currentColor" }: { size?: number; color?: string }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>;
+
 /* ═══ PLATFORM PREVIEW ═══ */
-function PlatformPreview({ platformId, content, imageUrl, videoUrl, dark }: { platformId: string; content: string; imageUrl: string; videoUrl?: string; dark: boolean }) {
+function PlatformPreview({ platformId, content, imageUrl, videoUrl, postType, dark }: { platformId: string; content: string; imageUrl: string; videoUrl?: string; postType?: string; dark: boolean }) {
   const p = PLATFORMS.find(pl => pl.id === platformId);
   if (!p) return null;
   const maxLen = PLATFORM_LIMITS[platformId] || 5000;
   const truncated = content.length > maxLen ? content.slice(0, maxLen) + "..." : content;
   const mediaUrl = videoUrl || imageUrl;
-  const bg = dark ? "#1a1a2e" : "#fff";
-  const border = dark ? "#2a2a40" : "#e5e7eb";
-  const textColor = dark ? "#e5e7eb" : "#111827";
-  const subColor = dark ? "#6b7280" : "#9ca3af";
+  const isVertical = postType === "reel" || postType === "story";
 
-  // Facebook style
+  // ── FACEBOOK ──
   if (platformId === "facebook") return (
-    <div style={{ background: bg, borderRadius: 10, border: `1px solid ${border}`, overflow: "hidden" }}>
-      <div style={{ padding: "10px 12px", display: "flex", alignItems: "center", gap: 8 }}>
-        <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg, #7C3AED, #06B6D4)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 14, fontWeight: 800 }}>D</div>
-        <div><div style={{ fontSize: 12, fontWeight: 700, color: textColor }}>Your Brand</div><div style={{ fontSize: 10, color: subColor }}>Just now · 🌎</div></div>
-      </div>
-      <div style={{ padding: "0 12px 10px" }}><p style={{ fontSize: 12, color: textColor, lineHeight: 1.5, margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{truncated || <span style={{ color: subColor, fontStyle: "italic" }}>Your post text...</span>}</p></div>
-      {mediaUrl && <div style={{ borderTop: `1px solid ${border}`, borderBottom: `1px solid ${border}` }}>{videoUrl ? <video src={videoUrl} style={{ width: "100%", height: 160, objectFit: "cover", display: "block" }} /> : <img src={imageUrl} style={{ width: "100%", height: 160, objectFit: "cover", display: "block" }} alt="" />}</div>}
-      <div style={{ padding: "8px 12px", display: "flex", gap: 20 }}>
-        {["👍 Like", "💬 Comment", "↗️ Share"].map(a => <span key={a} style={{ fontSize: 10, color: subColor, fontWeight: 600 }}>{a}</span>)}
-      </div>
-      <div style={{ padding: "4px 12px 8px", display: "flex", justifyContent: "space-between" }}><span style={{ fontSize: 9, color: subColor }}>{truncated.length}/{maxLen}</span><span style={{ fontSize: 9, color: "#1877F2", fontWeight: 700 }}>Facebook</span></div>
-    </div>
-  );
-
-  // Instagram style
-  if (platformId === "instagram") return (
-    <div style={{ background: bg, borderRadius: 10, border: `1px solid ${border}`, overflow: "hidden" }}>
-      <div style={{ padding: "8px 12px", display: "flex", alignItems: "center", gap: 8 }}>
-        <div style={{ width: 28, height: 28, borderRadius: "50%", background: "linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)", padding: 2 }}><div style={{ width: "100%", height: "100%", borderRadius: "50%", background: bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 800, color: textColor }}>D</div></div>
-        <span style={{ fontSize: 11, fontWeight: 700, color: textColor }}>yourbrand</span>
-        <span style={{ marginLeft: "auto", fontSize: 14, color: subColor }}>•••</span>
-      </div>
-      {mediaUrl ? <div>{videoUrl ? <video src={videoUrl} style={{ width: "100%", height: 260, objectFit: "cover", display: "block", background: "#000" }} /> : <img src={imageUrl} style={{ width: "100%", height: 260, objectFit: "cover", display: "block" }} alt="" />}</div> : <div style={{ width: "100%", height: 260, background: dark ? "#0f0f1a" : "#f3f4f6", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ fontSize: 32 }}>📷</span></div>}
-      <div style={{ padding: "8px 12px", display: "flex", gap: 14 }}>
-        {["♡", "💬", "↗️"].map(a => <span key={a} style={{ fontSize: 16 }}>{a}</span>)}
-        <span style={{ marginLeft: "auto", fontSize: 16 }}>🔖</span>
-      </div>
-      <div style={{ padding: "0 12px 8px" }}><span style={{ fontSize: 11, fontWeight: 700, color: textColor }}>yourbrand </span><span style={{ fontSize: 11, color: textColor, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{truncated || <span style={{ color: subColor, fontStyle: "italic" }}>Caption...</span>}</span></div>
-      <div style={{ padding: "2px 12px 8px", display: "flex", justifyContent: "space-between" }}><span style={{ fontSize: 9, color: subColor }}>{truncated.length}/{maxLen}</span><span style={{ fontSize: 9, color: "#E1306C", fontWeight: 700 }}>Instagram</span></div>
-    </div>
-  );
-
-  // TikTok style
-  if (platformId === "tiktok") return (
-    <div style={{ background: "#000", borderRadius: 10, border: `1px solid ${border}`, overflow: "hidden", color: "#fff" }}>
-      <div style={{ position: "relative", height: 320, display: "flex", alignItems: "center", justifyContent: "center", background: "#000" }}>
-        {videoUrl ? <video src={videoUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}><span style={{ fontSize: 40 }}>🎵</span><span style={{ fontSize: 11, color: "#ffffff80" }}>Video preview</span></div>}
-        {/* Right sidebar icons */}
-        <div style={{ position: "absolute", right: 8, bottom: 40, display: "flex", flexDirection: "column", gap: 14, alignItems: "center" }}>
-          <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg, #7C3AED, #06B6D4)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800 }}>D</div>
-          {["♥", "💬", "↗️", "🔖"].map(i => <div key={i} style={{ textAlign: "center" }}><span style={{ fontSize: 18 }}>{i}</span><div style={{ fontSize: 8, color: "#fff" }}>0</div></div>)}
-        </div>
-        {/* Bottom overlay */}
-        <div style={{ position: "absolute", bottom: 0, left: 0, right: 40, padding: "12px", background: "linear-gradient(transparent, rgba(0,0,0,0.7))" }}>
-          <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 4 }}>@yourbrand</div>
-          <div style={{ fontSize: 10, lineHeight: 1.4, whiteSpace: "pre-wrap", wordBreak: "break-word", maxHeight: 40, overflow: "hidden" }}>{truncated || "Your caption..."}</div>
-          <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 6 }}><span style={{ fontSize: 10 }}>🎵</span><span style={{ fontSize: 9, color: "#ffffffbb" }}>Original sound - yourbrand</span></div>
-        </div>
-      </div>
-      <div style={{ padding: "4px 12px 6px", display: "flex", justifyContent: "space-between", background: "#111" }}><span style={{ fontSize: 9, color: "#ffffff60" }}>{truncated.length}/{maxLen}</span><span style={{ fontSize: 9, color: "#fff", fontWeight: 700 }}>TikTok</span></div>
-    </div>
-  );
-
-  // LinkedIn style
-  if (platformId === "linkedin") return (
-    <div style={{ background: bg, borderRadius: 10, border: `1px solid ${border}`, overflow: "hidden" }}>
-      <div style={{ padding: "10px 12px", display: "flex", alignItems: "center", gap: 8 }}>
+    <div style={{ background: dark ? "#242526" : "#fff", borderRadius: 10, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.12)" }}>
+      <div style={{ padding: "12px 16px 8px", display: "flex", alignItems: "center", gap: 10 }}>
         <div style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg, #7C3AED, #06B6D4)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 16, fontWeight: 800 }}>D</div>
-        <div><div style={{ fontSize: 12, fontWeight: 700, color: textColor }}>Your Brand</div><div style={{ fontSize: 10, color: subColor }}>1,234 followers</div><div style={{ fontSize: 9, color: subColor }}>Just now · 🌎</div></div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: dark ? "#e4e6eb" : "#050505" }}>Your Brand</div>
+          <div style={{ fontSize: 11, color: dark ? "#b0b3b8" : "#65676b", display: "flex", alignItems: "center", gap: 4 }}>Just now · <svg width="12" height="12" viewBox="0 0 16 16" fill={dark ? "#b0b3b8" : "#65676b"}><path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm0 2a6 6 0 0 1 4.47 10H3.53A6 6 0 0 1 8 2z"/></svg></div>
+        </div>
+        <SvgMore size={20} color={dark ? "#b0b3b8" : "#65676b"} />
       </div>
-      <div style={{ padding: "0 12px 10px" }}><p style={{ fontSize: 12, color: textColor, lineHeight: 1.6, margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{truncated || <span style={{ color: subColor, fontStyle: "italic" }}>Share an update...</span>}</p></div>
-      {mediaUrl && <div style={{ borderTop: `1px solid ${border}`, borderBottom: `1px solid ${border}` }}>{videoUrl ? <video src={videoUrl} style={{ width: "100%", height: 160, objectFit: "cover", display: "block" }} /> : <img src={imageUrl} style={{ width: "100%", height: 160, objectFit: "cover", display: "block" }} alt="" />}</div>}
-      <div style={{ padding: "6px 12px", borderBottom: `1px solid ${border}` }}><span style={{ fontSize: 9, color: subColor }}>👍 0 · 0 comments</span></div>
-      <div style={{ padding: "6px 12px", display: "flex", gap: 16 }}>
-        {["👍 Like", "💬 Comment", "🔄 Repost", "↗️ Send"].map(a => <span key={a} style={{ fontSize: 10, color: subColor, fontWeight: 600 }}>{a}</span>)}
+      {truncated && <div style={{ padding: "0 16px 12px" }}><p style={{ fontSize: 14, color: dark ? "#e4e6eb" : "#050505", lineHeight: 1.5, margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{truncated}</p></div>}
+      {mediaUrl && <div>{videoUrl ? <video src={videoUrl} style={{ width: "100%", height: 200, objectFit: "cover", display: "block" }} /> : <img src={imageUrl} style={{ width: "100%", height: 200, objectFit: "cover", display: "block" }} alt="" />}</div>}
+      <div style={{ padding: "8px 16px", display: "flex", justifyContent: "space-between", borderBottom: `1px solid ${dark ? "#3e4042" : "#ced0d4"}` }}>
+        <span style={{ fontSize: 11, color: dark ? "#b0b3b8" : "#65676b" }}>👍 0</span>
+        <span style={{ fontSize: 11, color: dark ? "#b0b3b8" : "#65676b" }}>0 comments · 0 shares</span>
       </div>
-      <div style={{ padding: "2px 12px 6px", display: "flex", justifyContent: "space-between" }}><span style={{ fontSize: 9, color: subColor }}>{truncated.length}/{maxLen}</span><span style={{ fontSize: 9, color: "#0A66C2", fontWeight: 700 }}>LinkedIn</span></div>
+      <div style={{ padding: "4px 16px", display: "flex" }}>
+        {[{ icon: <SvgThumbUp size={18} color={dark ? "#b0b3b8" : "#65676b"} />, label: "Like" }, { icon: <SvgComment size={18} color={dark ? "#b0b3b8" : "#65676b"} />, label: "Comment" }, { icon: <SvgShare size={18} color={dark ? "#b0b3b8" : "#65676b"} />, label: "Share" }].map(a => (
+          <div key={a.label} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "8px 0", cursor: "default" }}>{a.icon}<span style={{ fontSize: 12, fontWeight: 600, color: dark ? "#b0b3b8" : "#65676b" }}>{a.label}</span></div>
+        ))}
+      </div>
+      <div style={{ padding: "4px 16px 6px", display: "flex", justifyContent: "space-between" }}><span style={{ fontSize: 9, color: dark ? "#b0b3b8" : "#65676b" }}>{truncated.length}/{maxLen}</span><span style={{ fontSize: 9, color: "#1877F2", fontWeight: 700 }}>Facebook Preview</span></div>
     </div>
   );
 
-  // YouTube style
-  if (platformId === "youtube") return (
-    <div style={{ background: bg, borderRadius: 10, border: `1px solid ${border}`, overflow: "hidden" }}>
-      <div style={{ position: "relative", background: "#000" }}>
-        {videoUrl ? <video src={videoUrl} style={{ width: "100%", height: 170, objectFit: "cover", display: "block" }} /> : <div style={{ width: "100%", height: 170, display: "flex", alignItems: "center", justifyContent: "center", background: dark ? "#0f0f1a" : "#111" }}><div style={{ width: 48, height: 34, borderRadius: 8, background: "#FF0000", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontSize: 16 }}>▶</span></div></div>}
-        <div style={{ position: "absolute", bottom: 6, right: 6, background: "rgba(0,0,0,0.8)", borderRadius: 4, padding: "1px 5px", fontSize: 10, color: "#fff" }}>0:00</div>
-      </div>
-      <div style={{ padding: "10px 12px", display: "flex", gap: 8 }}>
-        <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg, #7C3AED, #06B6D4)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 12, fontWeight: 800, flexShrink: 0 }}>D</div>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 12, fontWeight: 700, color: textColor, marginBottom: 2, lineHeight: 1.3 }}>{truncated.slice(0, 80) || <span style={{ color: subColor, fontStyle: "italic" }}>Video title...</span>}</div>
-          <div style={{ fontSize: 10, color: subColor }}>Your Brand · 0 views · Just now</div>
+  // ── INSTAGRAM ──
+  if (platformId === "instagram") {
+    if (isVertical) {
+      // Instagram Reel/Story style
+      return (
+        <div style={{ background: "#000", borderRadius: 10, overflow: "hidden", position: "relative", height: 420 }}>
+          {mediaUrl ? (videoUrl ? <video src={videoUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <img src={imageUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="" />) : <div style={{ width: "100%", height: "100%", background: "#1a1a1a", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ fontSize: 40 }}>📷</span></div>}
+          {/* Top bar */}
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, padding: "12px 16px", display: "flex", justifyContent: "space-between", background: "linear-gradient(rgba(0,0,0,0.4), transparent)" }}>
+            <span style={{ color: "#fff", fontSize: 14, fontWeight: 700 }}>Reels</span>
+            <span style={{ color: "#fff", fontSize: 18 }}>📷</span>
+          </div>
+          {/* Right icons */}
+          <div style={{ position: "absolute", right: 12, bottom: 80, display: "flex", flexDirection: "column", gap: 18, alignItems: "center" }}>
+            {[{ icon: <SvgHeart size={24} color="#fff" />, count: "0" }, { icon: <SvgComment size={24} color="#fff" />, count: "0" }, { icon: <SvgShare size={24} color="#fff" />, count: "0" }, { icon: <SvgBookmark size={24} color="#fff" />, count: "" }].map((item, i) => (
+              <div key={i} style={{ textAlign: "center" }}>{item.icon}{item.count && <div style={{ fontSize: 10, color: "#fff", marginTop: 2 }}>{item.count}</div>}</div>
+            ))}
+            <div style={{ width: 24, height: 24, borderRadius: 6, border: "2px solid #fff", background: "linear-gradient(135deg, #7C3AED, #06B6D4)" }} />
+          </div>
+          {/* Bottom */}
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 50, padding: "16px", background: "linear-gradient(transparent, rgba(0,0,0,0.6))" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}><div style={{ width: 28, height: 28, borderRadius: "50%", background: "linear-gradient(135deg, #7C3AED, #06B6D4)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 10, fontWeight: 800 }}>D</div><span style={{ fontSize: 12, fontWeight: 700, color: "#fff" }}>yourbrand</span><span style={{ fontSize: 11, color: "#fff", border: "1px solid #fff", borderRadius: 6, padding: "2px 8px", fontWeight: 600 }}>Follow</span></div>
+            <div style={{ fontSize: 11, color: "#fff", lineHeight: 1.4, maxHeight: 44, overflow: "hidden" }}>{truncated || "Caption..."}</div>
+            <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 6 }}><SvgMusic size={12} color="#fff" /><span style={{ fontSize: 10, color: "#ffffffcc" }}>Original audio · yourbrand</span></div>
+          </div>
+          <div style={{ position: "absolute", bottom: 4, left: 16 }}><span style={{ fontSize: 8, color: "#ffffff60" }}>{truncated.length}/{maxLen} · Instagram Reel</span></div>
         </div>
+      );
+    }
+    // Instagram Feed post
+    return (
+      <div style={{ background: dark ? "#000" : "#fff", borderRadius: 10, overflow: "hidden", border: `1px solid ${dark ? "#262626" : "#dbdbdb"}` }}>
+        <div style={{ padding: "10px 12px", display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ width: 32, height: 32, borderRadius: "50%", padding: 2, background: "linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)" }}><div style={{ width: "100%", height: "100%", borderRadius: "50%", background: dark ? "#000" : "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 800, color: dark ? "#fff" : "#000" }}>D</div></div>
+          <div style={{ flex: 1 }}><span style={{ fontSize: 12, fontWeight: 700, color: dark ? "#f5f5f5" : "#262626" }}>yourbrand</span></div>
+          <SvgMore size={16} color={dark ? "#f5f5f5" : "#262626"} />
+        </div>
+        {mediaUrl ? <div>{videoUrl ? <video src={videoUrl} style={{ width: "100%", height: 280, objectFit: "cover", display: "block" }} /> : <img src={imageUrl} style={{ width: "100%", height: 280, objectFit: "cover", display: "block" }} alt="" />}</div> : <div style={{ width: "100%", height: 280, background: dark ? "#1a1a1a" : "#fafafa", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ fontSize: 40 }}>📷</span></div>}
+        <div style={{ padding: "10px 12px 4px", display: "flex", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", gap: 14 }}><SvgHeart size={22} color={dark ? "#f5f5f5" : "#262626"} /><SvgComment size={22} color={dark ? "#f5f5f5" : "#262626"} /><SvgShare size={22} color={dark ? "#f5f5f5" : "#262626"} /></div>
+          <SvgBookmark size={22} color={dark ? "#f5f5f5" : "#262626"} />
+        </div>
+        <div style={{ padding: "4px 12px" }}><span style={{ fontSize: 12, fontWeight: 700, color: dark ? "#f5f5f5" : "#262626" }}>0 likes</span></div>
+        <div style={{ padding: "2px 12px 10px" }}><span style={{ fontSize: 12, fontWeight: 700, color: dark ? "#f5f5f5" : "#262626" }}>yourbrand </span><span style={{ fontSize: 12, color: dark ? "#f5f5f5" : "#262626" }}>{truncated || <span style={{ color: dark ? "#a8a8a8" : "#8e8e8e", fontStyle: "italic" }}>Caption...</span>}</span></div>
+        <div style={{ padding: "2px 12px 8px", display: "flex", justifyContent: "space-between" }}><span style={{ fontSize: 9, color: dark ? "#a8a8a8" : "#8e8e8e" }}>{truncated.length}/{maxLen}</span><span style={{ fontSize: 9, color: "#E1306C", fontWeight: 700 }}>Instagram Preview</span></div>
       </div>
-      <div style={{ padding: "2px 12px 8px", display: "flex", justifyContent: "space-between" }}><span style={{ fontSize: 9, color: subColor }}>{truncated.length}/{maxLen}</span><span style={{ fontSize: 9, color: "#FF0000", fontWeight: 700 }}>YouTube</span></div>
+    );
+  }
+
+  // ── TIKTOK ──
+  if (platformId === "tiktok") return (
+    <div style={{ background: "#000", borderRadius: 10, overflow: "hidden", position: "relative", height: 420 }}>
+      {mediaUrl ? (videoUrl ? <video src={videoUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <img src={imageUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="" />) : <div style={{ width: "100%", height: "100%", background: "#121212", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 8 }}><span style={{ fontSize: 40 }}>🎵</span><span style={{ fontSize: 11, color: "#ffffff50" }}>Video preview</span></div>}
+      {/* Top bar */}
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, padding: "12px 16px", display: "flex", justifyContent: "center", gap: 16, background: "linear-gradient(rgba(0,0,0,0.3), transparent)" }}>
+        <span style={{ fontSize: 13, color: "#ffffff80" }}>Following</span>
+        <span style={{ fontSize: 13, color: "#fff", fontWeight: 700, borderBottom: "2px solid #fff", paddingBottom: 2 }}>For You</span>
+      </div>
+      {/* Right side icons */}
+      <div style={{ position: "absolute", right: 10, bottom: 70, display: "flex", flexDirection: "column", gap: 16, alignItems: "center" }}>
+        <div style={{ position: "relative" }}>
+          <div style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg, #7C3AED, #06B6D4)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 16, fontWeight: 800, border: "2px solid #fff" }}>D</div>
+          <div style={{ position: "absolute", bottom: -6, left: "50%", transform: "translateX(-50%)", width: 18, height: 18, borderRadius: "50%", background: "#fe2c55", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontSize: 12, fontWeight: 800 }}>+</span></div>
+        </div>
+        {[{ icon: <SvgHeart size={28} color="#fff" />, count: "0" }, { icon: <SvgComment size={26} color="#fff" />, count: "0" }, { icon: <SvgBookmark size={24} color="#fff" />, count: "0" }, { icon: <SvgShare size={26} color="#fff" />, count: "0" }].map((item, i) => (
+          <div key={i} style={{ textAlign: "center" }}>{item.icon}<div style={{ fontSize: 10, color: "#fff", marginTop: 2 }}>{item.count}</div></div>
+        ))}
+        <div style={{ width: 32, height: 32, borderRadius: "50%", border: "8px solid #333", background: "linear-gradient(135deg, #7C3AED, #06B6D4)", animation: "spin 4s linear infinite" }}><style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style></div>
+      </div>
+      {/* Bottom overlay */}
+      <div style={{ position: "absolute", bottom: 0, left: 0, right: 56, padding: "16px", background: "linear-gradient(transparent, rgba(0,0,0,0.7))" }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 4 }}>@yourbrand</div>
+        <div style={{ fontSize: 12, color: "#fff", lineHeight: 1.4, maxHeight: 54, overflow: "hidden", whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{truncated || "Caption here..."}</div>
+        <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 6 }}><SvgMusic size={12} color="#fff" /><div style={{ overflow: "hidden", flex: 1 }}><span style={{ fontSize: 11, color: "#ffffffcc", whiteSpace: "nowrap" }}>♫ Original sound - yourbrand</span></div></div>
+      </div>
+      {/* Bottom nav */}
+      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "8px 0 6px", background: "#000", display: "flex", justifyContent: "space-around" }}>
+        {["Home", "Friends", "+", "Inbox", "Me"].map((n, i) => (
+          <div key={n} style={{ textAlign: "center" }}>
+            {i === 2 ? <div style={{ width: 36, height: 24, borderRadius: 6, background: "linear-gradient(90deg, #25f4ee, #fe2c55)", display: "flex", alignItems: "center", justifyContent: "center" }}><div style={{ width: 28, height: 20, borderRadius: 4, background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 800 }}>+</div></div> : <span style={{ fontSize: 9, color: i === 0 ? "#fff" : "#ffffff80" }}>{n}</span>}
+          </div>
+        ))}
+      </div>
+      <div style={{ position: "absolute", top: 44, left: 16 }}><span style={{ fontSize: 8, color: "#ffffff40" }}>{truncated.length}/{maxLen}</span></div>
     </div>
   );
+
+  // ── LINKEDIN ──
+  if (platformId === "linkedin") return (
+    <div style={{ background: dark ? "#1b1f23" : "#fff", borderRadius: 10, overflow: "hidden", border: `1px solid ${dark ? "#38434f" : "#e0e0e0"}` }}>
+      <div style={{ padding: "12px 16px 8px", display: "flex", alignItems: "flex-start", gap: 10 }}>
+        <div style={{ width: 48, height: 48, borderRadius: "50%", background: "linear-gradient(135deg, #7C3AED, #06B6D4)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 18, fontWeight: 800, flexShrink: 0 }}>D</div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: dark ? "#fff" : "#000" }}>Your Brand</div>
+          <div style={{ fontSize: 11, color: dark ? "#ffffff99" : "#00000099" }}>1,234 followers</div>
+          <div style={{ fontSize: 11, color: dark ? "#ffffff66" : "#00000066", display: "flex", alignItems: "center", gap: 4 }}>1h · <svg width="12" height="12" viewBox="0 0 16 16" fill={dark ? "#ffffff66" : "#00000066"}><path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm0 2a6 6 0 0 1 4.47 10H3.53A6 6 0 0 1 8 2z"/></svg></div>
+        </div>
+        <SvgMore size={20} color={dark ? "#ffffff99" : "#00000066"} />
+      </div>
+      {truncated && <div style={{ padding: "0 16px 12px" }}><p style={{ fontSize: 13, color: dark ? "#ffffffe6" : "#000000e6", lineHeight: 1.6, margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{truncated}</p></div>}
+      {mediaUrl && <div>{videoUrl ? <video src={videoUrl} style={{ width: "100%", height: 200, objectFit: "cover", display: "block" }} /> : <img src={imageUrl} style={{ width: "100%", height: 200, objectFit: "cover", display: "block" }} alt="" />}</div>}
+      <div style={{ padding: "8px 16px 4px", display: "flex", alignItems: "center", gap: 4, borderBottom: `1px solid ${dark ? "#38434f" : "#e0e0e0"}` }}>
+        <div style={{ display: "flex" }}>{["#0a66c2", "#e16745", "#44712e"].map((c, i) => <div key={i} style={{ width: 16, height: 16, borderRadius: "50%", background: c, marginLeft: i > 0 ? -4 : 0, border: `1.5px solid ${dark ? "#1b1f23" : "#fff"}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 8 }}>{["👍", "❤️", "👏"][i]}</div>)}</div>
+        <span style={{ fontSize: 11, color: dark ? "#ffffff99" : "#00000099", marginLeft: 4 }}>0</span>
+        <span style={{ marginLeft: "auto", fontSize: 11, color: dark ? "#ffffff99" : "#00000099" }}>0 comments · 0 reposts</span>
+      </div>
+      <div style={{ padding: "4px 8px", display: "flex" }}>
+        {[{ icon: <SvgThumbUp size={18} />, label: "Like" }, { icon: <SvgComment size={18} />, label: "Comment" }, { icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>, label: "Repost" }, { icon: <SvgShare size={18} />, label: "Send" }].map(a => (
+          <div key={a.label} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 5, padding: "8px 0", color: dark ? "#ffffff99" : "#00000099", cursor: "default" }}>{a.icon}<span style={{ fontSize: 11, fontWeight: 600 }}>{a.label}</span></div>
+        ))}
+      </div>
+      <div style={{ padding: "2px 16px 6px", display: "flex", justifyContent: "space-between" }}><span style={{ fontSize: 9, color: dark ? "#ffffff66" : "#00000066" }}>{truncated.length}/{maxLen}</span><span style={{ fontSize: 9, color: "#0A66C2", fontWeight: 700 }}>LinkedIn Preview</span></div>
+    </div>
+  );
+
+  // ── YOUTUBE ──
+  if (platformId === "youtube") {
+    if (isVertical) {
+      // YouTube Shorts style
+      return (
+        <div style={{ background: "#000", borderRadius: 10, overflow: "hidden", position: "relative", height: 420 }}>
+          {mediaUrl ? (videoUrl ? <video src={videoUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <img src={imageUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="" />) : <div style={{ width: "100%", height: "100%", background: "#0f0f0f", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ fontSize: 40 }}>🎬</span></div>}
+          <div style={{ position: "absolute", top: 12, left: 12 }}><span style={{ color: "#fff", fontSize: 14, fontWeight: 700 }}>Shorts</span></div>
+          <div style={{ position: "absolute", right: 10, bottom: 70, display: "flex", flexDirection: "column", gap: 18, alignItems: "center" }}>
+            {[{ icon: <SvgThumbUp size={26} color="#fff" />, count: "0" }, { icon: <span style={{ fontSize: 22 }}>👎</span>, count: "" }, { icon: <SvgComment size={24} color="#fff" />, count: "0" }, { icon: <SvgShare size={24} color="#fff" />, count: "" }].map((item, i) => (
+              <div key={i} style={{ textAlign: "center" }}>{item.icon}{item.count && <div style={{ fontSize: 10, color: "#fff", marginTop: 2 }}>{item.count}</div>}</div>
+            ))}
+            <div style={{ width: 28, height: 28, borderRadius: 6, background: "linear-gradient(135deg, #7C3AED, #06B6D4)", border: "1.5px solid #fff" }} />
+          </div>
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 56, padding: "16px", background: "linear-gradient(transparent, rgba(0,0,0,0.7))" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}><div style={{ width: 28, height: 28, borderRadius: "50%", background: "linear-gradient(135deg, #7C3AED, #06B6D4)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 10, fontWeight: 800 }}>D</div><span style={{ fontSize: 12, fontWeight: 600, color: "#fff" }}>@yourbrand</span><span style={{ fontSize: 10, color: "#fff", background: "rgba(255,255,255,0.2)", borderRadius: 4, padding: "2px 8px" }}>Subscribe</span></div>
+            <div style={{ fontSize: 11, color: "#fff", lineHeight: 1.3, maxHeight: 36, overflow: "hidden" }}>{truncated.slice(0, 80) || "Short title..."}</div>
+          </div>
+          <div style={{ position: "absolute", top: 44, left: 12 }}><span style={{ fontSize: 8, color: "#ffffff40" }}>{truncated.length}/{maxLen} · YouTube Shorts</span></div>
+        </div>
+      );
+    }
+    // YouTube regular video
+    return (
+      <div style={{ background: dark ? "#0f0f0f" : "#fff", borderRadius: 10, overflow: "hidden" }}>
+        <div style={{ position: "relative", background: "#000" }}>
+          {mediaUrl ? (videoUrl ? <video src={videoUrl} style={{ width: "100%", height: 180, objectFit: "cover", display: "block" }} /> : <img src={imageUrl} style={{ width: "100%", height: 180, objectFit: "cover", display: "block" }} alt="" />) : <div style={{ width: "100%", height: 180, background: "#0f0f0f", display: "flex", alignItems: "center", justifyContent: "center" }}><div style={{ width: 56, height: 40, borderRadius: 10, background: "rgba(255,0,0,0.9)", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontSize: 20, marginLeft: 2 }}>▶</span></div></div>}
+          <div style={{ position: "absolute", bottom: 6, right: 6, background: "rgba(0,0,0,0.8)", borderRadius: 4, padding: "2px 6px" }}><span style={{ fontSize: 11, color: "#fff", fontWeight: 500 }}>0:00</span></div>
+        </div>
+        <div style={{ padding: "12px", display: "flex", gap: 10 }}>
+          <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg, #7C3AED, #06B6D4)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 14, fontWeight: 800, flexShrink: 0 }}>D</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: dark ? "#f1f1f1" : "#0f0f0f", lineHeight: 1.3, marginBottom: 4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{truncated.slice(0, 100) || <span style={{ color: dark ? "#aaa" : "#606060", fontStyle: "italic" }}>Video title...</span>}</div>
+            <div style={{ fontSize: 11, color: dark ? "#aaa" : "#606060" }}>Your Brand · 0 views · Just now</div>
+          </div>
+          <SvgMore size={18} color={dark ? "#fff" : "#606060"} />
+        </div>
+        <div style={{ padding: "2px 12px 8px", display: "flex", justifyContent: "space-between" }}><span style={{ fontSize: 9, color: dark ? "#aaa" : "#606060" }}>{truncated.length}/{maxLen}</span><span style={{ fontSize: 9, color: "#FF0000", fontWeight: 700 }}>YouTube Preview</span></div>
+      </div>
+    );
+  }
 
   return null;
 }
@@ -239,7 +338,7 @@ export function CreatePostModal({ draft, setDraft, darkMode, theme, uploadingIma
             <div style={{ width: 300, flexShrink: 0, display: "flex", flexDirection: "column", gap: 12, overflowY: "auto", maxHeight: "75vh" }}>
               <div style={{ fontSize: 12, fontWeight: 700, color: theme.textS, display: "flex", alignItems: "center", gap: 6 }}><Monitor size={14} /> {t("Live Preview", "Live Voorbeeld")}</div>
               {draft.platforms.map((pid: string) => (
-                <PlatformPreview key={pid} platformId={pid} content={draft.content} imageUrl={draft.image_url} videoUrl={draft.video_url} dark={darkMode} />
+                <PlatformPreview key={pid} platformId={pid} content={draft.content} imageUrl={draft.image_url} videoUrl={draft.video_url} postType={draft.type} dark={darkMode} />
               ))}
             </div>
           )}
