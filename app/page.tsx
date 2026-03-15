@@ -137,6 +137,18 @@ export default function App() {
 
   useEffect(() => { if (session && workspaces.length === 0) loadWorkspaces(); }, [session]);
 
+  // Auto-open channel picker after Google login redirect
+  useEffect(() => {
+    if (session && typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("pickChannel") === "true") {
+        setPage("settings");
+        setTimeout(() => { fetchYouTubeChannels(); setShowChannelPicker(true); }, 500);
+        window.history.replaceState({}, "", "/");
+      }
+    }
+  }, [session]);
+
   async function loadWorkspaces() {
     setLoading(true);
     const { data } = await supabase.from("workspaces").select("*").eq("user_id", userEmail).order("created_at", { ascending: true });
@@ -405,7 +417,7 @@ export default function App() {
                         <button onClick={() => { fetchYouTubeChannels(); setShowChannelPicker(true); }} style={{ fontSize: 12, padding: "6px 12px", borderRadius: 8, border: `1px solid ${p.color}`, background: p.color + "10", color: p.color, cursor: "pointer", fontWeight: 600 }}>{t("Switch", "Wissel")}</button>
                         <button onClick={disconnectYouTube} style={{ fontSize: 12, padding: "6px 12px", borderRadius: 8, border: `1px solid ${BRAND.red}`, background: BRAND.red + "10", color: BRAND.red, cursor: "pointer", fontWeight: 600 }}>{t("Disconnect", "Ontkoppel")}</button>
                       </div>
-                    ) : <button onClick={() => { fetchYouTubeChannels(); setShowChannelPicker(true); }} style={{ fontSize: 12, padding: "6px 14px", borderRadius: 8, border: `1px solid ${p.color}`, background: p.color + "10", color: p.color, cursor: "pointer", fontWeight: 600 }}>Connect →</button>
+                    ) : <button onClick={() => signIn("google", { callbackUrl: "/?pickChannel=true" })} style={{ fontSize: 12, padding: "6px 14px", borderRadius: 8, border: `1px solid ${p.color}`, background: p.color + "10", color: p.color, cursor: "pointer", fontWeight: 600 }}>Connect →</button>
                   ) : <button style={{ fontSize: 12, padding: "6px 14px", borderRadius: 8, border: `1px solid ${theme.border}`, background: "transparent", color: theme.textT, cursor: "default", fontWeight: 600 }}>{t("Coming soon", "Binnenkort")}</button>}
                 </div>
               ))}
@@ -471,7 +483,7 @@ export default function App() {
           <div style={{ fontSize: 18, fontWeight: 800, marginBottom: 6, color: theme.text }}>{t("Select YouTube Channel", "Kies YouTube Kanaal")}</div>
           <p style={{ fontSize: 13, color: theme.textT, marginBottom: 18 }}>{t("Choose which channel to connect.", "Kies welk kanaal je wilt koppelen.")}</p>
           {loadingChannels ? <div style={{ textAlign: "center", padding: "30px 0" }}><div style={{ width: 40, height: 40, margin: "0 auto 12px", borderRadius: "50%", border: `3px solid ${BRAND.primary}30`, borderTopColor: BRAND.primary, animation: "spin 1s linear infinite" }} /><div style={{ fontSize: 13, color: BRAND.primary, fontWeight: 600 }}>{t("Loading...", "Laden...")}</div><style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style></div>
-            : ytChannels.length === 0 ? <div style={{ textAlign: "center", padding: "20px 0" }}><div style={{ fontSize: 36, marginBottom: 8 }}>📺</div><div style={{ fontSize: 14, fontWeight: 600, color: theme.text }}>{t("No channels found", "Geen kanalen gevonden")}</div><button onClick={fetchYouTubeChannels} style={{ marginTop: 12, padding: "8px 16px", borderRadius: 8, border: "none", background: BRAND.gradBtn, color: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>{t("Retry", "Opnieuw")}</button></div>
+            : ytChannels.length === 0 ? <div style={{ textAlign: "center", padding: "20px 0" }}><div style={{ fontSize: 36, marginBottom: 8 }}>📺</div><div style={{ fontSize: 14, fontWeight: 600, color: theme.text }}>{t("No channels found", "Geen kanalen gevonden")}</div><div style={{ display: "flex", gap: 8, justifyContent: "center", marginTop: 12 }}><button onClick={() => signIn("google", { callbackUrl: "/?pickChannel=true" })} style={{ padding: "8px 16px", borderRadius: 8, border: "none", background: BRAND.gradBtn, color: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>{t("Re-login & retry", "Opnieuw inloggen")}</button><button onClick={fetchYouTubeChannels} style={{ padding: "8px 16px", borderRadius: 8, border: `1px solid ${theme.border}`, background: "transparent", color: theme.text, cursor: "pointer", fontSize: 13, fontWeight: 600 }}>{t("Retry", "Opnieuw")}</button></div><div style={{ marginTop: 16, borderTop: `1px solid ${theme.border}`, paddingTop: 16 }}><div style={{ fontSize: 13, fontWeight: 600, color: theme.text, marginBottom: 8 }}>{t("Or add manually", "Of handmatig toevoegen")}</div><div style={{ display: "flex", gap: 8 }}><input id="manual-channel" placeholder={t("YouTube Channel ID (UCxxxx...)", "YouTube Kanaal ID (UCxxxx...)")} style={{ flex: 1, padding: "8px 12px", borderRadius: 8, border: `1px solid ${theme.inputBorder}`, fontSize: 13, background: theme.inputBg, color: theme.text }} /><button onClick={async () => { const input = document.getElementById("manual-channel") as HTMLInputElement; const cid = input?.value?.trim(); if (!cid) return; await selectYouTubeChannel({ id: cid, title: cid, thumbnail: "" }); }} style={{ padding: "8px 14px", borderRadius: 8, border: "none", background: BRAND.green, color: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>{t("Add", "Toevoegen")}</button></div></div></div>
             : <div>{ytChannels.map((ch: any) => <button key={ch.id} onClick={() => selectYouTubeChannel(ch)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "12px", borderRadius: 12, border: ws?.youtube_channel_id === ch.id ? `2px solid ${BRAND.green}` : `1px solid ${theme.border}`, background: ws?.youtube_channel_id === ch.id ? (darkMode ? "rgba(16,185,129,0.1)" : BRAND.greenL) : theme.card, cursor: "pointer", marginBottom: 8, textAlign: "left" }}>{ch.thumbnail ? <img src={ch.thumbnail} style={{ width: 44, height: 44, borderRadius: "50%" }} alt="" /> : <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#FF000015", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>▶</div>}<div style={{ flex: 1 }}><div style={{ fontSize: 14, fontWeight: 700, color: theme.text }}>{ch.title}</div><div style={{ fontSize: 11, color: theme.textT }}>{ch.id}</div></div>{ws?.youtube_channel_id === ch.id && <div style={{ width: 24, height: 24, borderRadius: "50%", background: BRAND.green, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 14 }}>✓</div>}</button>)}</div>}
           <button onClick={() => { setShowChannelPicker(false); setYtChannels([]); }} style={{ width: "100%", padding: "11px", borderRadius: 10, border: `1px solid ${theme.border}`, background: "transparent", cursor: "pointer", fontSize: 14, color: theme.textS, marginTop: 8 }}>{t("Cancel", "Annuleren")}</button>
         </div>
