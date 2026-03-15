@@ -198,8 +198,28 @@ export default function App() {
         <div style={{ padding: "8px", flex: 1, overflowY: "auto" }}>
           {NAV.map(n => { const act = page === n.id; return <button key={n.id} onClick={() => setPage(n.id)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "8px", borderRadius: 9, marginBottom: 1, background: act ? "rgba(124,58,237,0.2)" : "transparent", border: "none", cursor: "pointer", position: "relative" }}><span style={{ flexShrink: 0, width: 20, display: "flex", alignItems: "center", justifyContent: "center", color: act ? "#fff" : "rgba(255,255,255,0.55)" }}>{n.icon}</span>{sidebarOpen && <span style={{ fontSize: 13, color: act ? "#fff" : "rgba(255,255,255,0.55)", fontWeight: act ? 600 : 400 }}>{n.label}</span>}{n.badge && n.badge > 0 ? <span style={{ marginLeft: "auto", background: BRAND.primary, color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 10, padding: "1px 6px" }}>{n.badge}</span> : null}{act && <div style={{ position: "absolute", left: 0, top: "20%", height: "60%", width: 3, background: BRAND.primary, borderRadius: "0 3px 3px 0" }} />}</button>; })}
         </div>
+        {/* SIDEBAR FOOTER: Privacy · Terms · Feedback */}
         <div style={{ padding: "10px 8px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-          <button onClick={() => signOut({ callbackUrl: "/" })} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "7px 6px", borderRadius: 9, background: "transparent", border: "none", cursor: "pointer" }}><div style={{ width: 28, height: 28, borderRadius: "50%", background: BRAND.grad, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, color: "#fff", fontWeight: 700 }}>{userInitials}</div>{sidebarOpen && <div style={{ textAlign: "left" }}><div style={{ fontSize: 12, color: "rgba(255,255,255,0.7)", fontWeight: 600 }}>{userName}</div><div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)" }}>{t("Sign out", "Uitloggen")}</div></div>}</button>
+          {sidebarOpen ? (
+            <div style={{ display: "flex", justifyContent: "center", gap: 4, padding: "6px 0" }}>
+              {[
+                { label: t("Privacy", "Privacy"), href: "/privacy" },
+                { label: t("Terms", "Voorwaarden"), href: "/terms" },
+                { label: t("Feedback", "Feedback"), href: "mailto:inspiredmarketingsr@gmail.com?subject=DropPost Feedback" },
+              ].map((item, i) => (
+                <span key={item.label} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                  {i > 0 && <span style={{ color: "rgba(255,255,255,0.15)", fontSize: 10 }}>·</span>}
+                  <a href={item.href} target={item.href.startsWith("mailto") ? undefined : "_blank"} rel="noopener noreferrer" style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", textDecoration: "none", cursor: "pointer" }} onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")} onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.3)")}>{item.label}</a>
+                </span>
+              ))}
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, padding: "4px 0" }}>
+              <a href="/privacy" target="_blank" rel="noopener noreferrer" style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", textDecoration: "none" }} title="Privacy">P</a>
+              <a href="/terms" target="_blank" rel="noopener noreferrer" style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", textDecoration: "none" }} title="Terms">T</a>
+              <a href="mailto:inspiredmarketingsr@gmail.com?subject=DropPost Feedback" style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", textDecoration: "none" }} title="Feedback">F</a>
+            </div>
+          )}
         </div>
       </div>
 
