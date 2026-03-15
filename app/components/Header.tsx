@@ -29,6 +29,7 @@ type Props = {
   showUserMenu: boolean;
   setShowUserMenu: (fn: (v: boolean) => boolean) => void;
   setShowNewPost: (v: boolean) => void;
+  isMobile: boolean;
   theme: Theme;
   t: (en: string, nl: string) => string;
 };
@@ -37,12 +38,12 @@ export default function Header({
   sidebarOpen, setSidebarOpen, ws, workspaces, activeWS, switchWorkspace, setShowNewWS,
   session, userName, userEmail, userInitials, darkMode, setDarkMode, language, setLanguage,
   showSupport, setShowSupport, showNews, setShowNews, showLangMenu, setShowLangMenu,
-  showUserMenu, setShowUserMenu, setShowNewPost, theme, t,
+  showUserMenu, setShowUserMenu, setShowNewPost, isMobile, theme, t,
 }: Props) {
   const [showWSMenu, setShowWSMenu] = useState(false);
 
   return (
-    <div style={{ background: theme.headerBg, borderBottom: `1px solid ${theme.border}`, padding: "0 16px", display: "flex", alignItems: "center", height: 54, gap: 8, flexShrink: 0 }}>
+    <div style={{ background: theme.headerBg, borderBottom: `1px solid ${theme.border}`, padding: isMobile ? "0 12px" : "0 16px", display: "flex", alignItems: "center", height: isMobile ? 50 : 54, gap: isMobile ? 6 : 8, flexShrink: 0 }}>
 
       {/* Hamburger */}
       <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ width: 34, height: 34, borderRadius: 8, border: "none", background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -51,10 +52,10 @@ export default function Header({
 
       {/* Workspace selector */}
       <div style={{ position: "relative" }}>
-        <button onClick={() => setShowWSMenu(v => !v)} style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 10px 5px 6px", borderRadius: 10, border: `1px solid ${showWSMenu ? BRAND.primary + "50" : theme.border}`, background: showWSMenu ? (darkMode ? "rgba(124,58,237,0.1)" : BRAND.primaryL) : "transparent", cursor: "pointer", transition: "all 0.15s" }}>
-          {ws && <Avatar initials={ws.avatar} color={ws.color} size={26} />}
-          <span style={{ fontSize: 13, fontWeight: 700, color: theme.text, maxWidth: 140, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ws?.name || "Workspace"}</span>
-          <ChevronDown size={14} color={theme.textT} style={{ transition: "transform 0.2s", transform: showWSMenu ? "rotate(180deg)" : "rotate(0)" }} />
+        <button onClick={() => setShowWSMenu(v => !v)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 8px 4px 5px", borderRadius: 10, border: `1px solid ${showWSMenu ? BRAND.primary + "50" : theme.border}`, background: showWSMenu ? (darkMode ? "rgba(124,58,237,0.1)" : BRAND.primaryL) : "transparent", cursor: "pointer", transition: "all 0.15s" }}>
+          {ws && <Avatar initials={ws.avatar} color={ws.color} size={isMobile ? 22 : 26} />}
+          <span style={{ fontSize: isMobile ? 12 : 13, fontWeight: 700, color: theme.text, maxWidth: isMobile ? 100 : 140, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ws?.name || "Workspace"}</span>
+          <ChevronDown size={13} color={theme.textT} style={{ transition: "transform 0.2s", transform: showWSMenu ? "rotate(180deg)" : "rotate(0)" }} />
         </button>
 
         {showWSMenu && (
@@ -93,41 +94,51 @@ export default function Header({
       <div style={{ flex: 1 }} />
 
       {/* Create Post */}
-      <button onClick={() => setShowNewPost(true)} style={{ background: BRAND.gradBtn, color: "#fff", border: "none", borderRadius: 9, padding: "7px 16px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
-        <span style={{ display: "flex", alignItems: "center", gap: 5 }}><Plus size={15} /> {t("Create Post", "Maak Post")}</span>
+      <button onClick={() => setShowNewPost(true)} style={{ background: BRAND.gradBtn, color: "#fff", border: "none", borderRadius: 9, padding: isMobile ? "6px 12px" : "7px 16px", fontSize: 13, fontWeight: 700, cursor: "pointer", flexShrink: 0 }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          <Plus size={14} />{!isMobile && ` ${t("Create Post", "Maak Post")}`}
+        </span>
       </button>
 
-      {/* Tool buttons */}
-      <button onClick={() => { setShowSupport(o => !o); setShowNews(() => false); }} style={{ width: 34, height: 34, borderRadius: 8, border: "none", background: showSupport ? theme.tagBg : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <Headphones size={17} color={showSupport ? BRAND.primary : theme.textS} />
-      </button>
-      <button onClick={() => { setShowNews(o => !o); setShowSupport(() => false); }} style={{ width: 34, height: 34, borderRadius: 8, border: "none", background: showNews ? theme.tagBg : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <Newspaper size={17} color={showNews ? BRAND.primary : theme.textS} />
-      </button>
+      {/* Tool buttons — hidden on mobile */}
+      {!isMobile && (
+        <>
+          <button onClick={() => { setShowSupport(o => !o); setShowNews(() => false); }} style={{ width: 34, height: 34, borderRadius: 8, border: "none", background: showSupport ? theme.tagBg : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Headphones size={17} color={showSupport ? BRAND.primary : theme.textS} />
+          </button>
+          <button onClick={() => { setShowNews(o => !o); setShowSupport(() => false); }} style={{ width: 34, height: 34, borderRadius: 8, border: "none", background: showNews ? theme.tagBg : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Newspaper size={17} color={showNews ? BRAND.primary : theme.textS} />
+          </button>
+        </>
+      )}
+
+      {/* Dark mode toggle */}
       <button onClick={() => setDarkMode(o => !o)} style={{ width: 34, height: 34, borderRadius: 8, border: "none", background: darkMode ? theme.tagBg : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
         {darkMode ? <Sun size={17} color={BRAND.amber} /> : <Moon size={17} color={theme.textS} />}
       </button>
 
-      {/* Language */}
-      <div style={{ position: "relative" }}>
-        <button onClick={() => setShowLangMenu(o => !o)} style={{ width: 34, height: 34, borderRadius: 8, border: "none", background: showLangMenu ? theme.tagBg : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <Globe size={17} color={showLangMenu ? BRAND.primary : theme.textS} />
-        </button>
-        {showLangMenu && (
-          <>
-            <div style={{ position: "fixed", inset: 0, zIndex: 50 }} onClick={() => setShowLangMenu(() => false)} />
-            <div style={{ position: "absolute", right: 0, top: "calc(100% + 6px)", background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 10, boxShadow: "0 8px 30px rgba(0,0,0,0.18)", overflow: "hidden", zIndex: 60, minWidth: 150 }}>
-              {[{ code: "en" as const, flag: "EN", label: "English" }, { code: "nl" as const, flag: "NL", label: "Nederlands" }].map(l => (
-                <button key={l.code} onClick={() => { setLanguage(l.code); setShowLangMenu(() => false); }} style={{ width: "100%", padding: "10px 16px", display: "flex", alignItems: "center", gap: 8, background: language === l.code ? theme.tagBg : "none", border: "none", cursor: "pointer", fontSize: 13, color: language === l.code ? BRAND.primary : theme.text, fontWeight: language === l.code ? 700 : 400 }}>
-                  <span style={{ fontSize: 11, fontWeight: 700, width: 24, textAlign: "center", color: language === l.code ? BRAND.primary : theme.textT }}>{l.flag}</span>
-                  {l.label}
-                  {language === l.code && <Check size={14} color={BRAND.primary} style={{ marginLeft: "auto" }} />}
-                </button>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
+      {/* Language — hidden on mobile */}
+      {!isMobile && (
+        <div style={{ position: "relative" }}>
+          <button onClick={() => setShowLangMenu(o => !o)} style={{ width: 34, height: 34, borderRadius: 8, border: "none", background: showLangMenu ? theme.tagBg : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Globe size={17} color={showLangMenu ? BRAND.primary : theme.textS} />
+          </button>
+          {showLangMenu && (
+            <>
+              <div style={{ position: "fixed", inset: 0, zIndex: 50 }} onClick={() => setShowLangMenu(() => false)} />
+              <div style={{ position: "absolute", right: 0, top: "calc(100% + 6px)", background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 10, boxShadow: "0 8px 30px rgba(0,0,0,0.18)", overflow: "hidden", zIndex: 60, minWidth: 150 }}>
+                {[{ code: "en" as const, flag: "EN", label: "English" }, { code: "nl" as const, flag: "NL", label: "Nederlands" }].map(l => (
+                  <button key={l.code} onClick={() => { setLanguage(l.code); setShowLangMenu(() => false); }} style={{ width: "100%", padding: "10px 16px", display: "flex", alignItems: "center", gap: 8, background: language === l.code ? theme.tagBg : "none", border: "none", cursor: "pointer", fontSize: 13, color: language === l.code ? BRAND.primary : theme.text, fontWeight: language === l.code ? 700 : 400 }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, width: 24, textAlign: "center", color: language === l.code ? BRAND.primary : theme.textT }}>{l.flag}</span>
+                    {l.label}
+                    {language === l.code && <Check size={14} color={BRAND.primary} style={{ marginLeft: "auto" }} />}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      )}
 
       {/* User menu */}
       <div style={{ position: "relative", marginLeft: 2 }}>

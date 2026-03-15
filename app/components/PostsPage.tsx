@@ -11,6 +11,7 @@ type Props = {
   onNewPost: () => void;
   onDelete: (id: string) => void;
   onPublishYT: (post: any) => void;
+  isMobile: boolean;
   t: (en: string, nl: string) => string;
 };
 
@@ -24,7 +25,7 @@ const PlatformIcon = ({ id, size = 16 }: { id: string; size?: number }) => {
   return null;
 };
 
-export default function PostsPage({ wsPosts, darkMode, theme, publishing, onNewPost, onDelete, onPublishYT, t }: Props) {
+export default function PostsPage({ wsPosts, darkMode, theme, publishing, onNewPost, onDelete, onPublishYT, isMobile, t }: Props) {
   const [view, setView] = useState<"grid" | "list">("grid");
   const [selected, setSelected] = useState<any | null>(null);
   const [filter, setFilter] = useState<"all" | "published" | "scheduled" | "draft">("all");
@@ -78,7 +79,7 @@ export default function PostsPage({ wsPosts, darkMode, theme, publishing, onNewP
 
       {/* ═══ GRID VIEW ═══ */}
       {view === "grid" && filtered.length > 0 && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(4, 1fr)", gap: 12 }}>
           {filtered.map((post: any) => (
             <div key={post.id} onClick={() => setSelected(post)} style={{
               borderRadius: 14, overflow: "hidden", cursor: "pointer",

@@ -10,10 +10,11 @@ type Props = {
   pending: any[];
   darkMode: boolean;
   theme: Theme;
+  isMobile: boolean;
   t: (en: string, nl: string) => string;
 };
 
-export default function Dashboard({ wsPosts, scheduled, published, pending, darkMode, theme, t }: Props) {
+export default function Dashboard({ wsPosts, scheduled, published, pending, darkMode, theme, isMobile, t }: Props) {
   const [phase, setPhase] = useState<"drop" | "splash" | "reveal" | "done">("drop");
 
   useEffect(() => {
@@ -146,7 +147,7 @@ export default function Dashboard({ wsPosts, scheduled, published, pending, dark
         </div>
 
         {/* Stats cards */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginBottom: 24 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2,1fr)" : "repeat(4,1fr)", gap: isMobile ? 10 : 14, marginBottom: 24 }}>
           {stats.map((s, idx) => (
             <div key={s.label} style={{
               background: darkMode
@@ -205,7 +206,7 @@ export default function Dashboard({ wsPosts, scheduled, published, pending, dark
 
         {/* Quick actions */}
         <div style={{
-          display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 24,
+          display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 10 : 14, marginBottom: 24,
           animation: phase === "done" ? "none" : "fadeSlideUp 0.5s ease-out 0.6s both",
         }}>
           <div style={{

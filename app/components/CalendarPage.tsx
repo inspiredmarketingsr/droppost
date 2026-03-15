@@ -9,6 +9,7 @@ type Props = {
   setCalDate: (d: Date) => void;
   darkMode: boolean;
   theme: Theme;
+  isMobile: boolean;
   t: (en: string, nl: string) => string;
   onNewPost: (date: string) => void;
 };
