@@ -190,7 +190,7 @@ export default function LandingPage() {
             </button>
           </div>
 
-          {/* MOCK APP PREVIEW with entrance animation */}
+          {/* APP PREVIEW - Real screenshot */}
           <div style={{ maxWidth: 900, margin: "0 auto", borderRadius: 20, border: `1px solid ${C.border}`, overflow: "hidden", boxShadow: "0 25px 80px rgba(0,0,0,0.1), 0 0 0 1px rgba(124,58,237,0.05)", background: C.bg, animation: "fadeInUp 1s ease-out 0.8s both", position: "relative" }}>
             {/* Glow effect on top */}
             <div style={{ position: "absolute", top: -1, left: "10%", right: "10%", height: 2, background: C.grad, borderRadius: 2 }} />
@@ -198,38 +198,7 @@ export default function LandingPage() {
               <div style={{ display: "flex", gap: 6 }}><div style={{ width: 12, height: 12, borderRadius: "50%", background: "#EF4444" }} /><div style={{ width: 12, height: 12, borderRadius: "50%", background: "#F59E0B" }} /><div style={{ width: 12, height: 12, borderRadius: "50%", background: "#10B981" }} /></div>
               <div style={{ flex: 1, textAlign: "center" }}><span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", fontFamily: "monospace" }}>droppost.app</span></div>
             </div>
-            <div style={{ display: "flex", minHeight: 340 }}>
-              <div style={{ width: 56, background: "#13131F", padding: "16px 0", display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: C.grad, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontWeight: 900, fontSize: 14 }}>D</span></div>
-                <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(124,58,237,0.3)", border: "1px solid rgba(124,58,237,0.5)" }} />
-                <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(255,255,255,0.05)" }} />
-                <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(255,255,255,0.05)" }} />
-              </div>
-              <div style={{ flex: 1, background: C.bgS, padding: 20 }}>
-                <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
-                  {[{ label: "12", sub: "Scheduled", color: C.primary }, { label: "8", sub: "Published", color: C.green }, { label: "3", sub: "Pending", color: "#F59E0B" }].map((s, i) => (
-                    <div key={s.sub} style={{ flex: 1, background: C.bg, borderRadius: 12, padding: "14px 16px", border: `1px solid ${C.border}`, animation: `fadeInUp 0.6s ease-out ${1.2 + i * 0.15}s both` }}>
-                      <div style={{ fontSize: 22, fontWeight: 900, color: s.color }}>{s.label}</div>
-                      <div style={{ fontSize: 11, color: C.textT, fontWeight: 600 }}>{s.sub}</div>
-                    </div>
-                  ))}
-                </div>
-                <div style={{ background: C.bg, borderRadius: 12, border: `1px solid ${C.border}`, overflow: "hidden", animation: "fadeInUp 0.6s ease-out 1.6s both" }}>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", borderBottom: `1px solid ${C.border}` }}>
-                    {["M","T","W","T","F","S","S"].map((d, i) => <div key={i} style={{ padding: "8px 0", textAlign: "center", fontSize: 10, fontWeight: 700, color: C.textT }}>{d}</div>)}
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)" }}>
-                    {Array.from({ length: 14 }, (_, i) => (
-                      <div key={i} style={{ padding: "6px 4px", minHeight: 36, borderRight: `1px solid ${C.border}`, borderBottom: `1px solid ${C.border}` }}>
-                        <div style={{ fontSize: 10, color: C.textT, textAlign: "right" }}>{i + 1}</div>
-                        {[3,5,8,11].includes(i) && <div style={{ width: "80%", height: 4, borderRadius: 2, background: C.primary, opacity: 0.3, marginTop: 2 }} />}
-                        {[1,7,12].includes(i) && <div style={{ width: "60%", height: 4, borderRadius: 2, background: C.green, opacity: 0.3, marginTop: 2 }} />}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <img src="/images/dashboard-preview.png" alt="DropPost Dashboard" style={{ width: "100%", display: "block" }} />
           </div>
 
           <div style={{ display: "flex", justifyContent: "center", gap: 20, marginTop: 32, flexWrap: "wrap", animation: "fadeInUp 0.8s ease-out 1.8s both" }}>
