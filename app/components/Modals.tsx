@@ -74,8 +74,8 @@ function PlatformPreview({ platformId, content, imageUrl, videoUrl, postType, da
     if (isVertical) {
       // Instagram Reel/Story style
       return (
-        <div style={{ background: "#000", borderRadius: 10, overflow: "hidden", position: "relative", height: 420 }}>
-          {mediaUrl ? (videoUrl ? <video src={videoUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <img src={imageUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="" />) : <div style={{ width: "100%", height: "100%", background: "#1a1a1a", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ fontSize: 40 }}>📷</span></div>}
+        <div style={{ background: "#000", borderRadius: 28, overflow: "hidden", position: "relative", width: "100%", aspectRatio: "9/16", border: "3px solid #333" }}>
+          {mediaUrl ? (videoUrl ? <video src={videoUrl} style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0 }} /> : <img src={imageUrl} style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0 }} alt="" />) : <div style={{ width: "100%", height: "100%", background: "#1a1a1a", display: "flex", alignItems: "center", justifyContent: "center", position: "absolute", inset: 0 }}><span style={{ fontSize: 40 }}>📷</span></div>}
           {/* Top bar */}
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, padding: "12px 16px", display: "flex", justifyContent: "space-between", background: "linear-gradient(rgba(0,0,0,0.4), transparent)" }}>
             <span style={{ color: "#fff", fontSize: 14, fontWeight: 700 }}>Reels</span>
@@ -120,8 +120,8 @@ function PlatformPreview({ platformId, content, imageUrl, videoUrl, postType, da
 
   // ── TIKTOK ──
   if (platformId === "tiktok") return (
-    <div style={{ background: "#000", borderRadius: 10, overflow: "hidden", position: "relative", height: 420 }}>
-      {mediaUrl ? (videoUrl ? <video src={videoUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <img src={imageUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="" />) : <div style={{ width: "100%", height: "100%", background: "#121212", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 8 }}><span style={{ fontSize: 40 }}>🎵</span><span style={{ fontSize: 11, color: "#ffffff50" }}>Video preview</span></div>}
+    <div style={{ background: "#000", borderRadius: 28, overflow: "hidden", position: "relative", width: "100%", aspectRatio: "9/16", border: "3px solid #333" }}>
+      {mediaUrl ? (videoUrl ? <video src={videoUrl} style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0 }} /> : <img src={imageUrl} style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0 }} alt="" />) : <div style={{ width: "100%", height: "100%", background: "#121212", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 8, position: "absolute", inset: 0 }}><span style={{ fontSize: 40 }}>🎵</span><span style={{ fontSize: 11, color: "#ffffff50" }}>Video preview</span></div>}
       {/* Top bar */}
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, padding: "12px 16px", display: "flex", justifyContent: "center", gap: 16, background: "linear-gradient(rgba(0,0,0,0.3), transparent)" }}>
         <span style={{ fontSize: 13, color: "#ffffff80" }}>Following</span>
@@ -189,8 +189,8 @@ function PlatformPreview({ platformId, content, imageUrl, videoUrl, postType, da
     if (isVertical) {
       // YouTube Shorts style
       return (
-        <div style={{ background: "#000", borderRadius: 10, overflow: "hidden", position: "relative", height: 420 }}>
-          {mediaUrl ? (videoUrl ? <video src={videoUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <img src={imageUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="" />) : <div style={{ width: "100%", height: "100%", background: "#0f0f0f", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ fontSize: 40 }}>🎬</span></div>}
+        <div style={{ background: "#000", borderRadius: 28, overflow: "hidden", position: "relative", width: "100%", aspectRatio: "9/16", border: "3px solid #333" }}>
+          {mediaUrl ? (videoUrl ? <video src={videoUrl} style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0 }} /> : <img src={imageUrl} style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0 }} alt="" />) : <div style={{ width: "100%", height: "100%", background: "#0f0f0f", display: "flex", alignItems: "center", justifyContent: "center", position: "absolute", inset: 0 }}><span style={{ fontSize: 40 }}>🎬</span></div>}
           <div style={{ position: "absolute", top: 12, left: 12 }}><span style={{ color: "#fff", fontSize: 14, fontWeight: 700 }}>Shorts</span></div>
           <div style={{ position: "absolute", right: 10, bottom: 70, display: "flex", flexDirection: "column", gap: 18, alignItems: "center" }}>
             {[{ icon: <SvgThumbUp size={26} color="#fff" />, count: "0" }, { icon: <span style={{ fontSize: 22 }}>👎</span>, count: "" }, { icon: <SvgComment size={24} color="#fff" />, count: "0" }, { icon: <SvgShare size={24} color="#fff" />, count: "" }].map((item, i) => (
