@@ -91,57 +91,94 @@ export default function LandingPage() {
       </nav>
 
       {/* ═══ HERO ═══ */}
-      <section style={{ position: "relative", overflow: "hidden" }}>
+      <section style={{ position: "relative", overflow: "hidden", minHeight: "90vh", display: "flex", alignItems: "center" }}>
+        {/* Animated gradient background */}
         <div style={{ position: "absolute", inset: 0, background: C.gradSoft, opacity: 0.5 }} />
-        <div style={{ position: "absolute", top: -200, right: -200, width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%)" }} />
-        <div style={{ position: "absolute", bottom: -150, left: -150, width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, rgba(6,182,212,0.08) 0%, transparent 70%)" }} />
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "80px 24px 60px", position: "relative", textAlign: "center" }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: C.bg, border: `1px solid ${C.border}`, borderRadius: 100, padding: "6px 16px 6px 8px", marginBottom: 28, boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
+        <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
+          {/* Floating gradient orbs */}
+          <div style={{ position: "absolute", top: "-10%", right: "-5%", width: 500, height: 500, borderRadius: "50%", background: "radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%)", animation: "orbFloat1 8s ease-in-out infinite" }} />
+          <div style={{ position: "absolute", bottom: "-15%", left: "-10%", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(6,182,212,0.1) 0%, transparent 70%)", animation: "orbFloat2 10s ease-in-out infinite" }} />
+          <div style={{ position: "absolute", top: "40%", left: "60%", width: 300, height: 300, borderRadius: "50%", background: "radial-gradient(circle, rgba(124,58,237,0.06) 0%, transparent 70%)", animation: "orbFloat3 12s ease-in-out infinite" }} />
+
+          {/* Floating platform icons */}
+          {[
+            { icon: <FaYoutube size={20} />, color: "#FF0000", x: "8%", y: "20%", delay: "0s", dur: "6s" },
+            { icon: <FaFacebookF size={18} />, color: "#1877F2", x: "85%", y: "15%", delay: "1s", dur: "7s" },
+            { icon: <FaInstagram size={20} />, color: "#E1306C", x: "92%", y: "55%", delay: "0.5s", dur: "8s" },
+            { icon: <FaTiktok size={18} />, color: "#010101", x: "5%", y: "65%", delay: "1.5s", dur: "6.5s" },
+            { icon: <FaSnapchat size={18} />, color: "#FFCE00", x: "15%", y: "85%", delay: "2s", dur: "7.5s" },
+            { icon: <FaXTwitter size={16} />, color: "#000", x: "80%", y: "80%", delay: "0.8s", dur: "9s" },
+          ].map((p, i) => (
+            <div key={i} style={{ position: "absolute", left: p.x, top: p.y, width: 44, height: 44, borderRadius: "50%", background: `${C.bg}ee`, border: `1.5px solid ${p.color}20`, display: "flex", alignItems: "center", justifyContent: "center", color: p.color, boxShadow: `0 4px 20px ${p.color}10`, animation: `heroFloat ${p.dur} ease-in-out ${p.delay} infinite`, opacity: 0.7 }}>
+              {p.icon}
+            </div>
+          ))}
+
+          {/* Animated particles */}
+          {Array.from({ length: 20 }, (_, i) => (
+            <div key={`p${i}`} style={{ position: "absolute", left: `${5 + (i * 4.7) % 90}%`, top: `${10 + (i * 7.3) % 80}%`, width: i % 3 === 0 ? 6 : 4, height: i % 3 === 0 ? 6 : 4, borderRadius: "50%", background: i % 2 === 0 ? C.primary : C.accent, opacity: 0.15, animation: `particle ${5 + (i % 4) * 2}s ease-in-out ${i * 0.3}s infinite` }} />
+          ))}
+
+          {/* Grid pattern overlay */}
+          <div style={{ position: "absolute", inset: 0, backgroundImage: `radial-gradient(${C.primary}08 1px, transparent 1px)`, backgroundSize: "32px 32px", opacity: 0.5 }} />
+        </div>
+
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "80px 24px 60px", position: "relative", textAlign: "center", width: "100%" }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: `${C.bg}dd`, border: `1px solid ${C.border}`, borderRadius: 100, padding: "6px 16px 6px 8px", marginBottom: 28, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", backdropFilter: "blur(8px)", animation: "fadeInDown 0.8s ease-out" }}>
             <Sparkles size={16} color={C.primary} />
             <span style={{ fontSize: 13, fontWeight: 600, color: C.textS }}>{t("Now with AI-powered captions", "Nu met AI-aangedreven bijschriften")}</span>
           </div>
-          <h1 style={{ fontSize: "clamp(36px, 5vw, 64px)", fontWeight: 900, lineHeight: 1.1, marginBottom: 20, color: C.dark, letterSpacing: "-0.02em" }}>
+
+          <h1 style={{ fontSize: "clamp(40px, 5.5vw, 72px)", fontWeight: 900, lineHeight: 1.08, marginBottom: 24, color: C.dark, letterSpacing: "-0.03em", animation: "fadeInUp 0.8s ease-out 0.2s both" }}>
             {t("Schedule, approve &", "Plan, keur goed &")}<br />
-            <span style={{ background: C.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{t("publish with ease", "publiceer met gemak")}</span>
+            <span style={{ position: "relative", display: "inline-block" }}>
+              <span style={{ background: C.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", animation: "gradientShift 4s ease-in-out infinite" }}>{t("publish with ease", "publiceer met gemak")}</span>
+              {/* Animated underline */}
+              <svg style={{ position: "absolute", bottom: -4, left: 0, width: "100%", height: 12, overflow: "visible" }} viewBox="0 0 400 12">
+                <path d="M 0 8 Q 100 0, 200 8 Q 300 16, 400 8" fill="none" stroke="url(#heroUnderline)" strokeWidth="3" strokeLinecap="round" style={{ strokeDasharray: 500, strokeDashoffset: 500, animation: "drawLine 1.5s ease-out 1s forwards" }} />
+                <defs><linearGradient id="heroUnderline" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stopColor="#7C3AED" /><stop offset="100%" stopColor="#06B6D4" /></linearGradient></defs>
+              </svg>
+            </span>
           </h1>
-          <p style={{ fontSize: "clamp(16px, 2vw, 20px)", color: C.textS, maxWidth: 600, margin: "0 auto 36px", lineHeight: 1.7 }}>
+
+          <p style={{ fontSize: "clamp(16px, 2vw, 20px)", color: C.textS, maxWidth: 620, margin: "0 auto 40px", lineHeight: 1.7, animation: "fadeInUp 0.8s ease-out 0.4s both" }}>
             {t("The all-in-one social media management tool for agencies and teams. Plan content, get approvals, and publish across all platforms — from one dashboard.", "De alles-in-één social media tool voor agencies en teams. Plan content, krijg goedkeuringen en publiceer op alle platformen — vanuit één dashboard.")}
           </p>
-          <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 48 }}>
-            <button onClick={() => signIn("google")} style={btn(true, "lg")}>
+
+          <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 52, animation: "fadeInUp 0.8s ease-out 0.6s both" }}>
+            <button onClick={() => signIn("google")} style={{ ...btn(true, "lg"), transition: "all 0.3s", boxShadow: "0 4px 20px rgba(124,58,237,0.25)" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(124,58,237,0.35)"; }} onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(124,58,237,0.25)"; }}>
               {t("Start Free — No Credit Card", "Gratis Starten — Geen Creditcard")} <ArrowRight size={18} style={{ marginLeft: 8, verticalAlign: "middle" }} />
             </button>
-            <button style={btn(false, "lg")}>
+            <button style={{ ...btn(false, "lg"), transition: "all 0.3s", backdropFilter: "blur(8px)", background: `${C.bg}cc` }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.borderColor = C.primary; }} onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = C.border; }}>
               <Play size={16} style={{ marginRight: 8, verticalAlign: "middle" }} fill={C.primary} color={C.primary} />{t("Watch Demo", "Bekijk Demo")}
             </button>
           </div>
 
-          {/* MOCK APP PREVIEW */}
-          <div style={{ maxWidth: 900, margin: "0 auto", borderRadius: 20, border: `1px solid ${C.border}`, overflow: "hidden", boxShadow: "0 25px 60px rgba(0,0,0,0.08)", background: C.bg }}>
+          {/* MOCK APP PREVIEW with entrance animation */}
+          <div style={{ maxWidth: 900, margin: "0 auto", borderRadius: 20, border: `1px solid ${C.border}`, overflow: "hidden", boxShadow: "0 25px 80px rgba(0,0,0,0.1), 0 0 0 1px rgba(124,58,237,0.05)", background: C.bg, animation: "fadeInUp 1s ease-out 0.8s both", position: "relative" }}>
+            {/* Glow effect on top */}
+            <div style={{ position: "absolute", top: -1, left: "10%", right: "10%", height: 2, background: C.grad, borderRadius: 2 }} />
             <div style={{ background: C.dark, padding: "10px 16px", display: "flex", alignItems: "center", gap: 8 }}>
               <div style={{ display: "flex", gap: 6 }}><div style={{ width: 12, height: 12, borderRadius: "50%", background: "#EF4444" }} /><div style={{ width: 12, height: 12, borderRadius: "50%", background: "#F59E0B" }} /><div style={{ width: 12, height: 12, borderRadius: "50%", background: "#10B981" }} /></div>
               <div style={{ flex: 1, textAlign: "center" }}><span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", fontFamily: "monospace" }}>droppost.app</span></div>
             </div>
             <div style={{ display: "flex", minHeight: 340 }}>
-              {/* Mini sidebar */}
               <div style={{ width: 56, background: "#13131F", padding: "16px 0", display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
                 <div style={{ width: 32, height: 32, borderRadius: 8, background: C.grad, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontWeight: 900, fontSize: 14 }}>D</span></div>
                 <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(124,58,237,0.3)", border: "1px solid rgba(124,58,237,0.5)" }} />
                 <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(255,255,255,0.05)" }} />
                 <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(255,255,255,0.05)" }} />
               </div>
-              {/* Mini content */}
               <div style={{ flex: 1, background: C.bgS, padding: 20 }}>
                 <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
-                  {[{ label: "12", sub: "Scheduled", color: C.primary }, { label: "8", sub: "Published", color: C.green }, { label: "3", sub: "Pending", color: "#F59E0B" }].map(s => (
-                    <div key={s.sub} style={{ flex: 1, background: C.bg, borderRadius: 12, padding: "14px 16px", border: `1px solid ${C.border}` }}>
+                  {[{ label: "12", sub: "Scheduled", color: C.primary }, { label: "8", sub: "Published", color: C.green }, { label: "3", sub: "Pending", color: "#F59E0B" }].map((s, i) => (
+                    <div key={s.sub} style={{ flex: 1, background: C.bg, borderRadius: 12, padding: "14px 16px", border: `1px solid ${C.border}`, animation: `fadeInUp 0.6s ease-out ${1.2 + i * 0.15}s both` }}>
                       <div style={{ fontSize: 22, fontWeight: 900, color: s.color }}>{s.label}</div>
                       <div style={{ fontSize: 11, color: C.textT, fontWeight: 600 }}>{s.sub}</div>
                     </div>
                   ))}
                 </div>
-                {/* Mini calendar grid */}
-                <div style={{ background: C.bg, borderRadius: 12, border: `1px solid ${C.border}`, overflow: "hidden" }}>
+                <div style={{ background: C.bg, borderRadius: 12, border: `1px solid ${C.border}`, overflow: "hidden", animation: "fadeInUp 0.6s ease-out 1.6s both" }}>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", borderBottom: `1px solid ${C.border}` }}>
                     {["M","T","W","T","F","S","S"].map((d, i) => <div key={i} style={{ padding: "8px 0", textAlign: "center", fontSize: 10, fontWeight: 700, color: C.textT }}>{d}</div>)}
                   </div>
@@ -159,7 +196,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div style={{ display: "flex", justifyContent: "center", gap: 20, marginTop: 32, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", justifyContent: "center", gap: 20, marginTop: 32, flexWrap: "wrap", animation: "fadeInUp 0.8s ease-out 1.8s both" }}>
             {[t("No credit card required", "Geen creditcard nodig"), t("Free plan available", "Gratis plan beschikbaar"), t("Cancel anytime", "Opzegbaar wanneer je wilt")].map(s => (
               <span key={s} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: C.textS }}>
                 <Shield size={14} color={C.green} />{s}
@@ -167,6 +204,18 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
+
+        <style>{`
+          @keyframes orbFloat1 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-30px,20px) scale(1.05); } }
+          @keyframes orbFloat2 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(25px,-30px) scale(1.08); } }
+          @keyframes orbFloat3 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-20px,15px); } }
+          @keyframes heroFloat { 0%,100% { transform: translateY(0) rotate(0deg); } 25% { transform: translateY(-12px) rotate(3deg); } 75% { transform: translateY(8px) rotate(-2deg); } }
+          @keyframes particle { 0%,100% { transform: translateY(0) scale(1); opacity: 0.15; } 50% { transform: translateY(-20px) scale(1.5); opacity: 0.3; } }
+          @keyframes fadeInUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+          @keyframes fadeInDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
+          @keyframes drawLine { to { stroke-dashoffset: 0; } }
+          @keyframes gradientShift { 0%,100% { filter: hue-rotate(0deg); } 50% { filter: hue-rotate(15deg); } }
+        `}</style>
       </section>
 
       {/* ═══ INTEGRATIONS ═══ */}
