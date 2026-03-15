@@ -1,11 +1,14 @@
 "use client";
 import { signIn } from "next-auth/react";
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { BRAND, PLATFORMS, WORKSPACE_COLORS, Theme } from "./ui";
 import {
-  X, ChevronDown, Clock, CalendarDays, Send, FileText,
+  X, Clock, CalendarDays, Send, FileText,
   Image as ImageIcon, Film, SmilePlus, Hash, Trash2, Plus,
-  AlertTriangle, Check, Sparkles, Type, GripVertical,
+  Check, Sparkles, Eye, Monitor, Heart, MessageCircle,
+  Share2, Bookmark, ThumbsUp, Repeat2, Globe, Music,
+  Camera, PlayCircle, Upload, MoreHorizontal, MoreVertical,
+  Video, FileImage, MessageSquare,
 } from "lucide-react";
 
 /* ═══ CONSTANTS ═══ */
@@ -22,7 +25,7 @@ const PLATFORM_MEDIA: Record<string, { image: string; video: string }> = {
 const EMOJI_LIST = ["😀","😂","🥰","😎","🔥","🚀","💯","✨","🎉","👏","💪","🙌","❤️","💜","💙","🧡","💚","👀","📸","🎬","📱","💼","📊","🎯","✅","⭐","🌟","💡","🏆","🤝","👋","🙏","💰","📈","🗓️","⏰","🎵","🎨","✍️","📢"];
 const HASHTAG_SUGGESTIONS = ["#socialmedia","#marketing","#contentcreator","#digitalmarketing","#branding","#growthhacking","#startup","#entrepreneur","#business","#strategy","#reels","#trending","#viral","#fyp","#instagood","#motivation","#success","#lifestyle","#creative","#design"];
 
-/* ═══ PLATFORM ICONS (accurate SVGs) ═══ */
+/* ═══ PLATFORM ICONS (accurate brand SVGs) ═══ */
 const PlatformIcon = ({ id, size = 18 }: { id: string; size?: number }) => {
   if (id === "facebook") return <svg width={size} height={size} viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>;
   if (id === "instagram") return <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><defs><linearGradient id="ig" x1="0" y1="24" x2="24" y2="0"><stop offset="0%" stopColor="#feda75"/><stop offset="25%" stopColor="#fa7e1e"/><stop offset="50%" stopColor="#d62976"/><stop offset="75%" stopColor="#962fbf"/><stop offset="100%" stopColor="#4f5bd5"/></linearGradient></defs><rect width="22" height="22" x="1" y="1" rx="6" stroke="url(#ig)" strokeWidth="2" fill="none"/><circle cx="12" cy="12" r="4.5" stroke="url(#ig)" strokeWidth="2" fill="none"/><circle cx="17.5" cy="6.5" r="1.2" fill="url(#ig)"/></svg>;
@@ -33,27 +36,54 @@ const PlatformIcon = ({ id, size = 18 }: { id: string; size?: number }) => {
 };
 
 /* ═══ AVATAR ═══ */
-const Avi = ({ sz = 32, src }: { sz?: number; src?: string }) => src
-  ? <img src={src} style={{ width: sz, height: sz, borderRadius: "50%", objectFit: "cover" }} alt="" />
-  : <div style={{ width: sz, height: sz, borderRadius: "50%", background: "linear-gradient(135deg, #7C3AED, #06B6D4)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: sz * 0.4, fontWeight: 800, flexShrink: 0 }}>D</div>;
+const Avi = ({ sz = 32 }: { sz?: number }) => (
+  <div style={{ width: sz, height: sz, borderRadius: "50%", background: "linear-gradient(135deg, #7C3AED, #06B6D4)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: sz * 0.4, fontWeight: 800, flexShrink: 0 }}>D</div>
+);
 
-/* ═══ INLINE PREVIEW RENDERERS ═══ */
+/* ═══ PLATFORM-SPECIFIC PREVIEW COMPONENTS ═══ */
+
 function FBPreview({ content, media, dark, t }: { content: string; media: { imageUrl: string; videoUrl: string }; dark: boolean; t: any }) {
   const dc = dark ? "#b0b3b8" : "#65676b";
   return (
     <div style={{ background: dark ? "#242526" : "#fff", borderRadius: 10, border: `1px solid ${dark ? "#3e4042" : "#dadde1"}`, overflow: "hidden" }}>
       <div style={{ padding: "12px 14px 8px", display: "flex", alignItems: "center", gap: 10 }}>
         <Avi sz={36} />
-        <div style={{ flex: 1 }}><div style={{ fontSize: 13, fontWeight: 700, color: dark ? "#e4e6eb" : "#050505" }}>Your Brand</div><div style={{ fontSize: 11, color: dc }}>Just now · 🌐</div></div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: dark ? "#e4e6eb" : "#050505" }}>Your Brand</div>
+          <div style={{ fontSize: 11, color: dc, display: "flex", alignItems: "center", gap: 4 }}>Just now · <Globe size={10} color={dc} /></div>
+        </div>
+        <MoreHorizontal size={18} color={dc} />
       </div>
-      {content ? <div style={{ padding: "0 14px 10px" }}><p style={{ fontSize: 13, color: dark ? "#e4e6eb" : "#050505", lineHeight: 1.5, margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{content}</p></div>
-      : <div style={{ padding: "0 14px 10px", color: dark ? "#b0b3b8" : "#8a8d91", fontSize: 13, fontStyle: "italic" }}>{t("Click here to add text to this post...","Klik om tekst toe te voegen...")}</div>}
-      {(media.videoUrl || media.imageUrl) && <div style={{ background: "#000" }}>{media.videoUrl ? <video src={media.videoUrl} style={{ width: "100%", maxHeight: 320, objectFit: "contain", display: "block" }} controls /> : <img src={media.imageUrl} style={{ width: "100%", maxHeight: 320, objectFit: "cover", display: "block" }} alt="" />}</div>}
-      <div style={{ padding: "6px 14px", borderTop: `1px solid ${dark ? "#3e4042" : "#dadde1"}`, display: "flex", justifyContent: "space-between" }}>
-        <span style={{ fontSize: 11, color: dc }}>👍❤️ 0</span><span style={{ fontSize: 11, color: dc }}>0 comments</span>
+      {content
+        ? <div style={{ padding: "0 14px 10px" }}><p style={{ fontSize: 13, color: dark ? "#e4e6eb" : "#050505", lineHeight: 1.5, margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{content}</p></div>
+        : <div style={{ padding: "0 14px 10px", color: dc, fontSize: 13, fontStyle: "italic" }}>{t("Click here to add text to this post...","Klik om tekst toe te voegen...")}</div>
+      }
+      {(media.videoUrl || media.imageUrl) && (
+        <div style={{ background: "#000" }}>
+          {media.videoUrl
+            ? <video src={media.videoUrl} style={{ width: "100%", maxHeight: 320, objectFit: "contain", display: "block" }} controls />
+            : <img src={media.imageUrl} style={{ width: "100%", maxHeight: 320, objectFit: "cover", display: "block" }} alt="" />
+          }
+        </div>
+      )}
+      <div style={{ padding: "6px 14px", borderTop: `1px solid ${dark ? "#3e4042" : "#dadde1"}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          <div style={{ width: 16, height: 16, borderRadius: "50%", background: "#1877F2", display: "flex", alignItems: "center", justifyContent: "center" }}><ThumbsUp size={9} color="#fff" /></div>
+          <div style={{ width: 16, height: 16, borderRadius: "50%", background: "#E1306C", display: "flex", alignItems: "center", justifyContent: "center", marginLeft: -4 }}><Heart size={9} color="#fff" fill="#fff" /></div>
+          <span style={{ fontSize: 11, color: dc, marginLeft: 4 }}>0</span>
+        </div>
+        <span style={{ fontSize: 11, color: dc }}>0 comments</span>
       </div>
       <div style={{ padding: "2px 8px 6px", display: "flex", borderTop: `1px solid ${dark ? "#3e4042" : "#dadde1"}` }}>
-        {["👍 Like","💬 Comment","↗ Share"].map(a => <div key={a} style={{ flex: 1, textAlign: "center", padding: "7px 0", fontSize: 12, fontWeight: 600, color: dc, cursor: "default" }}>{a}</div>)}
+        {[
+          { icon: <ThumbsUp size={16} color={dc} />, label: "Like" },
+          { icon: <MessageCircle size={16} color={dc} />, label: "Comment" },
+          { icon: <Share2 size={16} color={dc} />, label: "Share" },
+        ].map(a => (
+          <div key={a.label} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 5, padding: "7px 0", cursor: "default" }}>
+            {a.icon}<span style={{ fontSize: 12, fontWeight: 600, color: dc }}>{a.label}</span>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -65,18 +95,37 @@ function IGPreview({ content, media, postType, dark, t }: { content: string; med
   return (
     <div style={{ background: dark ? "#000" : "#fff", borderRadius: 10, border: `1px solid ${dark ? "#262626" : "#dbdbdb"}`, overflow: "hidden" }}>
       <div style={{ padding: "10px 12px", display: "flex", alignItems: "center", gap: 8 }}>
-        <div style={{ width: 30, height: 30, borderRadius: "50%", padding: 2, background: "linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)" }}><div style={{ width: "100%", height: "100%", borderRadius: "50%", background: dark ? "#000" : "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}><Avi sz={24} /></div></div>
+        <div style={{ width: 30, height: 30, borderRadius: "50%", padding: 2, background: "linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)" }}>
+          <div style={{ width: "100%", height: "100%", borderRadius: "50%", background: dark ? "#000" : "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}><Avi sz={24} /></div>
+        </div>
         <span style={{ fontSize: 12, fontWeight: 600, color: c, flex: 1 }}>yourbrand</span>
         {isVert && <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 4, background: "#E1306C15", color: "#E1306C", fontWeight: 700 }}>Reel</span>}
+        <MoreHorizontal size={16} color={c} />
       </div>
-      {(media.videoUrl || media.imageUrl) ? <div style={{ background: "#000" }}>{media.videoUrl ? <video src={media.videoUrl} style={{ width: "100%", maxHeight: isVert ? 420 : 320, objectFit: isVert ? "contain" : "cover", display: "block" }} controls /> : <img src={media.imageUrl} style={{ width: "100%", maxHeight: isVert ? 420 : 320, objectFit: isVert ? "contain" : "cover", display: "block" }} alt="" />}</div>
-      : <div style={{ width: "100%", height: 200, background: dark ? "#1a1a1a" : "#fafafa", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ fontSize: 32, opacity: 0.3 }}>📷</span></div>}
+      {(media.videoUrl || media.imageUrl)
+        ? <div style={{ background: "#000" }}>
+            {media.videoUrl
+              ? <video src={media.videoUrl} style={{ width: "100%", maxHeight: isVert ? 420 : 320, objectFit: isVert ? "contain" : "cover", display: "block" }} controls />
+              : <img src={media.imageUrl} style={{ width: "100%", maxHeight: isVert ? 420 : 320, objectFit: isVert ? "contain" : "cover", display: "block" }} alt="" />
+            }
+          </div>
+        : <div style={{ width: "100%", height: 200, background: dark ? "#1a1a1a" : "#fafafa", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Camera size={36} color={dark ? "#333" : "#ccc"} />
+          </div>
+      }
       <div style={{ padding: "10px 12px 4px", display: "flex", justifyContent: "space-between" }}>
-        <div style={{ display: "flex", gap: 14, fontSize: 20 }}>♡ 💬 ✈</div><span style={{ fontSize: 20 }}>🔖</span>
+        <div style={{ display: "flex", gap: 14 }}>
+          <Heart size={22} color={c} />
+          <MessageCircle size={22} color={c} />
+          <Send size={22} color={c} />
+        </div>
+        <Bookmark size={22} color={c} />
       </div>
       <div style={{ padding: "2px 12px" }}><span style={{ fontSize: 12, fontWeight: 600, color: c }}>0 likes</span></div>
-      {content ? <div style={{ padding: "4px 12px 10px" }}><span style={{ fontSize: 12, fontWeight: 600, color: c }}>yourbrand </span><span style={{ fontSize: 12, color: c }}>{content}</span></div>
-      : <div style={{ padding: "4px 12px 10px", color: dark ? "#a8a8a8" : "#8e8e8e", fontSize: 12, fontStyle: "italic" }}>{t("Add a caption...","Voeg een caption toe...")}</div>}
+      {content
+        ? <div style={{ padding: "4px 12px 10px" }}><span style={{ fontSize: 12, fontWeight: 600, color: c }}>yourbrand </span><span style={{ fontSize: 12, color: c }}>{content}</span></div>
+        : <div style={{ padding: "4px 12px 10px", color: dark ? "#a8a8a8" : "#8e8e8e", fontSize: 12, fontStyle: "italic" }}>{t("Add a caption...","Voeg een caption toe...")}</div>
+      }
     </div>
   );
 }
@@ -84,13 +133,28 @@ function IGPreview({ content, media, postType, dark, t }: { content: string; med
 function TKPreview({ content, media, dark, t }: { content: string; media: { imageUrl: string; videoUrl: string }; dark: boolean; t: any }) {
   return (
     <div style={{ background: "#000", borderRadius: 14, overflow: "hidden", position: "relative", minHeight: 360 }}>
-      {(media.videoUrl || media.imageUrl) ? <div>{media.videoUrl ? <video src={media.videoUrl} style={{ width: "100%", maxHeight: 420, objectFit: "contain", display: "block" }} controls /> : <img src={media.imageUrl} style={{ width: "100%", maxHeight: 420, objectFit: "cover", display: "block" }} alt="" />}</div>
-      : <div style={{ height: 300, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 8 }}><span style={{ fontSize: 32, opacity: 0.4 }}>🎵</span><span style={{ fontSize: 11, color: "#ffffff40" }}>{t("Add video for TikTok","Voeg video toe voor TikTok")}</span></div>}
+      {(media.videoUrl || media.imageUrl)
+        ? <div>
+            {media.videoUrl
+              ? <video src={media.videoUrl} style={{ width: "100%", maxHeight: 420, objectFit: "contain", display: "block" }} controls />
+              : <img src={media.imageUrl} style={{ width: "100%", maxHeight: 420, objectFit: "cover", display: "block" }} alt="" />
+            }
+          </div>
+        : <div style={{ height: 300, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 8 }}>
+            <Music size={36} color="#ffffff40" />
+            <span style={{ fontSize: 11, color: "#ffffff40" }}>{t("Add video for TikTok","Voeg video toe voor TikTok")}</span>
+          </div>
+      }
       <div style={{ padding: "12px 14px", background: "linear-gradient(transparent, rgba(0,0,0,0.85))" }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 4 }}>@yourbrand</div>
-        {content ? <div style={{ fontSize: 12, color: "#fff", lineHeight: 1.4, whiteSpace: "pre-wrap" }}>{content}</div>
-        : <div style={{ fontSize: 12, color: "#ffffff50", fontStyle: "italic" }}>{t("Add caption...","Voeg caption toe...")}</div>}
-        <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 4 }}><span style={{ fontSize: 10, color: "#ffffffaa" }}>♫ Original sound – yourbrand</span></div>
+        {content
+          ? <div style={{ fontSize: 12, color: "#fff", lineHeight: 1.4, whiteSpace: "pre-wrap" }}>{content}</div>
+          : <div style={{ fontSize: 12, color: "#ffffff50", fontStyle: "italic" }}>{t("Add caption...","Voeg caption toe...")}</div>
+        }
+        <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 4 }}>
+          <Music size={11} color="#ffffffaa" />
+          <span style={{ fontSize: 10, color: "#ffffffaa" }}>Original sound – yourbrand</span>
+        </div>
       </div>
     </div>
   );
@@ -103,16 +167,47 @@ function LIPreview({ content, media, dark, t }: { content: string; media: { imag
     <div style={{ background: dark ? "#1b1f23" : "#fff", borderRadius: 10, border: `1px solid ${dark ? "#38434f" : "#e0e0e0"}`, overflow: "hidden" }}>
       <div style={{ padding: "12px 14px 8px", display: "flex", alignItems: "flex-start", gap: 10 }}>
         <Avi sz={40} />
-        <div style={{ flex: 1 }}><div style={{ fontSize: 13, fontWeight: 700, color: dark ? "#fff" : "#000" }}>Your Brand</div><div style={{ fontSize: 11, color: dc }}>1,234 followers</div><div style={{ fontSize: 11, color: dark ? "#ffffff50" : "#00000050" }}>1h · 🌐</div></div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: dark ? "#fff" : "#000" }}>Your Brand</div>
+          <div style={{ fontSize: 11, color: dc }}>1,234 followers</div>
+          <div style={{ fontSize: 11, color: dark ? "#ffffff50" : "#00000050", display: "flex", alignItems: "center", gap: 4 }}>1h · <Globe size={10} color={dark ? "#ffffff50" : "#00000050"} /></div>
+        </div>
+        <MoreHorizontal size={18} color={dc} />
       </div>
-      {content ? <div style={{ padding: "0 14px 10px" }}><p style={{ fontSize: 13, color: c, lineHeight: 1.5, margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{content}</p></div>
-      : <div style={{ padding: "0 14px 10px", color: dc, fontSize: 13, fontStyle: "italic" }}>{t("Click to add text...","Klik om tekst toe te voegen...")}</div>}
-      {(media.videoUrl || media.imageUrl) && <div style={{ background: "#000" }}>{media.videoUrl ? <video src={media.videoUrl} style={{ width: "100%", maxHeight: 320, objectFit: "contain", display: "block" }} controls /> : <img src={media.imageUrl} style={{ width: "100%", maxHeight: 320, objectFit: "cover", display: "block" }} alt="" />}</div>}
+      {content
+        ? <div style={{ padding: "0 14px 10px" }}><p style={{ fontSize: 13, color: c, lineHeight: 1.5, margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{content}</p></div>
+        : <div style={{ padding: "0 14px 10px", color: dc, fontSize: 13, fontStyle: "italic" }}>{t("Click to add text...","Klik om tekst toe te voegen...")}</div>
+      }
+      {(media.videoUrl || media.imageUrl) && (
+        <div style={{ background: "#000" }}>
+          {media.videoUrl
+            ? <video src={media.videoUrl} style={{ width: "100%", maxHeight: 320, objectFit: "contain", display: "block" }} controls />
+            : <img src={media.imageUrl} style={{ width: "100%", maxHeight: 320, objectFit: "cover", display: "block" }} alt="" />
+          }
+        </div>
+      )}
       <div style={{ padding: "4px 14px 2px", borderTop: `1px solid ${dark ? "#38434f" : "#e0e0e0"}`, display: "flex", alignItems: "center" }}>
-        <span style={{ fontSize: 11, color: dc }}>👍❤️👏 0</span><span style={{ marginLeft: "auto", fontSize: 11, color: dc }}>0 comments</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
+          {["#0a66c2","#e16745","#44712e"].map((bg,i) => (
+            <div key={i} style={{ width: 15, height: 15, borderRadius: "50%", background: bg, marginLeft: i > 0 ? -4 : 0, border: `1.5px solid ${dark ? "#1b1f23" : "#fff"}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              {i === 0 ? <ThumbsUp size={7} color="#fff" /> : i === 1 ? <Heart size={7} color="#fff" fill="#fff" /> : <svg width="7" height="7" viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>}
+            </div>
+          ))}
+          <span style={{ fontSize: 11, color: dc, marginLeft: 4 }}>0</span>
+        </div>
+        <span style={{ marginLeft: "auto", fontSize: 11, color: dc }}>0 comments</span>
       </div>
       <div style={{ padding: "2px 6px 6px", display: "flex", borderTop: `1px solid ${dark ? "#38434f" : "#e0e0e0"}` }}>
-        {["👍 Like","💬 Comment","🔄 Repost","✈ Send"].map(a => <div key={a} style={{ flex: 1, textAlign: "center", padding: "7px 0", fontSize: 11, fontWeight: 600, color: dc, cursor: "default" }}>{a}</div>)}
+        {[
+          { icon: <ThumbsUp size={15} />, label: "Like" },
+          { icon: <MessageCircle size={15} />, label: "Comment" },
+          { icon: <Repeat2 size={15} />, label: "Repost" },
+          { icon: <Send size={15} />, label: "Send" },
+        ].map(a => (
+          <div key={a.label} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 4, padding: "7px 0", color: dc, cursor: "default" }}>
+            {a.icon}<span style={{ fontSize: 11, fontWeight: 600 }}>{a.label}</span>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -123,17 +218,31 @@ function YTPreview({ content, media, postType, dark, t }: { content: string; med
   return (
     <div style={{ background: dark ? "#0f0f0f" : "#fff", borderRadius: 12, border: `1px solid ${dark ? "#272727" : "#e5e5e5"}`, overflow: "hidden" }}>
       <div style={{ position: "relative", background: "#000" }}>
-        {(media.videoUrl || media.imageUrl) ? <div>{media.videoUrl ? <video src={media.videoUrl} style={{ width: "100%", maxHeight: isVert ? 420 : 280, objectFit: isVert ? "contain" : "cover", display: "block" }} controls /> : <img src={media.imageUrl} style={{ width: "100%", maxHeight: isVert ? 420 : 280, objectFit: isVert ? "contain" : "cover", display: "block" }} alt="" />}</div>
-        : <div style={{ height: 180, display: "flex", alignItems: "center", justifyContent: "center" }}><div style={{ width: 56, height: 38, borderRadius: 10, background: "rgba(255,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontSize: 20, marginLeft: 2 }}>▶</span></div></div>}
+        {(media.videoUrl || media.imageUrl)
+          ? <div>
+              {media.videoUrl
+                ? <video src={media.videoUrl} style={{ width: "100%", maxHeight: isVert ? 420 : 280, objectFit: isVert ? "contain" : "cover", display: "block" }} controls />
+                : <img src={media.imageUrl} style={{ width: "100%", maxHeight: isVert ? 420 : 280, objectFit: isVert ? "contain" : "cover", display: "block" }} alt="" />
+              }
+            </div>
+          : <div style={{ height: 180, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ width: 56, height: 38, borderRadius: 10, background: "rgba(255,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <PlayCircle size={22} color="#fff" fill="#fff" />
+              </div>
+            </div>
+        }
         {isVert && <div style={{ position: "absolute", top: 8, left: 10 }}><span style={{ background: "rgba(0,0,0,0.7)", color: "#fff", fontSize: 10, padding: "2px 8px", borderRadius: 4, fontWeight: 700 }}>Short</span></div>}
       </div>
       <div style={{ padding: "10px 14px", display: "flex", gap: 10 }}>
         <Avi sz={36} />
         <div style={{ flex: 1 }}>
-          {content ? <div style={{ fontSize: 13, fontWeight: 600, color: dark ? "#f1f1f1" : "#0f0f0f", lineHeight: 1.4, marginBottom: 4 }}>{content.slice(0, 100)}</div>
-          : <div style={{ fontSize: 13, color: "#606060", fontStyle: "italic", marginBottom: 4 }}>{t("Video title...","Video titel...")}</div>}
+          {content
+            ? <div style={{ fontSize: 13, fontWeight: 600, color: dark ? "#f1f1f1" : "#0f0f0f", lineHeight: 1.4, marginBottom: 4 }}>{content.slice(0, 100)}</div>
+            : <div style={{ fontSize: 13, color: "#606060", fontStyle: "italic", marginBottom: 4 }}>{t("Video title...","Video titel...")}</div>
+          }
           <div style={{ fontSize: 11, color: dark ? "#aaa" : "#606060" }}>Your Brand · 0 views · Just now</div>
         </div>
+        <MoreVertical size={18} color={dark ? "#aaa" : "#606060"} />
       </div>
     </div>
   );
@@ -142,7 +251,7 @@ function YTPreview({ content, media, postType, dark, t }: { content: string; med
 const PREVIEW_MAP: Record<string, any> = { facebook: FBPreview, instagram: IGPreview, tiktok: TKPreview, linkedin: LIPreview, youtube: YTPreview };
 
 /* ═══════════════════════════════════════════
-   CREATE POST MODAL — PUBLER-STYLE
+   CREATE POST MODAL
    ═══════════════════════════════════════════ */
 type CreatePostProps = {
   draft: any; setDraft: (fn: (d: any) => any) => void;
@@ -164,7 +273,6 @@ export function CreatePostModal({ draft, setDraft, darkMode, theme, uploadingIma
   const imgInputRef = useRef<HTMLInputElement>(null);
   const vidInputRef = useRef<HTMLInputElement>(null);
 
-  // Sync active tab when platforms change
   useEffect(() => {
     if (draft.platforms.length > 0 && !draft.platforms.includes(activeTab)) {
       setActiveTab(draft.platforms[0]);
@@ -199,7 +307,6 @@ export function CreatePostModal({ draft, setDraft, darkMode, theme, uploadingIma
     });
   }
 
-  // Platform tabs that are NOT yet added
   const unselectedPlatforms = PLATFORMS.filter(p => !draft.platforms.includes(p.id));
 
   return (
@@ -210,22 +317,17 @@ export function CreatePostModal({ draft, setDraft, darkMode, theme, uploadingIma
         border: `1px solid ${theme.border}`, overflow: "hidden",
       }}>
 
-        {/* ── TOP BAR: Platform tabs ── */}
+        {/* ── TOP BAR ── */}
         <div style={{ padding: "16px 20px 0", flexShrink: 0 }}>
-          {/* Header */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+            <div />
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontSize: 11, fontWeight: 700, color: theme.textT, letterSpacing: 0.5 }}>INSERT TAGS</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              {/* Type selector */}
               <div style={{ display: "flex", gap: 4, background: theme.codeBg, borderRadius: 8, padding: 3 }}>
                 {["post","reel","video"].map(tp => (
                   <button key={tp} onClick={() => setDraft((d: any) => ({ ...d, type: tp }))} style={{
                     padding: "4px 10px", borderRadius: 6, border: "none", fontSize: 11, fontWeight: 600, cursor: "pointer",
                     background: draft.type === tp ? BRAND.primary : "transparent",
-                    color: draft.type === tp ? "#fff" : theme.textS,
-                    transition: "all 0.15s",
+                    color: draft.type === tp ? "#fff" : theme.textS, transition: "all 0.15s",
                   }}>{tp.charAt(0).toUpperCase()+tp.slice(1)}</button>
                 ))}
               </div>
@@ -238,23 +340,17 @@ export function CreatePostModal({ draft, setDraft, darkMode, theme, uploadingIma
             {draft.platforms.map((pid: string) => {
               const p = PLATFORMS.find(pl => pl.id === pid);
               const isActive = pid === activeTab;
-              const charUsed = draft.content.length;
-              const limit = PLATFORM_LIMITS[pid] || 5000;
-              const pctUsed = charUsed / limit;
+              const pctUsed = draft.content.length / (PLATFORM_LIMITS[pid] || 5000);
               return (
                 <button key={pid} onClick={() => setActiveTab(pid)} style={{
                   display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 10,
                   border: isActive ? `2px solid ${p?.color || BRAND.primary}` : `1px solid ${theme.border}`,
                   background: isActive ? (darkMode ? (p?.color || BRAND.primary) + "18" : (p?.color || BRAND.primary) + "10") : "transparent",
-                  cursor: "pointer", position: "relative", flexShrink: 0, transition: "all 0.15s",
+                  cursor: "pointer", flexShrink: 0, transition: "all 0.15s",
                 }}>
                   <PlatformIcon id={pid} size={18} />
                   {isActive && <span style={{ fontSize: 11, fontWeight: 700, color: p?.color || theme.text }}>{p?.label}</span>}
-                  {/* Status indicator */}
-                  {draft.content && (
-                    <div style={{ width: 7, height: 7, borderRadius: "50%", background: pctUsed > 1 ? BRAND.red : pctUsed > 0.9 ? BRAND.amber : BRAND.green }} />
-                  )}
-                  {/* Remove button on active */}
+                  {draft.content && <div style={{ width: 7, height: 7, borderRadius: "50%", background: pctUsed > 1 ? BRAND.red : pctUsed > 0.9 ? BRAND.amber : BRAND.green }} />}
                   {isActive && draft.platforms.length > 1 && (
                     <button onClick={e => { e.stopPropagation(); removePlatform(pid); }} style={{ width: 16, height: 16, borderRadius: 4, border: "none", background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", marginLeft: 2 }}>
                       <Trash2 size={11} color={theme.textT} />
@@ -263,23 +359,15 @@ export function CreatePostModal({ draft, setDraft, darkMode, theme, uploadingIma
                 </button>
               );
             })}
-
-            {/* Add platform button */}
-            {unselectedPlatforms.length > 0 && (
-              <div style={{ position: "relative" }}>
-                <AddPlatformDropdown platforms={unselectedPlatforms} onAdd={addPlatform} theme={theme} darkMode={darkMode} />
-              </div>
-            )}
+            {unselectedPlatforms.length > 0 && <AddPlatformDropdown platforms={unselectedPlatforms} onAdd={addPlatform} theme={theme} />}
           </div>
         </div>
 
-        {/* ── MAIN CONTENT: Preview + Editor ── */}
+        {/* ── MAIN CONTENT ── */}
         <div style={{ flex: 1, overflowY: "auto", padding: "0 20px 16px" }}>
-
-          {/* No platforms selected */}
           {draft.platforms.length === 0 ? (
             <div style={{ textAlign: "center", padding: "40px 20px" }}>
-              <div style={{ fontSize: 36, marginBottom: 12 }}>📱</div>
+              <Monitor size={40} color={theme.textT} style={{ marginBottom: 12 }} />
               <div style={{ fontSize: 15, fontWeight: 700, color: theme.text, marginBottom: 6 }}>{t("Select platforms","Kies platformen")}</div>
               <div style={{ fontSize: 13, color: theme.textT, marginBottom: 20 }}>{t("Choose where you want to publish","Kies waar je wilt publiceren")}</div>
               <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
@@ -292,20 +380,18 @@ export function CreatePostModal({ draft, setDraft, darkMode, theme, uploadingIma
             </div>
           ) : (
             <>
-              {/* Feed type indicator */}
+              {/* Feed type */}
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10, padding: "6px 0" }}>
-                <span style={{ fontSize: 14 }}>{draft.type === "reel" ? "🎬" : draft.type === "video" ? "📹" : "📄"}</span>
+                {draft.type === "reel" ? <Film size={16} color={theme.textS} /> : draft.type === "video" ? <Video size={16} color={theme.textS} /> : <FileImage size={16} color={theme.textS} />}
                 <span style={{ fontSize: 12, fontWeight: 600, color: theme.text }}>{draft.type === "reel" ? "Reel / Short" : draft.type === "video" ? "Video" : "Feed"}</span>
                 <span style={{ fontSize: 11, color: theme.textT }}>· {t("Post will appear in your feed","Post verschijnt in je feed")}</span>
               </div>
 
-              {/* Live preview */}
-              {PreviewComponent && (
-                <PreviewComponent content={draft.content} media={{ imageUrl: draft.image_url, videoUrl: draft.video_url }} postType={draft.type} dark={darkMode} t={t} />
-              )}
+              {/* Preview */}
+              {PreviewComponent && <PreviewComponent content={draft.content} media={{ imageUrl: draft.image_url, videoUrl: draft.video_url }} postType={draft.type} dark={darkMode} t={t} />}
 
-              {/* ── TEXT EDITOR ── */}
-              <div style={{ marginTop: 14, position: "relative" }}>
+              {/* Text editor */}
+              <div style={{ marginTop: 14 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                   <div style={{ display: "flex", gap: 4 }}>
                     <button onClick={() => { setShowEmoji(v => !v); setShowHashtags(false); }} style={{ width: 30, height: 30, borderRadius: 7, border: `1px solid ${showEmoji ? BRAND.primary : theme.border}`, background: showEmoji ? (darkMode ? "rgba(124,58,237,0.15)" : BRAND.primaryL) : "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><SmilePlus size={14} color={showEmoji ? BRAND.primary : theme.textT} /></button>
@@ -323,7 +409,7 @@ export function CreatePostModal({ draft, setDraft, darkMode, theme, uploadingIma
                 <textarea ref={textareaRef} value={draft.content} onChange={e => setDraft((d: any) => ({ ...d, content: e.target.value }))} placeholder={t("Write your caption...","Schrijf je caption...")} style={{ width: "100%", minHeight: 80, boxSizing: "border-box", borderRadius: 10, border: `1px solid ${isOverLimit ? BRAND.red : theme.inputBorder}`, padding: "10px 12px", fontSize: 14, resize: "vertical", fontFamily: "inherit", background: theme.inputBg, color: theme.text }} />
               </div>
 
-              {/* ── ADD MEDIA ── */}
+              {/* Media section */}
               <div style={{ marginTop: 12 }}>
                 {(draft.image_url || draft.video_url) ? (
                   <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -340,7 +426,6 @@ export function CreatePostModal({ draft, setDraft, darkMode, theme, uploadingIma
                         <div style={{ position: "absolute", bottom: 4, left: 4, fontSize: 8, background: videoAspect === "vertical" ? "#FF0000" : BRAND.primary, color: "#fff", padding: "1px 5px", borderRadius: 3, fontWeight: 700 }}>{videoAspect === "vertical" ? "9:16" : "16:9"}</div>
                       </div>
                     )}
-                    {/* Add more */}
                     <button onClick={() => setShowMediaPicker(true)} style={{ width: 100, height: 100, borderRadius: 10, border: `2px dashed ${theme.border}`, background: "transparent", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4 }}>
                       <Plus size={20} color={theme.textT} />
                       <span style={{ fontSize: 10, color: theme.textT }}>Add</span>
@@ -351,20 +436,19 @@ export function CreatePostModal({ draft, setDraft, darkMode, theme, uploadingIma
                     {(uploadingImage || uploadingVideo) ? (
                       <div style={{ borderRadius: 12, background: darkMode ? "rgba(124,58,237,0.08)" : BRAND.primaryL, padding: "20px", textAlign: "center" }}>
                         <div style={{ width: 32, height: 32, margin: "0 auto 8px", borderRadius: "50%", border: `3px solid ${BRAND.primary}30`, borderTopColor: BRAND.primary, animation: "spin 1s linear infinite" }} />
-                        <div style={{ fontSize: 12, color: BRAND.primary, fontWeight: 600 }}>{uploadingVideo ? "Uploading video..." : "Uploading..."}</div>
+                        <div style={{ fontSize: 12, color: BRAND.primary, fontWeight: 600 }}>{uploadingVideo ? t("Uploading video...","Video uploaden...") : t("Uploading...","Uploaden...")}</div>
                         <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
                       </div>
                     ) : (
                       <button onClick={() => setShowMediaPicker(v => !v)} style={{ width: "100%", padding: "14px", borderRadius: 12, border: `1px solid ${theme.border}`, background: theme.codeBg, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, fontSize: 13, fontWeight: 600, color: theme.textS, transition: "all 0.15s" }}>
-                        <ImageIcon size={16} /> {t("Add asset...","Media toevoegen...")}
+                        <Upload size={16} /> {t("Add asset...","Media toevoegen...")}
                       </button>
                     )}
                   </div>
                 )}
 
-                {/* Media picker panel */}
                 {showMediaPicker && !uploadingImage && !uploadingVideo && (
-                  <div style={{ marginTop: 8, background: theme.codeBg, border: `1px solid ${theme.border}`, borderRadius: 12, padding: "12px", display: "flex", flexDirection: "column", gap: 6 }}>
+                  <div style={{ marginTop: 8, background: theme.codeBg, border: `1px solid ${theme.border}`, borderRadius: 12, padding: "6px", display: "flex", flexDirection: "column" }}>
                     <button onClick={() => { imgInputRef.current?.click(); setShowMediaPicker(false); }} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", borderRadius: 8, border: "none", background: "transparent", cursor: "pointer", fontSize: 13, color: theme.text, width: "100%", textAlign: "left" }} onMouseEnter={ev => (ev.currentTarget.style.background = theme.hoverBg)} onMouseLeave={ev => (ev.currentTarget.style.background = "transparent")}>
                       <ImageIcon size={18} color={BRAND.primary} /> {t("Upload image","Upload afbeelding")}
                       {activeTab && <span style={{ marginLeft: "auto", fontSize: 10, color: theme.textT }}>{PLATFORM_MEDIA[activeTab]?.image}</span>}
@@ -373,31 +457,29 @@ export function CreatePostModal({ draft, setDraft, darkMode, theme, uploadingIma
                       <Film size={18} color={BRAND.primary} /> {t("Upload video","Upload video")}
                       <span style={{ marginLeft: "auto", fontSize: 10, color: theme.textT }}>MP4, MOV</span>
                     </button>
-                    <div style={{ borderTop: `1px solid ${theme.border}`, paddingTop: 6 }}>
-                      <button style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", borderRadius: 8, border: "none", background: "transparent", cursor: "pointer", fontSize: 13, color: theme.textT, width: "100%" }} disabled>
-                        <Sparkles size={18} color={theme.textT} /> {t("AI Image (coming soon)","AI Afbeelding (binnenkort)")}
+                    <div style={{ borderTop: `1px solid ${theme.border}`, marginTop: 2, paddingTop: 2 }}>
+                      <button style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", borderRadius: 8, border: "none", background: "transparent", cursor: "not-allowed", fontSize: 13, color: theme.textT, width: "100%", opacity: 0.5 }}>
+                        <Sparkles size={18} /> {t("AI Image (coming soon)","AI Afbeelding (binnenkort)")}
                       </button>
                     </div>
                   </div>
                 )}
 
-                {/* Hidden file inputs */}
                 <input ref={imgInputRef} type="file" accept="image/*" style={{ display: "none" }} onChange={async e => { const f = e.target.files?.[0]; if (f) { const u = await uploadImage(f); if (u) setDraft((d: any) => ({ ...d, image_url: u })); } }} />
                 <input ref={vidInputRef} type="file" accept="video/mp4,video/*" style={{ display: "none" }} onChange={async e => { const f = e.target.files?.[0]; if (f) { const u = await uploadVideo(f); if (u) setDraft((d: any) => ({ ...d, video_url: u })); } }} />
               </div>
 
-              {/* ── FIRST COMMENT ── */}
+              {/* First comment */}
               <button style={{ width: "100%", padding: "10px", borderRadius: 10, border: `1px solid ${theme.border}`, background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, fontSize: 12, color: BRAND.primary, fontWeight: 600, marginTop: 12 }}>
-                💬 {t("Add first comment","Eerste reactie toevoegen")}
+                <MessageSquare size={14} /> {t("Add first comment","Eerste reactie toevoegen")}
               </button>
             </>
           )}
         </div>
 
-        {/* ── BOTTOM BAR: Schedule / Publish ── */}
+        {/* ── BOTTOM BAR ── */}
         {draft.platforms.length > 0 && (
           <div style={{ padding: "12px 20px 16px", borderTop: `1px solid ${theme.border}`, flexShrink: 0, display: "flex", flexDirection: "column", gap: 10 }}>
-            {/* Date/Time row */}
             <div style={{ display: "flex", gap: 8 }}>
               <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", borderRadius: 9, border: `1px solid ${theme.inputBorder}`, background: theme.inputBg }}>
                 <CalendarDays size={14} color={theme.textT} />
@@ -408,16 +490,14 @@ export function CreatePostModal({ draft, setDraft, darkMode, theme, uploadingIma
                 <input type="time" value={draft.time} onChange={e => setDraft((d: any) => ({ ...d, time: e.target.value }))} style={{ border: "none", background: "transparent", fontSize: 13, color: theme.text, flex: 1, outline: "none", fontFamily: "inherit" }} />
               </div>
             </div>
-
-            {/* Action buttons */}
             <div style={{ display: "flex", gap: 8 }}>
               <button onClick={onSaveDraft} style={{ padding: "10px 16px", borderRadius: 10, border: `1px solid ${theme.border}`, background: "transparent", cursor: "pointer", fontSize: 13, color: theme.textS, fontWeight: 600, display: "flex", alignItems: "center", gap: 5 }}>
                 <FileText size={14} /> {t("Draft","Concept")}
               </button>
-              <button onClick={onSchedule} disabled={!draft.content || !draft.date || draft.platforms.length === 0 || isOverLimit} style={{ flex: 1, padding: "10px", borderRadius: 10, border: "none", background: BRAND.gradBtn, color: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 700, opacity: (!draft.content || !draft.date || draft.platforms.length === 0 || isOverLimit) ? 0.45 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 5, transition: "opacity 0.2s" }}>
+              <button onClick={onSchedule} disabled={!draft.content || !draft.date || draft.platforms.length === 0 || isOverLimit} style={{ flex: 1, padding: "10px", borderRadius: 10, border: "none", background: BRAND.gradBtn, color: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 700, opacity: (!draft.content || !draft.date || draft.platforms.length === 0 || isOverLimit) ? 0.45 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 5 }}>
                 <Clock size={14} /> {t("Schedule","Inplannen")}
               </button>
-              <button onClick={onPublishNow} disabled={!draft.content || draft.platforms.length === 0 || isOverLimit} style={{ flex: 1, padding: "10px", borderRadius: 10, border: "none", background: BRAND.green, color: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 700, opacity: (!draft.content || draft.platforms.length === 0 || isOverLimit) ? 0.45 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 5, transition: "opacity 0.2s" }}>
+              <button onClick={onPublishNow} disabled={!draft.content || draft.platforms.length === 0 || isOverLimit} style={{ flex: 1, padding: "10px", borderRadius: 10, border: "none", background: BRAND.green, color: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 700, opacity: (!draft.content || draft.platforms.length === 0 || isOverLimit) ? 0.45 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 5 }}>
                 <Send size={14} /> {t("Publish","Publiceer")}
               </button>
             </div>
@@ -429,11 +509,11 @@ export function CreatePostModal({ draft, setDraft, darkMode, theme, uploadingIma
 }
 
 /* ── Add Platform Dropdown ── */
-function AddPlatformDropdown({ platforms, onAdd, theme, darkMode }: { platforms: typeof PLATFORMS; onAdd: (id: string) => void; theme: Theme; darkMode: boolean }) {
+function AddPlatformDropdown({ platforms, onAdd, theme }: { platforms: typeof PLATFORMS; onAdd: (id: string) => void; theme: Theme }) {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <button onClick={() => setOpen(v => !v)} style={{ width: 36, height: 36, borderRadius: 10, border: `2px dashed ${theme.border}`, background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}>
+      <button onClick={() => setOpen(v => !v)} style={{ width: 36, height: 36, borderRadius: 10, border: `2px dashed ${theme.border}`, background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Plus size={16} color={theme.textT} />
       </button>
       {open && (
@@ -442,8 +522,7 @@ function AddPlatformDropdown({ platforms, onAdd, theme, darkMode }: { platforms:
           <div style={{ position: "absolute", top: "100%", left: 0, marginTop: 6, background: theme.modalBg, border: `1px solid ${theme.border}`, borderRadius: 12, padding: "6px", zIndex: 20, boxShadow: "0 8px 32px rgba(0,0,0,0.15)", minWidth: 180 }}>
             {platforms.map(p => (
               <button key={p.id} onClick={() => { onAdd(p.id); setOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", borderRadius: 8, border: "none", background: "transparent", cursor: "pointer", fontSize: 13, color: theme.text, width: "100%", textAlign: "left", fontWeight: 500 }} onMouseEnter={ev => (ev.currentTarget.style.background = theme.hoverBg)} onMouseLeave={ev => (ev.currentTarget.style.background = "transparent")}>
-                <PlatformIcon id={p.id} size={20} />
-                {p.label}
+                <PlatformIcon id={p.id} size={20} />{p.label}
               </button>
             ))}
           </div>
@@ -488,9 +567,36 @@ export function ChannelPickerModal({ ws, ytChannels, loadingChannels, darkMode, 
       <div style={{ background: theme.modalBg, borderRadius: 20, padding: "24px", width: "min(440px,100%)", boxSizing: "border-box", border: `1px solid ${theme.border}` }}>
         <div style={{ fontSize: 18, fontWeight: 800, marginBottom: 6, color: theme.text }}>Select YouTube Channel</div>
         <p style={{ fontSize: 13, color: theme.textT, marginBottom: 18 }}>Choose which channel to connect.</p>
-        {loadingChannels ? <div style={{ textAlign: "center", padding: "30px 0" }}><div style={{ width: 40, height: 40, margin: "0 auto 12px", borderRadius: "50%", border: `3px solid ${BRAND.primary}30`, borderTopColor: BRAND.primary, animation: "spin 1s linear infinite" }} /><style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style></div>
-        : ytChannels.length === 0 ? <div style={{ textAlign: "center", padding: "20px 0" }}>📺<div style={{ fontSize: 14, fontWeight: 600, color: theme.text, marginTop: 8 }}>No channels found</div><div style={{ display: "flex", gap: 8, justifyContent: "center", marginTop: 12 }}><button onClick={() => signIn("google", { callbackUrl: "/?pickChannel=true" })} style={{ padding: "8px 16px", borderRadius: 8, border: "none", background: BRAND.gradBtn, color: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>Re-login</button><button onClick={onRetry} style={{ padding: "8px 16px", borderRadius: 8, border: `1px solid ${theme.border}`, background: "transparent", color: theme.text, cursor: "pointer", fontSize: 13 }}>Retry</button></div><div style={{ marginTop: 16, borderTop: `1px solid ${theme.border}`, paddingTop: 16 }}><div style={{ fontSize: 13, fontWeight: 600, color: theme.text, marginBottom: 8 }}>Or add manually</div><div style={{ display: "flex", gap: 8 }}><input id="manual-ch" placeholder="Channel ID (UCxxxx...)" style={{ flex: 1, padding: "8px 12px", borderRadius: 8, border: `1px solid ${theme.inputBorder}`, fontSize: 13, background: theme.inputBg, color: theme.text }} /><button onClick={() => { const el = document.getElementById("manual-ch") as HTMLInputElement; const v = el?.value?.trim(); if (v) onSelect({ id: v, title: v, thumbnail: "" }); }} style={{ padding: "8px 14px", borderRadius: 8, border: "none", background: BRAND.green, color: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>Add</button></div></div></div>
-        : <div>{ytChannels.map((ch: any) => <button key={ch.id} onClick={() => onSelect(ch)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "12px", borderRadius: 12, border: ws?.youtube_channel_id === ch.id ? `2px solid ${BRAND.green}` : `1px solid ${theme.border}`, background: ws?.youtube_channel_id === ch.id ? (darkMode ? "rgba(16,185,129,0.08)" : BRAND.greenL) : theme.card, cursor: "pointer", marginBottom: 8, textAlign: "left" }}>{ch.thumbnail ? <img src={ch.thumbnail} style={{ width: 44, height: 44, borderRadius: "50%" }} alt="" /> : <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#FF000012", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>▶</div>}<div style={{ flex: 1 }}><div style={{ fontSize: 14, fontWeight: 700, color: theme.text }}>{ch.title}</div><div style={{ fontSize: 11, color: theme.textT }}>{ch.id}</div></div>{ws?.youtube_channel_id === ch.id && <div style={{ width: 24, height: 24, borderRadius: "50%", background: BRAND.green, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 14 }}>✓</div>}</button>)}</div>}
+        {loadingChannels ? (
+          <div style={{ textAlign: "center", padding: "30px 0" }}>
+            <div style={{ width: 40, height: 40, margin: "0 auto 12px", borderRadius: "50%", border: `3px solid ${BRAND.primary}30`, borderTopColor: BRAND.primary, animation: "spin 1s linear infinite" }} />
+            <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+          </div>
+        ) : ytChannels.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "20px 0" }}>
+            <PlayCircle size={36} color={theme.textT} />
+            <div style={{ fontSize: 14, fontWeight: 600, color: theme.text, marginTop: 8 }}>No channels found</div>
+            <div style={{ display: "flex", gap: 8, justifyContent: "center", marginTop: 12 }}>
+              <button onClick={() => signIn("google", { callbackUrl: "/?pickChannel=true" })} style={{ padding: "8px 16px", borderRadius: 8, border: "none", background: BRAND.gradBtn, color: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>Re-login</button>
+              <button onClick={onRetry} style={{ padding: "8px 16px", borderRadius: 8, border: `1px solid ${theme.border}`, background: "transparent", color: theme.text, cursor: "pointer", fontSize: 13 }}>Retry</button>
+            </div>
+            <div style={{ marginTop: 16, borderTop: `1px solid ${theme.border}`, paddingTop: 16 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: theme.text, marginBottom: 8 }}>Or add manually</div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <input id="manual-ch" placeholder="Channel ID (UCxxxx...)" style={{ flex: 1, padding: "8px 12px", borderRadius: 8, border: `1px solid ${theme.inputBorder}`, fontSize: 13, background: theme.inputBg, color: theme.text }} />
+                <button onClick={() => { const el = document.getElementById("manual-ch") as HTMLInputElement; const v = el?.value?.trim(); if (v) onSelect({ id: v, title: v, thumbnail: "" }); }} style={{ padding: "8px 14px", borderRadius: 8, border: "none", background: BRAND.green, color: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>Add</button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div>{ytChannels.map((ch: any) => (
+            <button key={ch.id} onClick={() => onSelect(ch)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "12px", borderRadius: 12, border: ws?.youtube_channel_id === ch.id ? `2px solid ${BRAND.green}` : `1px solid ${theme.border}`, background: ws?.youtube_channel_id === ch.id ? (darkMode ? "rgba(16,185,129,0.08)" : BRAND.greenL) : theme.card, cursor: "pointer", marginBottom: 8, textAlign: "left" }}>
+              {ch.thumbnail ? <img src={ch.thumbnail} style={{ width: 44, height: 44, borderRadius: "50%" }} alt="" /> : <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#FF000012", display: "flex", alignItems: "center", justifyContent: "center" }}><PlayCircle size={20} color="#FF0000" /></div>}
+              <div style={{ flex: 1 }}><div style={{ fontSize: 14, fontWeight: 700, color: theme.text }}>{ch.title}</div><div style={{ fontSize: 11, color: theme.textT }}>{ch.id}</div></div>
+              {ws?.youtube_channel_id === ch.id && <div style={{ width: 24, height: 24, borderRadius: "50%", background: BRAND.green, display: "flex", alignItems: "center", justifyContent: "center" }}><Check size={14} color="#fff" /></div>}
+            </button>
+          ))}</div>
+        )}
         <button onClick={onClose} style={{ width: "100%", padding: "11px", borderRadius: 10, border: `1px solid ${theme.border}`, background: "transparent", cursor: "pointer", fontSize: 14, color: theme.textS, marginTop: 8 }}>Cancel</button>
       </div>
     </div>
