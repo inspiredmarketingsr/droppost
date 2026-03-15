@@ -431,9 +431,9 @@ export default function App() {
             <span style={{ color: "#fff", fontWeight: 900, fontSize: 17 }}>D</span>
           </div>
           {sidebarOpen && <span style={{ color: "#fff", fontWeight: 800, fontSize: 17, whiteSpace: "nowrap" }}>Drop<span style={{ background: BRAND.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Post</span></span>}
-          <button onClick={() => setSidebarOpen(o => !o)} style={{ marginLeft: sidebarOpen ? "auto" : undefined, background: "rgba(255,255,255,0.1)", border: "none", color: "rgba(255,255,255,0.8)", cursor: "pointer", flexShrink: 0, padding: "6px", borderRadius: 7, display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32 }}>
+          {sidebarOpen && <button onClick={() => setSidebarOpen(false)} style={{ marginLeft: "auto", background: "rgba(255,255,255,0.1)", border: "none", color: "rgba(255,255,255,0.8)", cursor: "pointer", flexShrink: 0, padding: "6px", borderRadius: 7, display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32 }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-          </button>
+          </button>}
         </div>
 
         <div style={{ padding: "10px 8px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
@@ -495,6 +495,9 @@ export default function App() {
       <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
         {/* TOP BAR */}
         <div style={{ background: theme.headerBg, borderBottom: `1px solid ${theme.border}`, padding: "0 24px", display: "flex", alignItems: "center", height: 58, gap: 12, flexShrink: 0, position: "relative", transition: "background 0.3s" }}>
+          {!sidebarOpen && <button onClick={() => setSidebarOpen(true)} style={{ width: 36, height: 36, borderRadius: 8, border: `1px solid ${theme.border}`, background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", marginRight: 4 }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={theme.textS} strokeWidth="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>}
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             {ws && <Avatar initials={ws.avatar} color={ws.color} size={32} />}
             <div>
