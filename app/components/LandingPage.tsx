@@ -1,7 +1,7 @@
 "use client";
 import { signIn } from "next-auth/react";
 import { useState, useEffect } from "react";
-import { Calendar, Clock, CheckSquare, BarChart2, Users, Zap, Shield, Globe, ChevronRight, Play, Star, Menu, X, ArrowRight, Sparkles, PenLine } from "lucide-react";
+import { Calendar, Clock, CheckSquare, BarChart2, Users, Zap, Shield, Globe, ChevronRight, ChevronDown, Play, Star, Menu, X, ArrowRight, Sparkles, PenLine } from "lucide-react";
 import { FaYoutube, FaFacebookF, FaInstagram, FaTiktok, FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
 
 const C = {
@@ -57,6 +57,20 @@ function useIsMobile(bp = 768) {
   return m;
 }
 
+/* ═══ FAQ Accordion Item ═══ */
+function FAQItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ borderBottom: `1px solid ${C.border}` }}>
+      <button onClick={() => setOpen(v => !v)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 0", background: "none", border: "none", cursor: "pointer", textAlign: "left", fontFamily: "inherit" }}>
+        <span style={{ fontSize: 15, fontWeight: 600, color: C.dark, paddingRight: 16 }}>{q}</span>
+        {open ? <ChevronDown size={18} color={C.primary} style={{ flexShrink: 0 }} /> : <ChevronRight size={18} color={C.textT} style={{ flexShrink: 0 }} />}
+      </button>
+      {open && <div style={{ paddingBottom: 18, fontSize: 14, color: C.textS, lineHeight: 1.7 }}>{a}</div>}
+    </div>
+  );
+}
+
 export default function LandingPage() {
   const [lang, setLang] = useState<"en" | "nl">("en");
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -79,6 +93,7 @@ export default function LandingPage() {
     { label: t("Platforms", "Platformen"), id: "platforms" },
     { label: t("Pricing", "Prijzen"), id: "pricing" },
     { label: t("Testimonials", "Reviews"), id: "testimonials" },
+    { label: "FAQ", id: "faq" },
   ];
 
   const btn = (primary: boolean, size: "sm" | "md" | "lg" = "md") => ({
@@ -381,6 +396,32 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ═══ FAQ ═══ */}
+      <section id="faq" style={{ padding: isMobile ? "60px 20px" : "80px 24px", background: C.bgS }}>
+        <div style={{ maxWidth: 800, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 40 }}>
+            <p style={{ fontSize: 12, fontWeight: 700, color: C.primary, letterSpacing: 1.5, marginBottom: 10 }}>FAQ</p>
+            <h2 style={{ fontSize: "clamp(24px, 3vw, 40px)", fontWeight: 800, color: C.dark, marginBottom: 10 }}>{t("Frequently asked questions", "Veelgestelde vragen")}</h2>
+            <p style={{ fontSize: 15, color: C.textS }}>{t("Everything you need to know about DropPost", "Alles wat je moet weten over DropPost")}</p>
+          </div>
+          {[
+            { q: t("Is DropPost really free?", "Is DropPost echt gratis?"), a: t("Yes! Our Starter plan is completely free and includes 1 workspace, 3 social accounts, and 30 scheduled posts per month. No credit card required.", "Ja! Ons Starter plan is helemaal gratis met 1 workspace, 3 social accounts en 30 geplande posts per maand. Geen creditcard nodig.") },
+            { q: t("Which platforms does DropPost support?", "Welke platformen ondersteunt DropPost?"), a: t("DropPost currently supports YouTube, with Facebook, Instagram, TikTok, and LinkedIn integrations coming soon. You can already create and schedule content for all platforms.", "DropPost ondersteunt momenteel YouTube, met Facebook, Instagram, TikTok en LinkedIn integraties die binnenkort komen. Je kunt al content maken en plannen voor alle platformen.") },
+            { q: t("Can I manage multiple clients?", "Kan ik meerdere klanten beheren?"), a: t("Absolutely! With our multi-workspace feature, you can create separate workspaces for each client, each with their own connected accounts, calendar, and team access.", "Absoluut! Met onze multi-workspace functie kun je aparte werkruimtes maken per klant, elk met eigen gekoppelde accounts, kalender en teamtoegang.") },
+            { q: t("How does the approval workflow work?", "Hoe werkt de goedkeuringsflow?"), a: t("When a post is scheduled, it enters a 'Pending' status. Designated approvers can review the content and either approve or reject it. Only approved posts are published automatically.", "Wanneer een post is gepland, krijgt het een 'In behandeling' status. Aangewezen goedkeurders kunnen de content reviewen en goedkeuren of afwijzen. Alleen goedgekeurde posts worden automatisch gepubliceerd.") },
+            { q: t("Is my data safe?", "Is mijn data veilig?"), a: t("Yes. Your data is securely stored with encryption. We never sell your data to third parties. You can request complete data deletion at any time. See our Privacy Policy for more details.", "Ja. Je data wordt veilig opgeslagen met encryptie. We verkopen nooit je data aan derden. Je kunt op elk moment volledige verwijdering van je data aanvragen. Zie ons Privacybeleid voor meer details.") },
+            { q: t("Can I cancel my subscription anytime?", "Kan ik mijn abonnement op elk moment opzeggen?"), a: t("Yes, you can cancel your subscription at any time. There are no long-term contracts or hidden fees. Your account will remain active until the end of your billing period.", "Ja, je kunt je abonnement op elk moment opzeggen. Er zijn geen langetermijncontracten of verborgen kosten. Je account blijft actief tot het einde van je factureringsperiode.") },
+          ].map((item, i) => (
+            <FAQItem key={i} q={item.q} a={item.a} />
+          ))}
+          <div style={{ textAlign: "center", marginTop: 24 }}>
+            <a href="/help" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 14, color: C.primary, fontWeight: 600, textDecoration: "none" }}>
+              {t("View all FAQs", "Bekijk alle FAQs")} <ChevronRight size={16} />
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* ═══ CTA ═══ */}
       <section style={{ padding: isMobile ? "60px 20px" : "80px 24px", background: C.dark }}>
         <div style={{ maxWidth: 650, margin: "0 auto", textAlign: "center" }}>
@@ -415,6 +456,8 @@ export default function LandingPage() {
             <h4 style={{ fontSize: 13, fontWeight: 700, color: C.dark, marginBottom: 14 }}>{t("Legal", "Juridisch")}</h4>
             <a href="/terms" style={{ display: "block", fontSize: 13, color: C.textS, textDecoration: "none", marginBottom: 8 }}>{t("Terms & Conditions", "Algemene Voorwaarden")}</a>
             <a href="/privacy" style={{ display: "block", fontSize: 13, color: C.textS, textDecoration: "none", marginBottom: 8 }}>{t("Privacy Policy", "Privacybeleid")}</a>
+            <a href="/data-deletion" style={{ display: "block", fontSize: 13, color: C.textS, textDecoration: "none", marginBottom: 8 }}>{t("Data Deletion", "Data Verwijdering")}</a>
+            <a href="/help" style={{ display: "block", fontSize: 13, color: C.textS, textDecoration: "none", marginBottom: 8 }}>{t("Help Center", "Helpcentrum")}</a>
           </div>
         </div>
         <div style={{ borderTop: `1px solid ${C.border}`, maxWidth: 1200, margin: "0 auto" }}>
