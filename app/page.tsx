@@ -3,7 +3,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 import { Settings, User, CreditCard, HelpCircle, Gift, LogOut, Headphones, Newspaper, Moon, Sun, Globe, LayoutDashboard, Calendar, PenLine, Clock, FileText, CheckSquare, BarChart2, Image, Users, CheckCircle, Clock3, AlertCircle, Upload, GripVertical } from "lucide-react";
-import LandingPage from "./components/Landingpage";
+import LandingPage from "./components/LandingPage";
 
 const BRAND = {
   primary: "#7C3AED", primaryD: "#5B21B6", primaryL: "#EDE9FE",
