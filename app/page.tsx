@@ -1,32 +1,23 @@
 "use client";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
-import {
-  PenLine, Clock3, CheckCircle, AlertCircle, Upload, Trash2,
-  ChevronLeft, ChevronRight, Inbox, FileText, PartyPopper,
-  PlayCircle, Plus, ExternalLink,
-} from "lucide-react";
+import { BRAND, WORKSPACE_COLORS, useTheme } from "./components/ui";
 import LandingPage from "./components/LandingPage";
-import { BRAND, WORKSPACE_COLORS, useTheme, Avatar, PBadge, StatusTag, Tag, DraggableQueueItem } from "./components/ui";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import { SupportPanel, NewsPanel } from "./components/Panels";
 import { CreatePostModal, NewWorkspaceModal, ChannelPickerModal } from "./components/Modals";
 import Dashboard from "./components/Dashboard";
-
-/* ═══ Platform icon reused from Modals ═══ */
-const PlatformIcon = ({ id, size = 18 }: { id: string; size?: number }) => {
-  if (id === "facebook") return <svg width={size} height={size} viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>;
-  if (id === "instagram") return <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><defs><linearGradient id={`ig-${size}`} x1="0" y1="24" x2="24" y2="0"><stop offset="0%" stopColor="#feda75"/><stop offset="25%" stopColor="#fa7e1e"/><stop offset="50%" stopColor="#d62976"/><stop offset="75%" stopColor="#962fbf"/><stop offset="100%" stopColor="#4f5bd5"/></linearGradient></defs><rect width="22" height="22" x="1" y="1" rx="6" stroke={`url(#ig-${size})`} strokeWidth="2" fill="none"/><circle cx="12" cy="12" r="4.5" stroke={`url(#ig-${size})`} strokeWidth="2" fill="none"/><circle cx="17.5" cy="6.5" r="1.2" fill={`url(#ig-${size})`}/></svg>;
-  if (id === "tiktok") return <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.75a8.18 8.18 0 0 0 4.76 1.52v-3.4a4.85 4.85 0 0 1-1-.18z"/></svg>;
-  if (id === "linkedin") return <svg width={size} height={size} viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>;
-  if (id === "youtube") return <svg width={size} height={size} viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>;
-  return null;
-};
+import PostsPage from "./components/PostsPage";
+import CalendarPage from "./components/CalendarPage";
+import SettingsPage from "./components/SettingsPage";
+import { QueuePage, DraftsPage, ApprovalPage, AnalyticsPage, MediaPage, TeamPage } from "./components/SmallPages";
 
 export default function App() {
   const { data: session, status } = useSession();
+
+  /* ═══ STATE ═══ */
   const [workspaces, setWorkspaces] = useState<any[]>([]);
   const [posts, setPosts] = useState<Record<string, any[]>>({});
   const [activeWS, setActiveWS] = useState<string | null>(null);
@@ -68,7 +59,7 @@ export default function App() {
     }
   }, [session]);
 
-  /* ═══ DATA FUNCTIONS ═══ */
+  /* ═══ DATA ═══ */
   async function loadWorkspaces() {
     setLoading(true);
     const { data } = await supabase.from("workspaces").select("*").eq("user_id", userEmail).order("created_at", { ascending: true });
@@ -79,6 +70,7 @@ export default function App() {
   async function loadPosts(wsId: string) { const { data } = await supabase.from("posts").select("*").eq("workspace_id", wsId).order("created_at", { ascending: false }); if (data) setPosts(prev => ({ ...prev, [wsId]: data })); }
   async function switchWorkspace(wsId: string) { setActiveWS(wsId); setPage("dashboard"); if (!posts[wsId]) await loadPosts(wsId); }
 
+  /* ═══ UPLOADS ═══ */
   async function uploadImage(file: File): Promise<string | null> {
     setUploadingImage(true);
     try { const fn = `${userEmail}/${Date.now()}-${file.name}`; const { error } = await supabase.storage.from("post-images").upload(fn, file, { upsert: true }); if (error) { alert("Image upload failed: " + error.message); setUploadingImage(false); return null; } const { data: u } = supabase.storage.from("post-images").getPublicUrl(fn); setUploadingImage(false); return u.publicUrl; }
@@ -91,6 +83,7 @@ export default function App() {
     catch { alert("Upload failed"); setUploadingVideo(false); return null; }
   }
 
+  /* ═══ YOUTUBE ═══ */
   async function publishToYouTube(post: any) {
     if (!post.video_url) { alert("No video attached"); return; }
     setPublishing(post.id);
@@ -98,30 +91,30 @@ export default function App() {
     catch (err: any) { alert(`Upload failed: ${err.message}`); }
     setPublishing(null);
   }
-
   async function fetchYouTubeChannels() { setLoadingChannels(true); try { const res = await fetch("/api/youtube/channels"); const data = await res.json(); if (data.channels) setYtChannels(data.channels); else alert(data.error || "Failed"); } catch { alert("Failed to load channels"); } setLoadingChannels(false); }
   async function selectYouTubeChannel(channel: any) { if (!activeWS) return; await supabase.from("workspaces").update({ youtube_channel_id: channel.id, youtube_channel_name: channel.title, youtube_channel_thumb: channel.thumbnail }).eq("id", activeWS); setWorkspaces(prev => prev.map(w => w.id === activeWS ? { ...w, youtube_channel_id: channel.id, youtube_channel_name: channel.title, youtube_channel_thumb: channel.thumbnail } : w)); setShowChannelPicker(false); setYtChannels([]); }
   async function disconnectYouTube() { if (!activeWS) return; await supabase.from("workspaces").update({ youtube_channel_id: null, youtube_channel_name: null, youtube_channel_thumb: null }).eq("id", activeWS); setWorkspaces(prev => prev.map(w => w.id === activeWS ? { ...w, youtube_channel_id: null, youtube_channel_name: null, youtube_channel_thumb: null } : w)); }
 
+  /* ═══ POST ACTIONS ═══ */
   function resetDraft() { setDraft({ content: "", platforms: [], date: "", time: "12:00", type: "post", image_url: "", video_url: "" }); setVideoAspect(null); setShowNewPost(false); }
   async function saveAsDraft() { if (!draft.content || !activeWS) return; const { data } = await supabase.from("posts").insert({ workspace_id: activeWS, content: draft.content, platforms: draft.platforms, scheduled_date: draft.date || null, scheduled_time: draft.time, status: "draft", approval: "none", image_url: draft.image_url || null, video_url: draft.video_url || null }).select().single(); if (data) setPosts(prev => ({ ...prev, [activeWS!]: [data, ...(prev[activeWS!] || [])] })); resetDraft(); }
   async function schedulePost() { if (!draft.content || !draft.date || draft.platforms.length === 0 || !activeWS) return; const { data } = await supabase.from("posts").insert({ workspace_id: activeWS, content: draft.content, platforms: draft.platforms, scheduled_date: draft.date, scheduled_time: draft.time, status: "scheduled", approval: "pending", image_url: draft.image_url || null, video_url: draft.video_url || null }).select().single(); if (data) setPosts(prev => ({ ...prev, [activeWS!]: [data, ...(prev[activeWS!] || [])] })); resetDraft(); }
   async function publishNow() { if (!draft.content || draft.platforms.length === 0 || !activeWS) return; const today = new Date().toISOString().split("T")[0]; const now = new Date().toTimeString().slice(0, 5); const { data } = await supabase.from("posts").insert({ workspace_id: activeWS, content: draft.content, platforms: draft.platforms, scheduled_date: today, scheduled_time: now, status: "publishing", approval: "approved", image_url: draft.image_url || null, video_url: draft.video_url || null }).select().single(); if (data) { setPosts(prev => ({ ...prev, [activeWS!]: [data, ...(prev[activeWS!] || [])] })); if (draft.platforms.includes("youtube") && draft.video_url) { const vid = draft.video_url; const cnt = draft.content; resetDraft(); await publishToYouTube({ ...data, video_url: vid, content: cnt }); return; } } resetDraft(); }
-
   async function addWorkspace() { if (!newWS.name) return; const ini = newWS.name.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase(); const { data } = await supabase.from("workspaces").insert({ user_id: userEmail, ...newWS, avatar: ini }).select().single(); if (data) { setWorkspaces(prev => [...prev, data]); setPosts(prev => ({ ...prev, [data.id]: [] })); setActiveWS(data.id); } setNewWS({ name: "", industry: "", color: WORKSPACE_COLORS[0] }); setShowNewWS(false); }
   async function approvePost(id: string, decision: string) { await supabase.from("posts").update({ approval: decision }).eq("id", id); if (activeWS) setPosts(prev => ({ ...prev, [activeWS]: prev[activeWS].map(p => p.id === id ? { ...p, approval: decision } : p) })); }
   async function deletePost(id: string) { await supabase.from("posts").delete().eq("id", id); if (activeWS) setPosts(prev => ({ ...prev, [activeWS]: prev[activeWS].filter(p => p.id !== id) })); }
 
+  /* ═══ DRAG & DROP ═══ */
   function handleDragStart(e: any, idx: number) { setDragIndex(idx); e.dataTransfer.effectAllowed = "move"; }
   function handleDragOver(e: any, idx: number) { e.preventDefault(); e.dataTransfer.dropEffect = "move"; setDragOverIdx(idx); }
   async function handleDrop(e: any, toIdx: number) { e.preventDefault(); if (dragIndex === null || dragIndex === toIdx || !activeWS) { setDragIndex(null); setDragOverIdx(null); return; } const sched = (posts[activeWS] || []).filter(p => p.status === "scheduled").sort((a: any, b: any) => `${a.scheduled_date}T${a.scheduled_time}`.localeCompare(`${b.scheduled_date}T${b.scheduled_time}`)); const reordered = [...sched]; const [moved] = reordered.splice(dragIndex, 1); reordered.splice(toIdx, 0, moved); const allTimes = sched.map((p: any) => ({ date: p.scheduled_date, time: p.scheduled_time })).sort((a: any, b: any) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`)); const updates: PromiseLike<any>[] = []; const updatedPosts = reordered.map((post: any, i: number) => { const slot = allTimes[i]; if (post.scheduled_date !== slot.date || post.scheduled_time !== slot.time) updates.push(supabase.from("posts").update({ scheduled_date: slot.date, scheduled_time: slot.time }).eq("id", post.id)); return { ...post, scheduled_date: slot.date, scheduled_time: slot.time }; }); const otherPosts = (posts[activeWS] || []).filter(p => p.status !== "scheduled"); setPosts(prev => ({ ...prev, [activeWS!]: [...updatedPosts, ...otherPosts] })); await Promise.all(updates); setDragIndex(null); setDragOverIdx(null); }
 
-  /* ═══ LOADING / AUTH GUARDS ═══ */
+  /* ═══ GUARDS ═══ */
   if (status === "loading") return null;
   if (session && loading && workspaces.length === 0) return <div style={{ minHeight: "100vh", background: BRAND.dark, display: "flex", alignItems: "center", justifyContent: "center" }}><div style={{ color: "#fff", fontSize: 16, fontWeight: 600 }}>Loading...</div></div>;
   if (!session) return <LandingPage />;
 
-  /* ═══ DERIVED DATA ═══ */
+  /* ═══ DERIVED ═══ */
   const ws = workspaces.find(w => w.id === activeWS);
   const wsPosts = activeWS ? (posts[activeWS] || []) : [];
   const scheduled = wsPosts.filter(p => p.status === "scheduled").sort((a: any, b: any) => `${a.scheduled_date}T${a.scheduled_time}`.localeCompare(`${b.scheduled_date}T${b.scheduled_time}`));
@@ -132,247 +125,28 @@ export default function App() {
   /* ═══ RENDER ═══ */
   return (
     <div style={{ display: "flex", minHeight: "100vh", fontFamily: "'Segoe UI',system-ui,sans-serif", background: theme.bg }}>
-      {/* Sidebar — nav only, no workspace */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} page={page} setPage={setPage} pendingCount={pending.length} t={t} />
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-        {/* Header — with workspace selector */}
-        <Header
-          sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}
-          ws={ws} workspaces={workspaces} activeWS={activeWS} switchWorkspace={switchWorkspace} setShowNewWS={setShowNewWS}
-          session={session} userName={userName} userEmail={userEmail} userInitials={userInitials}
-          darkMode={darkMode} setDarkMode={setDarkMode} language={language} setLanguage={setLanguage}
-          showSupport={showSupport} setShowSupport={setShowSupport} showNews={showNews} setShowNews={setShowNews}
-          showLangMenu={showLangMenu} setShowLangMenu={setShowLangMenu} showUserMenu={showUserMenu} setShowUserMenu={setShowUserMenu}
-          setShowNewPost={setShowNewPost} theme={theme} t={t}
-        />
+        <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} ws={ws} workspaces={workspaces} activeWS={activeWS} switchWorkspace={switchWorkspace} setShowNewWS={setShowNewWS} session={session} userName={userName} userEmail={userEmail} userInitials={userInitials} darkMode={darkMode} setDarkMode={setDarkMode} language={language} setLanguage={setLanguage} showSupport={showSupport} setShowSupport={setShowSupport} showNews={showNews} setShowNews={setShowNews} showLangMenu={showLangMenu} setShowLangMenu={setShowLangMenu} showUserMenu={showUserMenu} setShowUserMenu={setShowUserMenu} setShowNewPost={setShowNewPost} theme={theme} t={t} />
 
         {showSupport && <SupportPanel theme={theme} darkMode={darkMode} t={t} onClose={() => setShowSupport(false)} />}
         {showNews && <NewsPanel theme={theme} darkMode={darkMode} t={t} onClose={() => setShowNews(false)} />}
 
         <div style={{ flex: 1, overflowY: "auto", padding: "24px" }}>
-
-          {/* ═══ DASHBOARD ═══ */}
           {page === "dashboard" && <Dashboard wsPosts={wsPosts} scheduled={scheduled} published={published} pending={pending} darkMode={darkMode} theme={theme} t={t} />}
-
-          {/* ═══ POSTS ═══ */}
-          {page === "posts" && <div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-              <h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text }}>Posts</h1>
-              <button onClick={() => setShowNewPost(true)} style={{ background: BRAND.gradBtn, color: "#fff", border: "none", borderRadius: 9, padding: "8px 16px", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 5 }}><Plus size={15} /> {t("New","Nieuw")}</button>
-            </div>
-            {wsPosts.map((post: any) => (
-              <div key={post.id} style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 14, padding: "16px 18px", marginBottom: 10 }}>
-                <div style={{ display: "flex", gap: 12 }}>
-                  <div style={{ flex: 1 }}>
-                    <p style={{ margin: "0 0 10px", fontSize: 14, color: theme.text, lineHeight: 1.6 }}>{post.content}</p>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center" }}>
-                      {post.platforms?.map((pid: string) => <PBadge key={pid} pid={pid} dark={darkMode} />)}
-                      <span style={{ fontSize: 11, color: theme.textT }}>{post.scheduled_date} {post.scheduled_time}</span>
-                      <StatusTag status={post.status} approval={post.approval} />
-                    </div>
-                  </div>
-                  <div style={{ display: "flex", gap: 6, flexShrink: 0, flexDirection: "column", alignItems: "flex-end" }}>
-                    <div style={{ display: "flex", gap: 6 }}>
-                      {post.platforms?.includes("youtube") && post.video_url && post.status !== "published" && (
-                        <button onClick={() => publishToYouTube(post)} disabled={publishing === post.id} style={{ fontSize: 12, background: "#FF000015", color: "#FF0000", border: "1px solid #FF000030", borderRadius: 7, padding: "5px 10px", cursor: "pointer", fontWeight: 600, display: "flex", alignItems: "center", gap: 4 }}>
-                          {publishing === post.id ? "..." : <><PlayCircle size={13} /> YT</>}
-                        </button>
-                      )}
-                      <button onClick={() => deletePost(post.id)} style={{ fontSize: 12, background: darkMode ? "rgba(239,68,68,0.15)" : BRAND.redL, color: BRAND.red, border: "none", borderRadius: 7, padding: "5px 10px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <Trash2 size={13} />
-                      </button>
-                    </div>
-                    {post.youtube_id && (
-                      <a href={`https://www.youtube.com/watch?v=${post.youtube_id}`} target="_blank" rel="noopener" style={{ fontSize: 11, color: "#FF0000", fontWeight: 600, textDecoration: "none", display: "flex", alignItems: "center", gap: 3 }}>
-                        <ExternalLink size={11} /> YouTube
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>}
-
-          {/* ═══ CALENDAR ═══ */}
-          {page === "calendar" && (() => {
-            const today = new Date(); const yr = calDate.getFullYear(); const mo = calDate.getMonth();
-            const DS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-            const fd = new Date(yr, mo, 1).getDay(); const dim = new Date(yr, mo + 1, 0).getDate();
-            const cells = Array.from({ length: 42 }, (_, i) => { const d = i - fd + 1; return d >= 1 && d <= dim ? d : null; });
-            const pfd = (date: Date) => wsPosts.filter((p: any) => p.scheduled_date === date.toISOString().split("T")[0]);
-            return <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
-                <span style={{ fontSize: 16, fontWeight: 700, color: theme.text, minWidth: 160 }}>{calDate.toLocaleString("en", { month: "long" })} {yr}</span>
-                <button onClick={() => { const d = new Date(calDate); d.setMonth(mo - 1); setCalDate(d); }} style={{ width: 32, height: 32, borderRadius: 8, border: "none", background: darkMode ? "rgba(13,148,136,0.15)" : "#E0F2F1", color: "#0D9488", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <ChevronLeft size={16} />
-                </button>
-                <button onClick={() => { const d = new Date(calDate); d.setMonth(mo + 1); setCalDate(d); }} style={{ width: 32, height: 32, borderRadius: 8, border: "none", background: darkMode ? "rgba(13,148,136,0.15)" : "#E0F2F1", color: "#0D9488", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <ChevronRight size={16} />
-                </button>
-              </div>
-              <div style={{ background: theme.card, borderRadius: 16, border: `1px solid ${theme.border}`, overflow: "hidden" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", borderBottom: `1px solid ${theme.border}` }}>
-                  {DS.map(d => <div key={d} style={{ padding: "10px 0", textAlign: "center", fontSize: 12, fontWeight: 700, color: theme.textT }}>{d}</div>)}
-                </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)" }}>
-                  {cells.map((day, i) => {
-                    const date = day ? new Date(yr, mo, day) : null;
-                    const isToday = date ? date.toDateString() === today.toDateString() : false;
-                    const dp = date ? pfd(date) : [];
-                    return <div key={i} style={{ minHeight: 90, padding: "6px 4px", borderRight: `1px solid ${theme.border}`, borderBottom: `1px solid ${theme.border}` }}>
-                      {day && <div style={{ fontSize: 13, fontWeight: isToday ? 800 : 500, color: isToday ? "#0D9488" : theme.textS, textAlign: "right", paddingRight: 4, marginBottom: 4 }}>{day}</div>}
-                      {dp.slice(0,2).map((post: any) => <div key={post.id} style={{ fontSize: 10, background: darkMode ? "rgba(124,58,237,0.15)" : BRAND.primaryL, color: BRAND.primary, borderRadius: 4, padding: "2px 4px", marginBottom: 2, overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>{post.content.slice(0,20)}</div>)}
-                    </div>;
-                  })}
-                </div>
-              </div>
-            </div>;
-          })()}
-
-          {/* ═══ QUEUE ═══ */}
-          {page === "queue" && <div>
-            <h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text, marginBottom: 20 }}>{t("Queue", "Wachtrij")}</h1>
-            {scheduled.length === 0 && (
-              <div style={{ textAlign: "center", padding: "3rem 0", display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <Inbox size={32} color={theme.textT} style={{ marginBottom: 8 }} />
-                <div style={{ color: theme.textT, fontSize: 14 }}>{t("No scheduled posts", "Geen geplande posts")}</div>
-              </div>
-            )}
-            <div onDragOver={(e: any) => e.preventDefault()}>
-              {scheduled.map((post: any, idx: number) => <DraggableQueueItem key={post.id} post={post} index={idx} onDragStart={handleDragStart} onDragOver={handleDragOver} onDrop={handleDrop} isDragging={dragIndex} dragOverIndex={dragOverIdx} theme={theme} dark={darkMode} />)}
-            </div>
-          </div>}
-
-          {/* ═══ DRAFTS ═══ */}
-          {page === "drafts" && <div>
-            <h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text, marginBottom: 20 }}>{t("Drafts", "Concepten")}</h1>
-            {draftPosts.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "3rem 0", display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <FileText size={32} color={theme.textT} style={{ marginBottom: 8 }} />
-                <div style={{ color: theme.textT, fontSize: 14 }}>{t("No drafts", "Geen concepten")}</div>
-              </div>
-            ) : draftPosts.map((post: any) => (
-              <div key={post.id} style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 12, padding: "14px 16px", marginBottom: 8, display: "flex", alignItems: "center" }}>
-                <div style={{ flex: 1, fontSize: 13, color: theme.text }}>{post.content}</div>
-                <button onClick={() => deletePost(post.id)} style={{ fontSize: 12, background: darkMode ? "rgba(239,68,68,0.15)" : BRAND.redL, color: BRAND.red, border: "none", borderRadius: 7, padding: "5px 10px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <Trash2 size={13} />
-                </button>
-              </div>
-            ))}
-          </div>}
-
-          {/* ═══ APPROVAL ═══ */}
-          {page === "approval" && <div>
-            <h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text, marginBottom: 20 }}>{t("Approval", "Goedkeuring")}</h1>
-            {pending.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "4rem 0", display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <PartyPopper size={32} color={BRAND.green} style={{ marginBottom: 8 }} />
-                <div style={{ color: theme.textT, fontSize: 14 }}>{t("All caught up!", "Alles bijgewerkt!")}</div>
-              </div>
-            ) : pending.map((post: any) => (
-              <div key={post.id} style={{ background: theme.card, border: `1.5px solid ${BRAND.amber}50`, borderRadius: 16, padding: "18px", marginBottom: 14 }}>
-                <p style={{ margin: "0 0 12px", fontSize: 14, color: theme.text }}>{post.content}</p>
-                <div style={{ display: "flex", gap: 10 }}>
-                  <button onClick={() => approvePost(post.id, "approved")} style={{ flex: 1, padding: "10px", background: darkMode ? "rgba(16,185,129,0.15)" : BRAND.greenL, color: BRAND.green, border: `1px solid ${BRAND.green}40`, borderRadius: 10, cursor: "pointer", fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", gap: 5 }}>
-                    <CheckCircle size={15} /> {t("Approve","Goedkeuren")}
-                  </button>
-                  <button onClick={() => approvePost(post.id, "rejected")} style={{ flex: 1, padding: "10px", background: darkMode ? "rgba(239,68,68,0.15)" : BRAND.redL, color: BRAND.red, border: `1px solid ${BRAND.red}40`, borderRadius: 10, cursor: "pointer", fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", gap: 5 }}>
-                    <Trash2 size={15} /> {t("Reject","Afwijzen")}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>}
-
-          {/* ═══ ANALYTICS ═══ */}
-          {page === "analytics" && <div>
-            <h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text, marginBottom: 20 }}>Analytics</h1>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14 }}>
-              {[{ l: "Reach", v: "—", c: BRAND.primary }, { l: "Engagement", v: "—", c: BRAND.green }, { l: "Posts", v: String(wsPosts.length), c: "#0EA5E9" }].map(s => (
-                <div key={s.l} style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 14, padding: "18px 20px" }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: theme.textT, marginBottom: 10 }}>{s.l.toUpperCase()}</div>
-                  <div style={{ fontSize: 30, fontWeight: 900, color: s.c }}>{s.v}</div>
-                </div>
-              ))}
-            </div>
-            <div style={{ marginTop: 20, background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 14, padding: "24px", textAlign: "center" }}>
-              <AlertCircle size={28} color={theme.textT} style={{ marginBottom: 8 }} />
-              <div style={{ fontSize: 14, fontWeight: 600, color: theme.text }}>{t("Real analytics coming soon","Echte analytics komen binnenkort")}</div>
-              <div style={{ fontSize: 12, color: theme.textT, marginTop: 4 }}>{t("Connect your accounts in Settings to see real data","Koppel je accounts in Instellingen voor echte data")}</div>
-            </div>
-          </div>}
-
-          {/* ═══ MEDIA ═══ */}
-          {page === "media" && <div>
-            <h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text, marginBottom: 20 }}>Media</h1>
-            <div style={{ background: theme.card, border: `2px dashed ${theme.border}`, borderRadius: 14, padding: "40px", textAlign: "center" }}>
-              <Upload size={36} color={theme.textT} />
-              <div style={{ fontSize: 14, fontWeight: 600, color: theme.text, marginTop: 12 }}>{t("Drop files here", "Sleep bestanden hierheen")}</div>
-            </div>
-          </div>}
-
-          {/* ═══ TEAM ═══ */}
-          {page === "team" && <div>
-            <h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text, marginBottom: 20 }}>Team</h1>
-            <div style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 12, padding: "14px 16px", display: "flex", gap: 12, alignItems: "center" }}>
-              <Avatar initials={userInitials} color={BRAND.primary} size={40} />
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: theme.text }}>{userName}</div>
-                <div style={{ fontSize: 12, color: theme.textT }}>{userEmail}</div>
-              </div>
-              <Tag label="Admin" color={BRAND.primary} bg={darkMode ? "rgba(124,58,237,0.2)" : BRAND.primaryL} />
-            </div>
-          </div>}
-
-          {/* ═══ SETTINGS ═══ */}
-          {page === "settings" && <div>
-            <h1 style={{ fontSize: 20, fontWeight: 800, color: theme.text, marginBottom: 20 }}>{t("Settings", "Instellingen")}</h1>
-            <div style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 14, padding: "18px", marginBottom: 14 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: theme.text, marginBottom: 12 }}>{t("Connected accounts", "Gekoppelde accounts")}</div>
-              {[
-                { id: "youtube", label: "YouTube", color: "#FF0000", desc: "Videos & Shorts" },
-                { id: "facebook", label: "Facebook", color: "#1877F2", desc: "Pages" },
-                { id: "instagram", label: "Instagram", color: "#E1306C", desc: "Reels" },
-                { id: "tiktok", label: "TikTok", color: "#010101", desc: "Videos" },
-                { id: "linkedin", label: "LinkedIn", color: "#0A66C2", desc: "Posts & Articles" },
-              ].map(p => (
-                <div key={p.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: `1px solid ${darkMode ? "#2A2A40" : "#F3F4F6"}` }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 9, background: p.color + "15", border: `1px solid ${p.color}30`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <PlatformIcon id={p.id} size={20} />
-                    </div>
-                    <div>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: theme.text }}>{p.label}</div>
-                      <div style={{ fontSize: 11, color: theme.textT }}>{p.desc}</div>
-                      {p.id === "youtube" && ws?.youtube_channel_name && (
-                        <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
-                          {ws.youtube_channel_thumb && <img src={ws.youtube_channel_thumb} style={{ width: 20, height: 20, borderRadius: "50%" }} alt="" />}
-                          <span style={{ fontSize: 12, color: BRAND.green, fontWeight: 600 }}>{ws.youtube_channel_name}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  {p.id === "youtube" ? (
-                    ws?.youtube_channel_id ? (
-                      <div style={{ display: "flex", gap: 6 }}>
-                        <button onClick={() => { fetchYouTubeChannels(); setShowChannelPicker(true); }} style={{ fontSize: 12, padding: "6px 12px", borderRadius: 8, border: `1px solid ${p.color}`, background: p.color + "10", color: p.color, cursor: "pointer", fontWeight: 600 }}>{t("Switch", "Wissel")}</button>
-                        <button onClick={disconnectYouTube} style={{ fontSize: 12, padding: "6px 12px", borderRadius: 8, border: `1px solid ${BRAND.red}`, background: BRAND.red + "10", color: BRAND.red, cursor: "pointer", fontWeight: 600 }}>{t("Disconnect", "Ontkoppel")}</button>
-                      </div>
-                    ) : (
-                      <button onClick={() => signIn("google", { callbackUrl: "/?pickChannel=true" })} style={{ fontSize: 12, padding: "6px 14px", borderRadius: 8, border: `1px solid ${p.color}`, background: p.color + "10", color: p.color, cursor: "pointer", fontWeight: 600 }}>Connect</button>
-                    )
-                  ) : (
-                    <button style={{ fontSize: 12, padding: "6px 14px", borderRadius: 8, border: `1px solid ${theme.border}`, background: "transparent", color: theme.textT, cursor: "default", fontWeight: 600 }}>{t("Coming soon", "Binnenkort")}</button>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>}
+          {page === "posts" && <PostsPage wsPosts={wsPosts} darkMode={darkMode} theme={theme} publishing={publishing} onNewPost={() => setShowNewPost(true)} onDelete={deletePost} onPublishYT={publishToYouTube} t={t} />}
+          {page === "calendar" && <CalendarPage wsPosts={wsPosts} calDate={calDate} setCalDate={setCalDate} darkMode={darkMode} theme={theme} />}
+          {page === "queue" && <QueuePage scheduled={scheduled} dragIndex={dragIndex} dragOverIdx={dragOverIdx} onDragStart={handleDragStart} onDragOver={handleDragOver} onDrop={handleDrop} darkMode={darkMode} theme={theme} t={t} />}
+          {page === "drafts" && <DraftsPage draftPosts={draftPosts} darkMode={darkMode} theme={theme} onDelete={deletePost} t={t} />}
+          {page === "approval" && <ApprovalPage pending={pending} darkMode={darkMode} theme={theme} onApprove={approvePost} t={t} />}
+          {page === "analytics" && <AnalyticsPage wsPosts={wsPosts} darkMode={darkMode} theme={theme} t={t} />}
+          {page === "media" && <MediaPage theme={theme} t={t} />}
+          {page === "team" && <TeamPage userName={userName} userEmail={userEmail} userInitials={userInitials} darkMode={darkMode} theme={theme} />}
+          {page === "settings" && <SettingsPage ws={ws} darkMode={darkMode} theme={theme} onFetchChannels={fetchYouTubeChannels} onShowChannelPicker={setShowChannelPicker} onDisconnectYT={disconnectYouTube} t={t} />}
         </div>
       </div>
 
-      {/* ═══ MODALS ═══ */}
       {showNewPost && <CreatePostModal draft={draft} setDraft={setDraft} darkMode={darkMode} theme={theme} uploadingImage={uploadingImage} uploadingVideo={uploadingVideo} videoAspect={videoAspect} uploadImage={uploadImage} uploadVideo={uploadVideo} setVideoAspect={setVideoAspect} onClose={resetDraft} onSaveDraft={saveAsDraft} onSchedule={schedulePost} onPublishNow={publishNow} t={t} />}
       {showNewWS && <NewWorkspaceModal newWS={newWS} setNewWS={setNewWS} onClose={() => setShowNewWS(false)} onCreate={addWorkspace} theme={theme} t={t} />}
       {showChannelPicker && <ChannelPickerModal ws={ws} ytChannels={ytChannels} loadingChannels={loadingChannels} darkMode={darkMode} theme={theme} t={t} onSelect={selectYouTubeChannel} onClose={() => { setShowChannelPicker(false); setYtChannels([]); }} onRetry={fetchYouTubeChannels} />}
