@@ -315,19 +315,29 @@ export default function LandingPage() {
             <p style={{ fontSize: 12, fontWeight: 700, color: C.primary, letterSpacing: 1.5, marginBottom: 10 }}>{t("HOW IT WORKS", "HOE HET WERKT")}</p>
             <h2 style={{ fontSize: "clamp(24px, 3vw, 40px)", fontWeight: 800, color: C.dark }}>{t("From idea to published in 3 steps", "Van idee tot gepubliceerd in 3 stappen")}</h2>
           </div>
-          <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: isMobile ? 24 : 16, alignItems: isMobile ? "center" : "flex-start" }}>
+          <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", alignItems: isMobile ? "center" : "flex-start", position: "relative" }}>
+            {/* Connecting line — desktop only */}
+            {!isMobile && <div style={{ position: "absolute", top: 34, left: "16.66%", right: "16.66%", height: 3, background: C.gradSoft, zIndex: 0, borderRadius: 2 }} />}
+            {!isMobile && (
+              <>
+                <div style={{ position: "absolute", top: 22, left: "calc(33.33% - 14px)", zIndex: 3 }}><div style={{ width: 28, height: 28, borderRadius: "50%", background: C.bg, border: `2px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "center" }}><ArrowRight size={14} color={C.primary} /></div></div>
+                <div style={{ position: "absolute", top: 22, left: "calc(66.66% - 14px)", zIndex: 3 }}><div style={{ width: 28, height: 28, borderRadius: "50%", background: C.bg, border: `2px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "center" }}><ArrowRight size={14} color={C.primary} /></div></div>
+              </>
+            )}
             {[
-              { step: "1", icon: <PenLine size={22} />, title: t("Create & Schedule", "Maak & Plan"), desc: t("Write your post, pick platforms, upload media, set date & time.", "Schrijf je post, kies platformen, upload media, stel datum & tijd in."), color: C.primary },
-              { step: "2", icon: <CheckSquare size={22} />, title: t("Review & Approve", "Review & Keur goed"), desc: t("Send posts for approval. Clients review and approve instantly.", "Stuur posts ter goedkeuring. Klanten reviewen en keuren direct goed."), color: C.accent },
-              { step: "3", icon: <Zap size={22} />, title: t("Publish & Grow", "Publiceer & Groei"), desc: t("Approved posts publish automatically. Track performance.", "Goedgekeurde posts worden automatisch gepubliceerd. Volg prestaties."), color: C.green },
+              { step: "1", icon: <PenLine size={22} />, title: t("Create & Schedule", "Maak & Plan"), desc: t("Write your post, pick platforms, upload media, set date & time — all from one beautiful editor.", "Schrijf je post, kies platformen, upload media, stel datum & tijd in — vanuit één mooie editor."), color: C.primary },
+              { step: "2", icon: <CheckSquare size={22} />, title: t("Review & Approve", "Review & Keur goed"), desc: t("Send posts for approval with one click. Clients and team members review, comment, and approve instantly.", "Stuur posts ter goedkeuring met één klik. Klanten en teamleden reviewen, reageren en keuren direct goed."), color: C.accent },
+              { step: "3", icon: <Zap size={22} />, title: t("Publish & Grow", "Publiceer & Groei"), desc: t("Approved posts publish automatically across all platforms. Track performance and optimize your strategy.", "Goedgekeurde posts worden automatisch gepubliceerd. Volg prestaties en optimaliseer je strategie."), color: C.green },
             ].map(s => (
-              <div key={s.step} style={{ flex: 1, textAlign: "center", maxWidth: isMobile ? 360 : "none" }}>
-                <div style={{ width: 64, height: 64, borderRadius: "50%", background: `${s.color}12`, display: "flex", alignItems: "center", justifyContent: "center", color: s.color, margin: "0 auto 16px", position: "relative" }}>
-                  {s.icon}
-                  <div style={{ position: "absolute", top: -4, right: -4, width: 24, height: 24, borderRadius: "50%", background: s.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 800, color: "#fff" }}>{s.step}</div>
+              <div key={s.step} style={{ flex: "1 1 0%", textAlign: "center", position: "relative", zIndex: 1, padding: isMobile ? "0 0 32px" : "0 12px", maxWidth: isMobile ? 360 : "none" }}>
+                <div style={{ width: 72, height: 72, borderRadius: "50%", background: C.bg, border: `3px solid ${s.color}30`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px", position: "relative" }}>
+                  <div style={{ width: 56, height: 56, borderRadius: "50%", background: `${s.color}12`, display: "flex", alignItems: "center", justifyContent: "center", color: s.color }}>{s.icon}</div>
+                  <div style={{ position: "absolute", top: -6, right: -6, width: 26, height: 26, borderRadius: "50%", background: s.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: "#fff", boxShadow: `0 2px 8px ${s.color}40` }}>{s.step}</div>
                 </div>
-                <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 8, color: C.dark }}>{s.title}</h3>
-                <p style={{ fontSize: 14, color: C.textS, lineHeight: 1.7, margin: 0 }}>{s.desc}</p>
+                <div style={{ background: C.bgS, borderRadius: 16, padding: "24px 20px", border: `1px solid ${C.border}`, minHeight: isMobile ? "auto" : 150, display: "flex", flexDirection: "column", justifyContent: "flex-start", transition: "all 0.3s" }} onMouseEnter={e => { e.currentTarget.style.boxShadow = `0 8px 30px ${s.color}12`; e.currentTarget.style.borderColor = `${s.color}30`; e.currentTarget.style.transform = "translateY(-4px)"; }} onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.borderColor = C.border; e.currentTarget.style.transform = "translateY(0)"; }}>
+                  <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 10, color: C.dark }}>{s.title}</h3>
+                  <p style={{ fontSize: 14, color: C.textS, lineHeight: 1.7, margin: 0 }}>{s.desc}</p>
+                </div>
               </div>
             ))}
           </div>
