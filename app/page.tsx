@@ -367,7 +367,7 @@ export default function App() {
     const allTimes = scheduled.map((p: any) => ({ date: p.scheduled_date, time: p.scheduled_time }))
       .sort((a: any, b: any) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`));
 
-    const updates: Promise<any>[] = [];
+    const updates: PromiseLike<any>[] = [];
     const updatedPosts = reordered.map((post: any, i: number) => {
       const slot = allTimes[i];
       if (post.scheduled_date !== slot.date || post.scheduled_time !== slot.time) {
