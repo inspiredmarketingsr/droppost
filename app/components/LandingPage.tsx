@@ -45,10 +45,24 @@ const PLANS = [
   { name: "Agency", price: "$49", pricePer: "/mo", features: ["Unlimited workspaces", "Unlimited accounts", "Unlimited posts", "Advanced analytics", "Team management", "White label", "Dedicated support"], featuresNl: ["Onbeperkte werkruimtes", "Onbeperkte accounts", "Onbeperkte posts", "Geavanceerde analytics", "Teambeheer", "White label", "Dedicated support"], cta: "Start Free Trial", ctaNl: "Start Gratis Proef", popular: false },
 ];
 
+/* ═══ Hook: detect mobile ═══ */
+function useIsMobile(bp = 768) {
+  const [m, setM] = useState(false);
+  useEffect(() => {
+    const check = () => setM(window.innerWidth < bp);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, [bp]);
+  return m;
+}
+
 export default function LandingPage() {
   const [lang, setLang] = useState<"en" | "nl">("en");
   const [mobileMenu, setMobileMenu] = useState(false);
   const [roleIndex, setRoleIndex] = useState(0);
+  const isMobile = useIsMobile();
+  const isTablet = useIsMobile(1024);
   const t = (en: string, nl: string) => lang === "nl" ? nl : en;
 
   const roles = [t("creators", "creators"), t("influencers", "influencers"), t("agencies", "agencies"), t("teams", "teams"), t("brands", "merken")];
@@ -58,7 +72,7 @@ export default function LandingPage() {
     return () => clearInterval(interval);
   }, [roles.length]);
 
-  const scrollTo = (id: string) => { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); };
+  const scrollTo = (id: string) => { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); setMobileMenu(false); };
 
   const navLinks = [
     { label: t("Features", "Functies"), id: "features" },
@@ -70,247 +84,208 @@ export default function LandingPage() {
   const btn = (primary: boolean, size: "sm" | "md" | "lg" = "md") => ({
     background: primary ? C.grad : "transparent", color: primary ? "#fff" : C.text,
     border: primary ? "none" : `1.5px solid ${C.border}`, borderRadius: size === "lg" ? 14 : 10,
-    padding: size === "lg" ? "16px 36px" : size === "md" ? "11px 24px" : "8px 18px",
-    fontSize: size === "lg" ? 16 : size === "md" ? 14 : 13, fontWeight: 700 as const,
+    padding: size === "lg" ? (isMobile ? "14px 28px" : "16px 36px") : size === "md" ? "11px 24px" : "8px 18px",
+    fontSize: size === "lg" ? (isMobile ? 14 : 16) : size === "md" ? 14 : 13, fontWeight: 700 as const,
     cursor: "pointer" as const, fontFamily: "inherit", transition: "all 0.2s",
   });
 
   return (
-    <div style={{ fontFamily: "'Inter','Segoe UI',system-ui,sans-serif", color: C.text, background: C.bg, minHeight: "100vh" }}>
+    <div style={{ fontFamily: "'Inter','Segoe UI',system-ui,sans-serif", color: C.text, background: C.bg, minHeight: "100vh", overflowX: "hidden" }}>
 
       {/* ═══ NAV ═══ */}
       <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(255,255,255,0.92)", backdropFilter: "blur(12px)", borderBottom: `1px solid ${C.border}` }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", height: 64 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginRight: 48 }}>
-            <div style={{ width: 34, height: 34, borderRadius: 10, background: C.grad, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontWeight: 900, fontSize: 17 }}>D</span></div>
-            <span style={{ fontWeight: 800, fontSize: 18, color: C.dark }}>Drop<span style={{ background: C.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Post</span></span>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 16px", display: "flex", alignItems: "center", height: 60 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ width: 32, height: 32, borderRadius: 9, background: C.grad, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontWeight: 900, fontSize: 15 }}>D</span></div>
+            <span style={{ fontWeight: 800, fontSize: 17, color: C.dark }}>Drop<span style={{ background: C.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Post</span></span>
           </div>
-          <div style={{ display: "flex", gap: 32, flex: 1 }}>
-            {navLinks.map(l => <button key={l.id} onClick={() => scrollTo(l.id)} style={{ fontSize: 14, color: C.textS, textDecoration: "none", fontWeight: 500, transition: "color 0.2s", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit" }} onMouseEnter={e => (e.currentTarget.style.color = C.primary)} onMouseLeave={e => (e.currentTarget.style.color = C.textS)}>{l.label}</button>)}
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <button onClick={() => setLang(l => l === "en" ? "nl" : "en")} style={{ background: "none", border: `1px solid ${C.border}`, borderRadius: 8, padding: "6px 10px", cursor: "pointer", fontSize: 13, color: C.textS, fontWeight: 600 }}>{lang === "en" ? "🇳🇱 NL" : "🇬🇧 EN"}</button>
-            <button onClick={() => signIn("google")} style={btn(false, "sm")}>{t("Log in", "Inloggen")}</button>
-            <button onClick={() => signIn("google")} style={btn(true, "sm")}>{t("Get Started Free", "Gratis Starten")}</button>
-          </div>
+
+          {/* Desktop nav */}
+          {!isMobile && (
+            <div style={{ display: "flex", gap: 28, flex: 1, marginLeft: 40 }}>
+              {navLinks.map(l => <button key={l.id} onClick={() => scrollTo(l.id)} style={{ fontSize: 14, color: C.textS, background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", fontWeight: 500 }} onMouseEnter={e => (e.currentTarget.style.color = C.primary)} onMouseLeave={e => (e.currentTarget.style.color = C.textS)}>{l.label}</button>)}
+            </div>
+          )}
+
+          <div style={{ flex: isMobile ? 1 : undefined }} />
+
+          {/* Desktop buttons */}
+          {!isMobile && (
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <button onClick={() => setLang(l => l === "en" ? "nl" : "en")} style={{ background: "none", border: `1px solid ${C.border}`, borderRadius: 8, padding: "5px 10px", cursor: "pointer", fontSize: 12, color: C.textS, fontWeight: 600 }}>{lang === "en" ? "NL" : "EN"}</button>
+              <button onClick={() => signIn("google")} style={btn(false, "sm")}>{t("Log in", "Inloggen")}</button>
+              <button onClick={() => signIn("google")} style={btn(true, "sm")}>{t("Get Started", "Starten")}</button>
+            </div>
+          )}
+
+          {/* Mobile hamburger */}
+          {isMobile && (
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <button onClick={() => setLang(l => l === "en" ? "nl" : "en")} style={{ background: "none", border: `1px solid ${C.border}`, borderRadius: 8, padding: "5px 8px", cursor: "pointer", fontSize: 11, color: C.textS, fontWeight: 600 }}>{lang === "en" ? "NL" : "EN"}</button>
+              <button onClick={() => setMobileMenu(!mobileMenu)} style={{ width: 36, height: 36, borderRadius: 8, border: "none", background: "transparent", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {mobileMenu ? <X size={22} color={C.text} /> : <Menu size={22} color={C.text} />}
+              </button>
+            </div>
+          )}
         </div>
+
+        {/* Mobile drawer */}
+        {isMobile && mobileMenu && (
+          <div style={{ background: C.bg, borderTop: `1px solid ${C.border}`, padding: "12px 16px 16px", boxShadow: "0 8px 30px rgba(0,0,0,0.1)" }}>
+            {navLinks.map(l => <button key={l.id} onClick={() => scrollTo(l.id)} style={{ display: "block", width: "100%", textAlign: "left", padding: "12px 0", fontSize: 15, color: C.text, background: "none", border: "none", borderBottom: `1px solid ${C.border}`, cursor: "pointer", fontFamily: "inherit", fontWeight: 600 }}>{l.label}</button>)}
+            <div style={{ display: "flex", gap: 10, marginTop: 16 }}>
+              <button onClick={() => signIn("google")} style={{ ...btn(false, "md"), flex: 1, textAlign: "center" as const }}>{t("Log in", "Inloggen")}</button>
+              <button onClick={() => signIn("google")} style={{ ...btn(true, "md"), flex: 1, textAlign: "center" as const }}>{t("Get Started", "Starten")}</button>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* ═══ HERO ═══ */}
-      <section style={{ position: "relative", overflow: "hidden", minHeight: "90vh", display: "flex", alignItems: "center" }}>
+      <section style={{ position: "relative", overflow: "hidden", minHeight: isMobile ? "auto" : "90vh", display: "flex", alignItems: "center" }}>
         <div style={{ position: "absolute", inset: 0, background: C.gradSoft, opacity: 0.5 }} />
         <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
-          <div style={{ position: "absolute", top: "-10%", right: "-5%", width: 500, height: 500, borderRadius: "50%", background: "radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%)", animation: "orbFloat1 8s ease-in-out infinite" }} />
-          <div style={{ position: "absolute", bottom: "-15%", left: "-10%", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(6,182,212,0.1) 0%, transparent 70%)", animation: "orbFloat2 10s ease-in-out infinite" }} />
-          <div style={{ position: "absolute", top: "40%", left: "60%", width: 300, height: 300, borderRadius: "50%", background: "radial-gradient(circle, rgba(124,58,237,0.06) 0%, transparent 70%)", animation: "orbFloat3 12s ease-in-out infinite" }} />
-          {[
-            { icon: <FaYoutube size={20} />, color: "#FF0000", x: "6%", y: "25%", delay: "0s", dur: "6s" },
-            { icon: <FaFacebookF size={18} />, color: "#1877F2", x: "88%", y: "22%", delay: "1s", dur: "7s" },
-            { icon: <FaInstagram size={20} />, color: "#E1306C", x: "12%", y: "50%", delay: "0.5s", dur: "8s" },
-            { icon: <FaTiktok size={18} />, color: "#010101", x: "82%", y: "52%", delay: "1.5s", dur: "6.5s" },
-            { icon: <FaLinkedinIn size={18} />, color: "#0A66C2", x: "18%", y: "12%", delay: "2s", dur: "7.5s" },
-            { icon: <FaXTwitter size={16} />, color: "#000", x: "76%", y: "10%", delay: "0.8s", dur: "9s" },
+          <div style={{ position: "absolute", top: "-10%", right: "-5%", width: isMobile ? 250 : 500, height: isMobile ? 250 : 500, borderRadius: "50%", background: "radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%)" }} />
+          <div style={{ position: "absolute", bottom: "-15%", left: "-10%", width: isMobile ? 300 : 600, height: isMobile ? 300 : 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(6,182,212,0.1) 0%, transparent 70%)" }} />
+          {!isMobile && [
+            { icon: <FaYoutube size={20} />, color: "#FF0000", x: "6%", y: "25%", dur: "6s" },
+            { icon: <FaFacebookF size={18} />, color: "#1877F2", x: "88%", y: "22%", dur: "7s" },
+            { icon: <FaInstagram size={20} />, color: "#E1306C", x: "12%", y: "50%", dur: "8s" },
+            { icon: <FaTiktok size={18} />, color: "#010101", x: "82%", y: "52%", dur: "6.5s" },
+            { icon: <FaLinkedinIn size={18} />, color: "#0A66C2", x: "18%", y: "12%", dur: "7.5s" },
+            { icon: <FaXTwitter size={16} />, color: "#000", x: "76%", y: "10%", dur: "9s" },
           ].map((p, i) => (
-            <div key={i} style={{ position: "absolute", left: p.x, top: p.y, width: 48, height: 48, borderRadius: "50%", background: `${C.bg}ee`, border: `2px solid ${p.color}25`, display: "flex", alignItems: "center", justifyContent: "center", color: p.color, boxShadow: `0 4px 20px ${p.color}15`, animation: `heroFloat ${p.dur} ease-in-out ${p.delay} infinite`, opacity: 0.85 }}>{p.icon}</div>
+            <div key={i} style={{ position: "absolute", left: p.x, top: p.y, width: 44, height: 44, borderRadius: "50%", background: `${C.bg}ee`, border: `2px solid ${p.color}25`, display: "flex", alignItems: "center", justifyContent: "center", color: p.color, boxShadow: `0 4px 20px ${p.color}15`, animation: `heroFloat ${p.dur} ease-in-out infinite`, opacity: 0.85 }}>{p.icon}</div>
           ))}
-          {Array.from({ length: 20 }, (_, i) => (
-            <div key={`p${i}`} style={{ position: "absolute", left: `${5 + (i * 4.7) % 90}%`, top: `${10 + (i * 7.3) % 80}%`, width: i % 3 === 0 ? 6 : 4, height: i % 3 === 0 ? 6 : 4, borderRadius: "50%", background: i % 2 === 0 ? C.primary : C.accent, opacity: 0.15, animation: `particle ${5 + (i % 4) * 2}s ease-in-out ${i * 0.3}s infinite` }} />
-          ))}
-          <div style={{ position: "absolute", inset: 0, backgroundImage: `radial-gradient(${C.primary}08 1px, transparent 1px)`, backgroundSize: "32px 32px", opacity: 0.5 }} />
         </div>
 
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "80px 24px 60px", position: "relative", textAlign: "center", width: "100%" }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: `${C.bg}dd`, border: `1px solid ${C.border}`, borderRadius: 100, padding: "6px 16px 6px 8px", marginBottom: 28, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", backdropFilter: "blur(8px)", animation: "fadeInDown 0.8s ease-out" }}>
-            <Sparkles size={16} color={C.primary} />
-            <span style={{ fontSize: 13, fontWeight: 600, color: C.textS }}>{t("Now with AI-powered captions", "Nu met AI-aangedreven bijschriften")}</span>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: isMobile ? "48px 20px 40px" : "80px 24px 60px", position: "relative", textAlign: "center", width: "100%" }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: `${C.bg}dd`, border: `1px solid ${C.border}`, borderRadius: 100, padding: "6px 14px 6px 8px", marginBottom: 24, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", animation: "fadeInDown 0.8s ease-out" }}>
+            <Sparkles size={14} color={C.primary} />
+            <span style={{ fontSize: 12, fontWeight: 600, color: C.textS }}>{t("Now with AI-powered captions", "Nu met AI-aangedreven bijschriften")}</span>
           </div>
 
-          <h1 style={{ fontSize: "clamp(40px, 5.5vw, 72px)", fontWeight: 900, lineHeight: 1.08, marginBottom: 24, color: C.dark, letterSpacing: "-0.03em", animation: "fadeInUp 0.8s ease-out 0.2s both" }}>
+          <h1 style={{ fontSize: "clamp(32px, 5.5vw, 72px)", fontWeight: 900, lineHeight: 1.08, marginBottom: 20, color: C.dark, letterSpacing: "-0.03em", animation: "fadeInUp 0.8s ease-out 0.2s both" }}>
             {t("Schedule, approve &", "Plan, keur goed &")}<br />
-            <span style={{ position: "relative", display: "inline-block" }}>
-              <span style={{ background: C.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", animation: "gradientShift 4s ease-in-out infinite" }}>{t("publish with ease", "publiceer met gemak")}</span>
-              <svg style={{ position: "absolute", bottom: -4, left: 0, width: "100%", height: 12, overflow: "visible" }} viewBox="0 0 400 12">
-                <path d="M 0 8 Q 100 0, 200 8 Q 300 16, 400 8" fill="none" stroke="url(#heroUnderline)" strokeWidth="3" strokeLinecap="round" style={{ strokeDasharray: 500, strokeDashoffset: 500, animation: "drawLine 1.5s ease-out 1s forwards" }} />
-                <defs><linearGradient id="heroUnderline" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stopColor="#7C3AED" /><stop offset="100%" stopColor="#06B6D4" /></linearGradient></defs>
-              </svg>
-            </span>
+            <span style={{ background: C.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{t("publish with ease", "publiceer met gemak")}</span>
           </h1>
 
-          <p style={{ fontSize: "clamp(16px, 2vw, 20px)", color: C.textS, maxWidth: 620, margin: "0 auto 40px", lineHeight: 1.7, animation: "fadeInUp 0.8s ease-out 0.4s both" }}>
+          <p style={{ fontSize: "clamp(15px, 2vw, 20px)", color: C.textS, maxWidth: 560, margin: "0 auto 32px", lineHeight: 1.7, padding: "0 8px", animation: "fadeInUp 0.8s ease-out 0.4s both" }}>
             {t("The all-in-one social media management tool for ", "De alles-in-één social media tool voor ")}
-            <span style={{ position: "relative", display: "inline-block", width: lang === "nl" ? 130 : 120, textAlign: "left" }}>
-              <span key={roleIndex} style={{ position: "absolute", left: 0, top: 0, background: C.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontWeight: 800, animation: "roleIn 0.5s ease-out forwards", whiteSpace: "nowrap" }}>{roles[roleIndex]}</span>
-              <span style={{ visibility: "hidden", fontWeight: 800 }}>{roles[roleIndex]}</span>
-            </span>
-            {t(". Plan content, get approvals, and publish across all platforms — from one dashboard.", ". Plan content, krijg goedkeuringen en publiceer op alle platformen — vanuit één dashboard.")}
+            <span style={{ background: C.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontWeight: 800 }}>{roles[roleIndex]}</span>
+            {t(". Plan content, get approvals, and publish — from one dashboard.", ". Plan, keur goed en publiceer — vanuit één dashboard.")}
           </p>
 
-          <div style={{ display: "inline-flex", gap: 14, justifyContent: "center", marginBottom: 52, animation: "fadeInUp 0.8s ease-out 0.6s both" }}>
-            <button onClick={() => signIn("google")} style={{ ...btn(true, "lg"), transition: "all 0.3s", boxShadow: "0 4px 20px rgba(124,58,237,0.25)", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(124,58,237,0.35)"; }} onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(124,58,237,0.25)"; }}>
-              {t("Start Free — No Credit Card", "Gratis Starten — Geen Creditcard")} <ArrowRight size={18} style={{ marginLeft: 8 }} />
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: isMobile ? 32 : 48, animation: "fadeInUp 0.8s ease-out 0.6s both" }}>
+            <button onClick={() => signIn("google")} style={{ ...btn(true, "lg"), boxShadow: "0 4px 20px rgba(124,58,237,0.25)", display: "inline-flex", alignItems: "center" }}>
+              {t("Start Free", "Gratis Starten")} <ArrowRight size={16} style={{ marginLeft: 6 }} />
             </button>
-            <button style={{ ...btn(false, "lg"), transition: "all 0.3s", backdropFilter: "blur(8px)", background: `${C.bg}cc`, whiteSpace: "nowrap", display: "inline-flex", alignItems: "center" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.borderColor = C.primary; }} onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = C.border; }}>
-              <Play size={16} style={{ marginRight: 8 }} fill={C.primary} color={C.primary} />{t("Watch Demo", "Bekijk Demo")}
+            <button style={{ ...btn(false, "lg"), display: "inline-flex", alignItems: "center", backdropFilter: "blur(8px)", background: `${C.bg}cc` }}>
+              <Play size={14} style={{ marginRight: 6 }} fill={C.primary} color={C.primary} />{t("Watch Demo", "Bekijk Demo")}
             </button>
           </div>
 
-          {/* APP PREVIEW - Rich mock dashboard */}
-          <div style={{ maxWidth: 940, margin: "0 auto", borderRadius: 20, border: `1px solid ${C.border}`, overflow: "hidden", boxShadow: "0 25px 80px rgba(0,0,0,0.1), 0 0 0 1px rgba(124,58,237,0.05)", background: C.bg, animation: "fadeInUp 1s ease-out 0.8s both", position: "relative" }}>
-            <div style={{ position: "absolute", top: -1, left: "10%", right: "10%", height: 2, background: C.grad, borderRadius: 2 }} />
-            <div style={{ background: C.dark, padding: "10px 16px", display: "flex", alignItems: "center", gap: 8 }}>
-              <div style={{ display: "flex", gap: 6 }}><div style={{ width: 12, height: 12, borderRadius: "50%", background: "#EF4444" }} /><div style={{ width: 12, height: 12, borderRadius: "50%", background: "#F59E0B" }} /><div style={{ width: 12, height: 12, borderRadius: "50%", background: "#10B981" }} /></div>
-              <div style={{ flex: 1, textAlign: "center" }}><span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", fontFamily: "monospace" }}>droppost.app</span></div>
-            </div>
-            <div style={{ display: "flex", minHeight: 380 }}>
-              {/* Sidebar */}
-              <div style={{ width: 180, background: "#13131F", padding: "14px 8px", display: "flex", flexDirection: "column", gap: 2, flexShrink: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 8px", marginBottom: 10 }}>
-                  <div style={{ width: 28, height: 28, borderRadius: 8, background: C.grad, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontWeight: 900, fontSize: 13 }}>D</span></div>
-                  <span style={{ color: "#fff", fontWeight: 800, fontSize: 13 }}>Drop<span style={{ color: "#06B6D4" }}>Post</span></span>
-                </div>
-                <div style={{ fontSize: 8, color: "rgba(255,255,255,0.25)", fontWeight: 700, letterSpacing: 1, padding: "4px 8px" }}>WORKSPACES</div>
-                {[{ name: "Acme Agency", color: "#7C3AED", active: true }, { name: "FitBrand Co", color: "#10B981", active: false }].map(w => (
-                  <div key={w.name} style={{ display: "flex", alignItems: "center", gap: 6, padding: "5px 8px", borderRadius: 7, background: w.active ? "rgba(124,58,237,0.25)" : "transparent", border: w.active ? "1px solid rgba(124,58,237,0.35)" : "1px solid transparent" }}>
-                    <div style={{ width: 22, height: 22, borderRadius: "50%", background: w.color + "22", border: `1.5px solid ${w.color}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 8, fontWeight: 800, color: w.color }}>{w.name.slice(0, 2).toUpperCase()}</div>
-                    <span style={{ fontSize: 10, color: w.active ? "#fff" : "rgba(255,255,255,0.55)", fontWeight: w.active ? 600 : 400 }}>{w.name}</span>
-                  </div>
-                ))}
-                <div style={{ marginTop: 8 }}>
-                  {["Dashboard", "Calendar", "Posts", "Queue", "Drafts", "Approval", "Analytics"].map((n, i) => (
-                    <div key={n} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 8px", borderRadius: 7, background: i === 0 ? "rgba(124,58,237,0.2)" : "transparent", position: "relative" }}>
-                      {i === 0 && <div style={{ position: "absolute", left: 0, top: "20%", height: "60%", width: 2.5, background: "#7C3AED", borderRadius: "0 3px 3px 0" }} />}
-                      <span style={{ fontSize: 10, color: i === 0 ? "#fff" : "rgba(255,255,255,0.45)", fontWeight: i === 0 ? 600 : 400 }}>{n}</span>
-                    </div>
-                  ))}
-                </div>
-                <div style={{ marginTop: "auto", padding: "6px 8px", display: "flex", gap: 4, justifyContent: "center" }}>
-                  {["Privacy", "Terms"].map(l => <span key={l} style={{ fontSize: 7, color: "rgba(255,255,255,0.2)" }}>{l}</span>)}
-                </div>
+          {/* App preview — hidden on small mobile */}
+          {!isMobile && (
+            <div style={{ maxWidth: 860, margin: "0 auto", borderRadius: 16, border: `1px solid ${C.border}`, overflow: "hidden", boxShadow: "0 20px 60px rgba(0,0,0,0.08)", background: C.bg, animation: "fadeInUp 1s ease-out 0.8s both" }}>
+              <div style={{ background: C.dark, padding: "8px 14px", display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{ display: "flex", gap: 5 }}><div style={{ width: 10, height: 10, borderRadius: "50%", background: "#EF4444" }} /><div style={{ width: 10, height: 10, borderRadius: "50%", background: "#F59E0B" }} /><div style={{ width: 10, height: 10, borderRadius: "50%", background: "#10B981" }} /></div>
+                <div style={{ flex: 1, textAlign: "center" }}><span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", fontFamily: "monospace" }}>droppost.app</span></div>
               </div>
-              {/* Main content */}
-              <div style={{ flex: 1, background: "#F9FAFB", padding: 16, overflow: "hidden" }}>
-                <div style={{ display: "flex", alignItems: "center", marginBottom: 14, gap: 8 }}>
-                  <div style={{ width: 26, height: 26, borderRadius: "50%", background: "#7C3AED22", border: "1.5px solid #7C3AED", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 8, fontWeight: 800, color: "#7C3AED" }}>AC</div>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: C.dark }}>Acme Agency</span>
-                  <div style={{ flex: 1 }} />
-                  <div style={{ background: C.grad, color: "#fff", fontSize: 9, fontWeight: 700, padding: "5px 12px", borderRadius: 7 }}>+ Create Post</div>
-                </div>
-                <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
-                  {[{ label: "TOTAL", value: "24", color: "#7C3AED" }, { label: "SCHEDULED", value: "12", color: "#0EA5E9" }, { label: "PUBLISHED", value: "9", color: "#10B981" }, { label: "PENDING", value: "3", color: "#F59E0B" }].map(s => (
-                    <div key={s.label} style={{ flex: 1, background: "#fff", borderRadius: 10, padding: "10px 12px", border: `1px solid ${C.border}` }}>
-                      <div style={{ fontSize: 7, fontWeight: 700, color: C.textT, marginBottom: 4 }}>{s.label}</div>
-                      <div style={{ fontSize: 20, fontWeight: 900, color: s.color }}>{s.value}</div>
+              <div style={{ padding: 16, background: "#F9FAFB" }}>
+                <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+                  {[{ l: "TOTAL", v: "24", c: "#7C3AED" }, { l: "SCHEDULED", v: "12", c: "#0EA5E9" }, { l: "PUBLISHED", v: "9", c: "#10B981" }, { l: "PENDING", v: "3", c: "#F59E0B" }].map(s => (
+                    <div key={s.l} style={{ flex: 1, background: "#fff", borderRadius: 10, padding: "10px 12px", border: `1px solid ${C.border}` }}>
+                      <div style={{ fontSize: 7, fontWeight: 700, color: C.textT, marginBottom: 3 }}>{s.l}</div>
+                      <div style={{ fontSize: 18, fontWeight: 900, color: s.c }}>{s.v}</div>
                     </div>
                   ))}
                 </div>
-                <div style={{ background: "#fff", borderRadius: 12, border: `1px solid ${C.border}`, padding: "12px" }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: C.dark, marginBottom: 10 }}>Recent Posts</div>
-                  {[
-                    { text: "🚀 New product launch this Friday! Get ready for something amazing...", platforms: ["FB", "IG", "TT"], status: "Scheduled", statusColor: "#7C3AED", statusBg: "#EDE9FE" },
-                    { text: "Behind the scenes of our latest photoshoot 📸 #BrandLife", platforms: ["IG", "TT"], status: "Published", statusColor: "#10B981", statusBg: "#D1FAE5" },
-                    { text: "5 tips to boost your social media engagement in 2026", platforms: ["FB", "YT", "IG"], status: "Pending", statusColor: "#F59E0B", statusBg: "#FEF3C7" },
-                    { text: "Customer spotlight: How @acmeclient grew 300% with us", platforms: ["FB", "IG"], status: "Published", statusColor: "#10B981", statusBg: "#D1FAE5" },
-                    { text: "Join our live Q&A session tomorrow at 3 PM! 🎙️", platforms: ["YT", "FB", "IG", "TT"], status: "Scheduled", statusColor: "#7C3AED", statusBg: "#EDE9FE" },
-                    { text: "Weekly content tips: Carousel posts get 3x more reach", platforms: ["IG", "FB"], status: "Draft", statusColor: "#6B7280", statusBg: "#E5E7EB" },
-                  ].map((post, i) => (
-                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 0", borderBottom: i < 5 ? `1px solid ${C.border}` : "none" }}>
-                      <div style={{ flex: 1, fontSize: 10, color: C.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{post.text}</div>
-                      <div style={{ display: "flex", gap: 3, flexShrink: 0 }}>
-                        {post.platforms.map(p => {
-                          const colors: Record<string, string> = { FB: "#1877F2", IG: "#E1306C", TT: "#010101", YT: "#FF0000", LI: "#0A66C2" };
-                          return <span key={p} style={{ fontSize: 7, background: `${colors[p]}15`, color: colors[p], borderRadius: 3, padding: "1px 4px", fontWeight: 700, border: `1px solid ${colors[p]}20` }}>{p}</span>;
-                        })}
-                      </div>
-                      <span style={{ fontSize: 8, background: post.statusBg, color: post.statusColor, borderRadius: 10, padding: "2px 7px", fontWeight: 600, flexShrink: 0 }}>{post.status}</span>
+                <div style={{ background: "#fff", borderRadius: 10, border: `1px solid ${C.border}`, padding: "10px" }}>
+                  {["New product launch this Friday!", "Behind the scenes photoshoot", "5 tips to boost engagement", "Customer spotlight: 300% growth"].map((t, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 0", borderBottom: i < 3 ? `1px solid ${C.border}` : "none" }}>
+                      <span style={{ fontSize: 10, color: C.text, flex: 1 }}>{t}</span>
+                      <span style={{ fontSize: 7, background: i % 2 === 0 ? "#EDE9FE" : "#D1FAE5", color: i % 2 === 0 ? "#7C3AED" : "#10B981", borderRadius: 8, padding: "2px 6px", fontWeight: 600 }}>{i % 2 === 0 ? "Scheduled" : "Published"}</span>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
-          <div style={{ display: "flex", justifyContent: "center", gap: 20, marginTop: 32, flexWrap: "wrap", animation: "fadeInUp 0.8s ease-out 1.8s both" }}>
-            {[t("No credit card required", "Geen creditcard nodig"), t("Free plan available", "Gratis plan beschikbaar"), t("Cancel anytime", "Opzegbaar wanneer je wilt")].map(s => (
-              <span key={s} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: C.textS }}><Shield size={14} color={C.green} />{s}</span>
+          <div style={{ display: "flex", justifyContent: "center", gap: isMobile ? 12 : 20, marginTop: 24, flexWrap: "wrap", animation: "fadeInUp 0.8s ease-out 1.5s both" }}>
+            {[t("No credit card required", "Geen creditcard nodig"), t("Free plan available", "Gratis plan"), t("Cancel anytime", "Altijd opzegbaar")].map(s => (
+              <span key={s} style={{ display: "flex", alignItems: "center", gap: 4, fontSize: isMobile ? 11 : 13, color: C.textS }}><Shield size={12} color={C.green} />{s}</span>
             ))}
           </div>
         </div>
 
         <style>{`
-          @keyframes orbFloat1 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-30px,20px) scale(1.05); } }
-          @keyframes orbFloat2 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(25px,-30px) scale(1.08); } }
-          @keyframes orbFloat3 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-20px,15px); } }
-          @keyframes heroFloat { 0%,100% { transform: translateY(0) rotate(0deg); } 25% { transform: translateY(-12px) rotate(3deg); } 75% { transform: translateY(8px) rotate(-2deg); } }
-          @keyframes particle { 0%,100% { transform: translateY(0) scale(1); opacity: 0.15; } 50% { transform: translateY(-20px) scale(1.5); opacity: 0.3; } }
+          @keyframes heroFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
           @keyframes fadeInUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
           @keyframes fadeInDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
-          @keyframes drawLine { to { stroke-dashoffset: 0; } }
-          @keyframes gradientShift { 0%,100% { filter: hue-rotate(0deg); } 50% { filter: hue-rotate(15deg); } }
-          @keyframes roleIn { 0% { opacity: 0; transform: scale(0.6); filter: blur(4px); } 50% { transform: scale(1.08); } 100% { opacity: 1; transform: scale(1); filter: blur(0); } }
         `}</style>
       </section>
 
       {/* ═══ INTEGRATIONS ═══ */}
-      <section id="platforms" style={{ padding: "100px 24px", background: "linear-gradient(180deg, #F8FAFC 0%, #EDE9FE22 40%, #CFFAFE18 70%, #F8FAFC 100%)", overflow: "hidden" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", gap: 60, flexWrap: "wrap", justifyContent: "center" }}>
-          <div style={{ position: "relative", width: 440, height: 440, flexShrink: 0 }}>
-            <svg width="440" height="440" viewBox="0 0 440 440" style={{ position: "absolute", inset: 0 }}>
-              <defs>
-                <linearGradient id="lineGrad1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#7C3AED" stopOpacity="0.3" /><stop offset="100%" stopColor="#06B6D4" stopOpacity="0.3" /></linearGradient>
-                <linearGradient id="lineGrad2" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stopColor="#7C3AED" stopOpacity="0.2" /><stop offset="100%" stopColor="#06B6D4" stopOpacity="0.2" /></linearGradient>
-              </defs>
-              <circle cx="220" cy="220" r="140" fill="none" stroke="url(#lineGrad1)" strokeWidth="1" strokeDasharray="8 6" />
-              <circle cx="220" cy="220" r="195" fill="none" stroke="url(#lineGrad2)" strokeWidth="1" strokeDasharray="4 8" />
-              {[{ x: 103, y: 53 }, { x: 341, y: 81 }, { x: 57, y: 222 }, { x: 370, y: 260 }, { x: 140, y: 390 }, { x: 329, y: 389 }].map((p, i) => (
-                <line key={i} x1="220" y1="220" x2={p.x} y2={p.y} stroke="url(#lineGrad1)" strokeWidth="1.5" strokeDasharray="6 4"><animate attributeName="stroke-dashoffset" from="0" to="20" dur={`${3 + i * 0.5}s`} repeatCount="indefinite" /></line>
-              ))}
-              <circle cx="220" cy="220" r="60" fill="url(#lineGrad1)" opacity="0.08" />
-            </svg>
-            <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%,-50%)", width: 80, height: 80, borderRadius: 22, background: C.grad, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 8px 32px rgba(124,58,237,0.3)", zIndex: 2 }}><span style={{ color: "#fff", fontWeight: 900, fontSize: 32 }}>D</span></div>
+      <section id="platforms" style={{ padding: isMobile ? "60px 20px" : "100px 24px", background: "linear-gradient(180deg, #F8FAFC 0%, #EDE9FE22 40%, #CFFAFE18 70%, #F8FAFC 100%)" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", gap: isMobile ? 32 : 60, flexDirection: isMobile ? "column" : "row" }}>
+          {/* Platform orbit — scaled on mobile */}
+          <div style={{ position: "relative", width: isMobile ? 280 : 400, height: isMobile ? 280 : 400, flexShrink: 0 }}>
+            <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%,-50%)", width: isMobile ? 56 : 72, height: isMobile ? 56 : 72, borderRadius: 18, background: C.grad, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 8px 32px rgba(124,58,237,0.3)", zIndex: 2 }}>
+              <span style={{ color: "#fff", fontWeight: 900, fontSize: isMobile ? 22 : 28 }}>D</span>
+            </div>
             {[
-              { name: "YouTube", color: "#FF0000", icon: <FaYoutube size={24} />, x: 75, y: 25, size: 56 },
-              { name: "Facebook", color: "#1877F2", icon: <FaFacebookF size={22} />, x: 315, y: 55, size: 52 },
-              { name: "Instagram", color: "#E1306C", icon: <FaInstagram size={24} />, x: 30, y: 195, size: 54 },
-              { name: "TikTok", color: "#010101", icon: <FaTiktok size={22} />, x: 345, y: 235, size: 50 },
-              { name: "LinkedIn", color: "#0A66C2", icon: <FaLinkedinIn size={22} />, x: 115, y: 365, size: 50 },
-              { name: "X", color: "#000000", icon: <FaXTwitter size={20} />, x: 305, y: 365, size: 48 },
-            ].map((p, i) => (
-              <div key={p.name} style={{ position: "absolute", left: p.x, top: p.y, width: p.size, height: p.size, borderRadius: "50%", background: C.bg, border: `2.5px solid ${p.color}30`, display: "flex", alignItems: "center", justifyContent: "center", color: p.color, boxShadow: `0 4px 16px ${p.color}15`, zIndex: 2, transition: "transform 0.3s, box-shadow 0.3s", cursor: "default", animation: `floatIcon${i} ${4 + i * 0.7}s ease-in-out infinite` }} onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.15)"; e.currentTarget.style.boxShadow = `0 6px 24px ${p.color}30`; }} onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = `0 4px 16px ${p.color}15`; }}>{p.icon}</div>
-            ))}
-            <style>{`
-              @keyframes floatIcon0 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-              @keyframes floatIcon1 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-              @keyframes floatIcon2 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-              @keyframes floatIcon3 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
-              @keyframes floatIcon4 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-              @keyframes floatIcon5 { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
-            `}</style>
+              { icon: <FaYoutube size={isMobile ? 18 : 22} />, color: "#FF0000", angle: -60 },
+              { icon: <FaFacebookF size={isMobile ? 16 : 20} />, color: "#1877F2", angle: 0 },
+              { icon: <FaInstagram size={isMobile ? 18 : 22} />, color: "#E1306C", angle: 60 },
+              { icon: <FaTiktok size={isMobile ? 16 : 20} />, color: "#010101", angle: 120 },
+              { icon: <FaLinkedinIn size={isMobile ? 16 : 20} />, color: "#0A66C2", angle: 180 },
+              { icon: <FaXTwitter size={isMobile ? 14 : 18} />, color: "#000", angle: 240 },
+            ].map((p, i) => {
+              const r = isMobile ? 110 : 155;
+              const rad = (p.angle * Math.PI) / 180;
+              const x = 50 + (r / (isMobile ? 280 : 400)) * 100 * Math.cos(rad);
+              const y = 50 + (r / (isMobile ? 280 : 400)) * 100 * Math.sin(rad);
+              const sz = isMobile ? 40 : 48;
+              return (
+                <div key={i} style={{ position: "absolute", left: `calc(${x}% - ${sz/2}px)`, top: `calc(${y}% - ${sz/2}px)`, width: sz, height: sz, borderRadius: "50%", background: C.bg, border: `2px solid ${p.color}25`, display: "flex", alignItems: "center", justifyContent: "center", color: p.color, boxShadow: `0 4px 16px ${p.color}15`, zIndex: 2, animation: `heroFloat ${4 + i * 0.5}s ease-in-out infinite` }}>
+                  {p.icon}
+                </div>
+              );
+            })}
+            {/* Orbit rings */}
+            <svg width="100%" height="100%" viewBox="0 0 400 400" style={{ position: "absolute", inset: 0 }}>
+              <circle cx="200" cy="200" r="155" fill="none" stroke={`${C.primary}15`} strokeWidth="1" strokeDasharray="6 4" />
+              <circle cx="200" cy="200" r="80" fill={`${C.primary}06`} />
+            </svg>
           </div>
-          <div style={{ flex: 1, minWidth: 320, maxWidth: 480 }}>
-            <p style={{ fontSize: 13, fontWeight: 700, color: C.primary, letterSpacing: 1.5, marginBottom: 12 }}>{t("INTEGRATIONS", "INTEGRATIES")}</p>
-            <h2 style={{ fontSize: "clamp(28px, 3.5vw, 42px)", fontWeight: 900, lineHeight: 1.15, marginBottom: 20, color: C.dark }}>
+
+          <div style={{ flex: 1, minWidth: 0, textAlign: isMobile ? "center" : "left" }}>
+            <p style={{ fontSize: 12, fontWeight: 700, color: C.primary, letterSpacing: 1.5, marginBottom: 10 }}>{t("INTEGRATIONS", "INTEGRATIES")}</p>
+            <h2 style={{ fontSize: "clamp(24px, 3.5vw, 40px)", fontWeight: 900, lineHeight: 1.15, marginBottom: 16, color: C.dark }}>
               {t("Integrations that work with ", "Integraties die werken met ")}
               <span style={{ background: C.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{t("your social media", "jouw social media")}</span>
             </h2>
-            <p style={{ fontSize: 16, color: C.textS, lineHeight: 1.8, marginBottom: 32 }}>{t("Our integrations allow you to automate your social media posts and schedule your content across all platforms from one centralized dashboard. Streamline your workflow and save valuable time.", "Onze integraties stellen je in staat om je social media posts te automatiseren en je content in te plannen op alle platformen vanuit één centraal dashboard. Stroomlijn je workflow en bespaar waardevolle tijd.")}</p>
-            <button onClick={() => signIn("google")} style={{ background: C.grad, color: "#fff", border: "none", borderRadius: 12, padding: "14px 32px", fontSize: 15, fontWeight: 700, cursor: "pointer", letterSpacing: 0.5, transition: "transform 0.2s, box-shadow 0.2s" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(124,58,237,0.3)"; }} onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>{t("START YOUR FREE TRIAL NOW!", "START JE GRATIS PROEF NU!")}</button>
+            <p style={{ fontSize: isMobile ? 14 : 16, color: C.textS, lineHeight: 1.8, marginBottom: 28 }}>{t("Automate your social media posts and schedule content across all platforms from one dashboard.", "Automatiseer je social media posts en plan content op alle platformen vanuit één dashboard.")}</p>
+            <button onClick={() => signIn("google")} style={{ background: C.grad, color: "#fff", border: "none", borderRadius: 12, padding: "13px 28px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>{t("START YOUR FREE TRIAL!", "START JE GRATIS PROEF!")}</button>
           </div>
         </div>
       </section>
 
       {/* ═══ FEATURES ═══ */}
-      <section id="features" style={{ padding: "80px 24px", background: C.bgS }}>
+      <section id="features" style={{ padding: isMobile ? "60px 20px" : "80px 24px", background: C.bgS }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 56 }}>
-            <p style={{ fontSize: 13, fontWeight: 700, color: C.primary, letterSpacing: 1.5, marginBottom: 12 }}>{t("FEATURES", "FUNCTIES")}</p>
-            <h2 style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 800, marginBottom: 16, color: C.dark }}>{t("Everything you need to scale", "Alles wat je nodig hebt om te groeien")}</h2>
-            <p style={{ fontSize: 16, color: C.textS, maxWidth: 540, margin: "0 auto" }}>{t("From scheduling to analytics — DropPost has every tool your agency needs.", "Van inplannen tot analytics — DropPost heeft elke tool die je agency nodig heeft.")}</p>
+          <div style={{ textAlign: "center", marginBottom: 48 }}>
+            <p style={{ fontSize: 12, fontWeight: 700, color: C.primary, letterSpacing: 1.5, marginBottom: 10 }}>{t("FEATURES", "FUNCTIES")}</p>
+            <h2 style={{ fontSize: "clamp(24px, 3vw, 40px)", fontWeight: 800, marginBottom: 14, color: C.dark }}>{t("Everything you need to scale", "Alles wat je nodig hebt om te groeien")}</h2>
+            <p style={{ fontSize: 15, color: C.textS, maxWidth: 500, margin: "0 auto" }}>{t("From scheduling to analytics — DropPost has every tool your agency needs.", "Van inplannen tot analytics — DropPost heeft elke tool die je agency nodig heeft.")}</p>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 20 }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : isTablet ? "repeat(2, 1fr)" : "repeat(3, 1fr)", gap: 16 }}>
             {FEATURES.map((f, i) => (
-              <div key={i} style={{ background: C.bg, borderRadius: 16, padding: "28px 24px", border: `1px solid ${C.border}`, transition: "box-shadow 0.2s, transform 0.2s" }} onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 8px 30px rgba(124,58,237,0.08)"; e.currentTarget.style.transform = "translateY(-2px)"; }} onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "translateY(0)"; }}>
-                <div style={{ width: 48, height: 48, borderRadius: 12, background: C.gradSoft, display: "flex", alignItems: "center", justifyContent: "center", color: C.primary, marginBottom: 16 }}>{f.icon}</div>
-                <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 8, color: C.dark }}>{lang === "nl" ? f.titleNl : f.title}</h3>
+              <div key={i} style={{ background: C.bg, borderRadius: 16, padding: "24px 20px", border: `1px solid ${C.border}`, transition: "box-shadow 0.2s, transform 0.2s" }} onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 8px 30px rgba(124,58,237,0.08)"; e.currentTarget.style.transform = "translateY(-2px)"; }} onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "translateY(0)"; }}>
+                <div style={{ width: 44, height: 44, borderRadius: 12, background: C.gradSoft, display: "flex", alignItems: "center", justifyContent: "center", color: C.primary, marginBottom: 14 }}>{f.icon}</div>
+                <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 8, color: C.dark }}>{lang === "nl" ? f.titleNl : f.title}</h3>
                 <p style={{ fontSize: 14, color: C.textS, lineHeight: 1.7, margin: 0 }}>{lang === "nl" ? f.descNl : f.desc}</p>
               </div>
             ))}
@@ -319,30 +294,25 @@ export default function LandingPage() {
       </section>
 
       {/* ═══ HOW IT WORKS ═══ */}
-      <section style={{ padding: "80px 24px", background: C.bg }}>
+      <section style={{ padding: isMobile ? "60px 20px" : "80px 24px", background: C.bg }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 56 }}>
-            <p style={{ fontSize: 13, fontWeight: 700, color: C.primary, letterSpacing: 1.5, marginBottom: 12 }}>{t("HOW IT WORKS", "HOE HET WERKT")}</p>
-            <h2 style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 800, color: C.dark }}>{t("From idea to published in 3 steps", "Van idee tot gepubliceerd in 3 stappen")}</h2>
+          <div style={{ textAlign: "center", marginBottom: 48 }}>
+            <p style={{ fontSize: 12, fontWeight: 700, color: C.primary, letterSpacing: 1.5, marginBottom: 10 }}>{t("HOW IT WORKS", "HOE HET WERKT")}</p>
+            <h2 style={{ fontSize: "clamp(24px, 3vw, 40px)", fontWeight: 800, color: C.dark }}>{t("From idea to published in 3 steps", "Van idee tot gepubliceerd in 3 stappen")}</h2>
           </div>
-          <div style={{ display: "flex", alignItems: "flex-start", position: "relative" }}>
-            <div style={{ position: "absolute", top: 34, left: "16.66%", right: "16.66%", height: 3, background: C.gradSoft, zIndex: 0, borderRadius: 2 }} />
-            <div style={{ position: "absolute", top: 22, left: "calc(33.33% - 14px)", zIndex: 3 }}><div style={{ width: 28, height: 28, borderRadius: "50%", background: C.bg, border: `2px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "center" }}><ArrowRight size={14} color={C.primary} /></div></div>
-            <div style={{ position: "absolute", top: 22, left: "calc(66.66% - 14px)", zIndex: 3 }}><div style={{ width: 28, height: 28, borderRadius: "50%", background: C.bg, border: `2px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "center" }}><ArrowRight size={14} color={C.primary} /></div></div>
+          <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: isMobile ? 24 : 16, alignItems: isMobile ? "center" : "flex-start" }}>
             {[
-              { step: "1", icon: <PenLine size={22} />, title: t("Create & Schedule", "Maak & Plan"), desc: t("Write your post, pick platforms, upload media, set date & time — all from one beautiful editor.", "Schrijf je post, kies platformen, upload media, stel datum & tijd in — vanuit één mooie editor."), color: C.primary },
-              { step: "2", icon: <CheckSquare size={22} />, title: t("Review & Approve", "Review & Keur goed"), desc: t("Send posts for approval with one click. Clients and team members review, comment, and approve instantly.", "Stuur posts ter goedkeuring met één klik. Klanten en teamleden reviewen, reageren en keuren direct goed."), color: C.accent },
-              { step: "3", icon: <Zap size={22} />, title: t("Publish & Grow", "Publiceer & Groei"), desc: t("Approved posts publish automatically across all platforms. Track performance and optimize your strategy.", "Goedgekeurde posts worden automatisch gepubliceerd. Volg prestaties en optimaliseer je strategie."), color: C.green },
+              { step: "1", icon: <PenLine size={22} />, title: t("Create & Schedule", "Maak & Plan"), desc: t("Write your post, pick platforms, upload media, set date & time.", "Schrijf je post, kies platformen, upload media, stel datum & tijd in."), color: C.primary },
+              { step: "2", icon: <CheckSquare size={22} />, title: t("Review & Approve", "Review & Keur goed"), desc: t("Send posts for approval. Clients review and approve instantly.", "Stuur posts ter goedkeuring. Klanten reviewen en keuren direct goed."), color: C.accent },
+              { step: "3", icon: <Zap size={22} />, title: t("Publish & Grow", "Publiceer & Groei"), desc: t("Approved posts publish automatically. Track performance.", "Goedgekeurde posts worden automatisch gepubliceerd. Volg prestaties."), color: C.green },
             ].map(s => (
-              <div key={s.step} style={{ flex: "1 1 0%", textAlign: "center", position: "relative", zIndex: 1, padding: "0 12px" }}>
-                <div style={{ width: 72, height: 72, borderRadius: "50%", background: C.bg, border: `3px solid ${s.color}30`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px", position: "relative" }}>
-                  <div style={{ width: 56, height: 56, borderRadius: "50%", background: `${s.color}12`, display: "flex", alignItems: "center", justifyContent: "center", color: s.color }}>{s.icon}</div>
-                  <div style={{ position: "absolute", top: -6, right: -6, width: 26, height: 26, borderRadius: "50%", background: s.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: "#fff", boxShadow: `0 2px 8px ${s.color}40` }}>{s.step}</div>
+              <div key={s.step} style={{ flex: 1, textAlign: "center", maxWidth: isMobile ? 360 : "none" }}>
+                <div style={{ width: 64, height: 64, borderRadius: "50%", background: `${s.color}12`, display: "flex", alignItems: "center", justifyContent: "center", color: s.color, margin: "0 auto 16px", position: "relative" }}>
+                  {s.icon}
+                  <div style={{ position: "absolute", top: -4, right: -4, width: 24, height: 24, borderRadius: "50%", background: s.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 800, color: "#fff" }}>{s.step}</div>
                 </div>
-                <div style={{ background: C.bgS, borderRadius: 16, padding: "24px 20px", border: `1px solid ${C.border}`, minHeight: 150, display: "flex", flexDirection: "column", justifyContent: "flex-start", transition: "all 0.3s" }} onMouseEnter={e => { e.currentTarget.style.boxShadow = `0 8px 30px ${s.color}12`; e.currentTarget.style.borderColor = `${s.color}30`; e.currentTarget.style.transform = "translateY(-4px)"; }} onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.borderColor = C.border; e.currentTarget.style.transform = "translateY(0)"; }}>
-                  <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 10, color: C.dark }}>{s.title}</h3>
-                  <p style={{ fontSize: 14, color: C.textS, lineHeight: 1.7, margin: 0 }}>{s.desc}</p>
-                </div>
+                <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 8, color: C.dark }}>{s.title}</h3>
+                <p style={{ fontSize: 14, color: C.textS, lineHeight: 1.7, margin: 0 }}>{s.desc}</p>
               </div>
             ))}
           </div>
@@ -350,48 +320,32 @@ export default function LandingPage() {
       </section>
 
       {/* ═══ TESTIMONIALS ═══ */}
-      <section id="testimonials" style={{ padding: "80px 0", background: C.bgS, overflow: "hidden" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
-          <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <p style={{ fontSize: 13, fontWeight: 700, color: C.primary, letterSpacing: 1.5, marginBottom: 12 }}>{t("TESTIMONIALS", "REVIEWS")}</p>
-            <h2 style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 800, color: C.dark, marginBottom: 12 }}>{t("Loved by creators, brands & agencies", "Geliefd bij creators, merken & agencies")}</h2>
-            <p style={{ fontSize: 16, color: C.textS }}>{t("See what our users have to say", "Bekijk wat onze gebruikers zeggen")}</p>
+      <section id="testimonials" style={{ padding: isMobile ? "60px 0" : "80px 0", background: C.bgS, overflow: "hidden" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 20px" }}>
+          <div style={{ textAlign: "center", marginBottom: 40 }}>
+            <p style={{ fontSize: 12, fontWeight: 700, color: C.primary, letterSpacing: 1.5, marginBottom: 10 }}>{t("TESTIMONIALS", "REVIEWS")}</p>
+            <h2 style={{ fontSize: "clamp(24px, 3vw, 40px)", fontWeight: 800, color: C.dark, marginBottom: 10 }}>{t("Loved by creators & agencies", "Geliefd bij creators & agencies")}</h2>
           </div>
         </div>
-        <div style={{ position: "relative", marginBottom: 20 }}>
-          <div style={{ display: "flex", gap: 20, animation: "marqueeLeft 78s linear infinite", width: "max-content" }}>
-            {[...TESTIMONIALS.slice(0, 6), ...TESTIMONIALS.slice(0, 6)].map((tm, i) => (
-              <div key={i} style={{ width: 380, flexShrink: 0, background: C.bg, borderRadius: 16, padding: "24px 22px", border: `1px solid ${C.border}`, display: "flex", flexDirection: "column", transition: "box-shadow 0.3s, transform 0.3s" }} onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 8px 30px rgba(124,58,237,0.08)"; e.currentTarget.style.transform = "translateY(-3px)"; }} onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "translateY(0)"; }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                  <div style={{ display: "flex", gap: 3 }}>{[1,2,3,4,5].map(s => <Star key={s} size={14} fill="#F59E0B" color="#F59E0B" />)}</div>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: tm.badgeColor, background: tm.badgeColor + "12", padding: "3px 10px", borderRadius: 100, border: `1px solid ${tm.badgeColor}20` }}>{tm.badge}</span>
+        {[TESTIMONIALS.slice(0, 6), TESTIMONIALS.slice(6, 12)].map((row, ri) => (
+          <div key={ri} style={{ position: "relative", marginBottom: 16 }}>
+            <div style={{ display: "flex", gap: 16, animation: `${ri === 0 ? "marqueeLeft" : "marqueeRight"} ${70 + ri * 10}s linear infinite`, width: "max-content" }}>
+              {[...row, ...row].map((tm, i) => (
+                <div key={i} style={{ width: isMobile ? 280 : 360, flexShrink: 0, background: C.bg, borderRadius: 14, padding: "20px 18px", border: `1px solid ${C.border}`, display: "flex", flexDirection: "column" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                    <div style={{ display: "flex", gap: 2 }}>{[1,2,3,4,5].map(s => <Star key={s} size={12} fill="#F59E0B" color="#F59E0B" />)}</div>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: tm.badgeColor, background: tm.badgeColor + "12", padding: "2px 8px", borderRadius: 100 }}>{tm.badge}</span>
+                  </div>
+                  <p style={{ fontSize: 12, color: C.textS, lineHeight: 1.6, marginBottom: 14, fontStyle: "italic", flex: 1 }}>"{lang === "nl" ? tm.textNl : tm.text}"</p>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, borderTop: `1px solid ${C.border}`, paddingTop: 12 }}>
+                    <div style={{ width: 32, height: 32, borderRadius: "50%", background: `${tm.badgeColor}15`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, color: tm.badgeColor }}>{tm.name[0]}</div>
+                    <div><div style={{ fontSize: 12, fontWeight: 700, color: C.dark }}>{tm.name}</div><div style={{ fontSize: 10, color: C.textT }}>{tm.role}</div></div>
+                  </div>
                 </div>
-                <p style={{ fontSize: 13, color: C.textS, lineHeight: 1.7, marginBottom: 16, fontStyle: "italic", flex: 1 }}>"{lang === "nl" ? tm.textNl : tm.text}"</p>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, borderTop: `1px solid ${C.border}`, paddingTop: 14 }}>
-                  <div style={{ width: 36, height: 36, borderRadius: "50%", background: `${tm.badgeColor}15`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 800, color: tm.badgeColor }}>{tm.name[0]}</div>
-                  <div><div style={{ fontSize: 13, fontWeight: 700, color: C.dark }}>{tm.name}</div><div style={{ fontSize: 11, color: C.textT }}>{tm.role}</div></div>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-        <div style={{ position: "relative" }}>
-          <div style={{ display: "flex", gap: 20, animation: "marqueeRight 85s linear infinite", width: "max-content" }}>
-            {[...TESTIMONIALS.slice(6, 12), ...TESTIMONIALS.slice(6, 12)].map((tm, i) => (
-              <div key={i} style={{ width: 380, flexShrink: 0, background: C.bg, borderRadius: 16, padding: "24px 22px", border: `1px solid ${C.border}`, display: "flex", flexDirection: "column", transition: "box-shadow 0.3s, transform 0.3s" }} onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 8px 30px rgba(124,58,237,0.08)"; e.currentTarget.style.transform = "translateY(-3px)"; }} onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "translateY(0)"; }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                  <div style={{ display: "flex", gap: 3 }}>{[1,2,3,4,5].map(s => <Star key={s} size={14} fill="#F59E0B" color="#F59E0B" />)}</div>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: tm.badgeColor, background: tm.badgeColor + "12", padding: "3px 10px", borderRadius: 100, border: `1px solid ${tm.badgeColor}20` }}>{tm.badge}</span>
-                </div>
-                <p style={{ fontSize: 13, color: C.textS, lineHeight: 1.7, marginBottom: 16, fontStyle: "italic", flex: 1 }}>"{lang === "nl" ? tm.textNl : tm.text}"</p>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, borderTop: `1px solid ${C.border}`, paddingTop: 14 }}>
-                  <div style={{ width: 36, height: 36, borderRadius: "50%", background: `${tm.badgeColor}15`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 800, color: tm.badgeColor }}>{tm.name[0]}</div>
-                  <div><div style={{ fontSize: 13, fontWeight: 700, color: C.dark }}>{tm.name}</div><div style={{ fontSize: 11, color: C.textT }}>{tm.role}</div></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        ))}
         <style>{`
           @keyframes marqueeLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
           @keyframes marqueeRight { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
@@ -399,24 +353,24 @@ export default function LandingPage() {
       </section>
 
       {/* ═══ PRICING ═══ */}
-      <section id="pricing" style={{ padding: "80px 24px", background: C.bg }}>
+      <section id="pricing" style={{ padding: isMobile ? "60px 20px" : "80px 24px", background: C.bg }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <p style={{ fontSize: 13, fontWeight: 700, color: C.primary, letterSpacing: 1.5, marginBottom: 12 }}>{t("PRICING", "PRIJZEN")}</p>
-            <h2 style={{ fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 800, marginBottom: 12, color: C.dark }}>{t("Simple, transparent pricing", "Eenvoudige, transparante prijzen")}</h2>
-            <p style={{ fontSize: 16, color: C.textS }}>{t("Start free. Upgrade when you're ready.", "Start gratis. Upgrade wanneer je klaar bent.")}</p>
+          <div style={{ textAlign: "center", marginBottom: 40 }}>
+            <p style={{ fontSize: 12, fontWeight: 700, color: C.primary, letterSpacing: 1.5, marginBottom: 10 }}>{t("PRICING", "PRIJZEN")}</p>
+            <h2 style={{ fontSize: "clamp(24px, 3vw, 40px)", fontWeight: 800, marginBottom: 10, color: C.dark }}>{t("Simple, transparent pricing", "Eenvoudige, transparante prijzen")}</h2>
+            <p style={{ fontSize: 15, color: C.textS }}>{t("Start free. Upgrade when you're ready.", "Start gratis. Upgrade wanneer je klaar bent.")}</p>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20, maxWidth: 960, margin: "0 auto" }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 16, maxWidth: 900, margin: "0 auto" }}>
             {PLANS.map(plan => (
-              <div key={plan.name} style={{ background: C.bg, borderRadius: 20, padding: "32px 28px", border: plan.popular ? `2px solid ${C.primary}` : `1px solid ${C.border}`, position: "relative", boxShadow: plan.popular ? "0 8px 30px rgba(124,58,237,0.12)" : "none" }}>
-                {plan.popular && <div style={{ position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)", background: C.grad, color: "#fff", fontSize: 12, fontWeight: 700, padding: "4px 16px", borderRadius: 100 }}>{t("Most Popular", "Populairst")}</div>}
-                <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4, color: C.dark }}>{plan.name}</h3>
-                <div style={{ marginBottom: 20 }}><span style={{ fontSize: 40, fontWeight: 900, color: C.dark }}>{plan.price}</span>{plan.pricePer && <span style={{ fontSize: 16, color: C.textT }}>{plan.pricePer}</span>}</div>
-                <div style={{ marginBottom: 24 }}>
+              <div key={plan.name} style={{ background: C.bg, borderRadius: 20, padding: "28px 24px", border: plan.popular ? `2px solid ${C.primary}` : `1px solid ${C.border}`, position: "relative", boxShadow: plan.popular ? "0 8px 30px rgba(124,58,237,0.12)" : "none" }}>
+                {plan.popular && <div style={{ position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)", background: C.grad, color: "#fff", fontSize: 11, fontWeight: 700, padding: "4px 14px", borderRadius: 100 }}>{t("Most Popular", "Populairst")}</div>}
+                <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 4, color: C.dark }}>{plan.name}</h3>
+                <div style={{ marginBottom: 18 }}><span style={{ fontSize: 36, fontWeight: 900, color: C.dark }}>{plan.price}</span>{plan.pricePer && <span style={{ fontSize: 15, color: C.textT }}>{plan.pricePer}</span>}</div>
+                <div style={{ marginBottom: 20 }}>
                   {(lang === "nl" ? plan.featuresNl : plan.features).map(f => (
-                    <div key={f} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-                      <div style={{ width: 20, height: 20, borderRadius: "50%", background: C.greenL, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><span style={{ color: C.green, fontSize: 12, fontWeight: 800 }}>✓</span></div>
-                      <span style={{ fontSize: 14, color: C.textS }}>{f}</span>
+                    <div key={f} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                      <div style={{ width: 18, height: 18, borderRadius: "50%", background: C.greenL, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><span style={{ color: C.green, fontSize: 11, fontWeight: 800 }}>✓</span></div>
+                      <span style={{ fontSize: 13, color: C.textS }}>{f}</span>
                     </div>
                   ))}
                 </div>
@@ -428,69 +382,45 @@ export default function LandingPage() {
       </section>
 
       {/* ═══ CTA ═══ */}
-      <section style={{ padding: "80px 24px", background: C.dark }}>
-        <div style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
-          <h2 style={{ fontSize: "clamp(28px, 3.5vw, 44px)", fontWeight: 900, color: "#fff", marginBottom: 16, lineHeight: 1.2 }}>{t("Ready to streamline your social media?", "Klaar om je social media te stroomlijnen?")}</h2>
-          <p style={{ fontSize: 17, color: "rgba(255,255,255,0.6)", marginBottom: 32, lineHeight: 1.7 }}>{t("Join thousands of agencies and teams using DropPost to save time and grow their presence.", "Sluit je aan bij duizenden agencies en teams die DropPost gebruiken om tijd te besparen.")}</p>
-          <button onClick={() => signIn("google")} style={{ background: C.grad, color: "#fff", border: "none", borderRadius: 14, padding: "16px 40px", fontSize: 17, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", whiteSpace: "nowrap", transition: "all 0.3s", boxShadow: "0 4px 20px rgba(124,58,237,0.3)" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(124,58,237,0.4)"; }} onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(124,58,237,0.3)"; }}>{t("Get Started Free", "Gratis Starten")} <ArrowRight size={18} style={{ marginLeft: 8 }} /></button>
+      <section style={{ padding: isMobile ? "60px 20px" : "80px 24px", background: C.dark }}>
+        <div style={{ maxWidth: 650, margin: "0 auto", textAlign: "center" }}>
+          <h2 style={{ fontSize: "clamp(24px, 3.5vw, 40px)", fontWeight: 900, color: "#fff", marginBottom: 14, lineHeight: 1.2 }}>{t("Ready to streamline your social media?", "Klaar om je social media te stroomlijnen?")}</h2>
+          <p style={{ fontSize: isMobile ? 14 : 16, color: "rgba(255,255,255,0.6)", marginBottom: 28, lineHeight: 1.7 }}>{t("Join thousands of teams using DropPost to save time and grow.", "Sluit je aan bij duizenden teams die DropPost gebruiken.")}</p>
+          <button onClick={() => signIn("google")} style={{ background: C.grad, color: "#fff", border: "none", borderRadius: 14, padding: isMobile ? "14px 32px" : "16px 40px", fontSize: isMobile ? 15 : 17, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", boxShadow: "0 4px 20px rgba(124,58,237,0.3)" }}>
+            {t("Get Started Free", "Gratis Starten")} <ArrowRight size={16} style={{ marginLeft: 8 }} />
+          </button>
         </div>
       </section>
 
       {/* ═══ FOOTER ═══ */}
       <footer style={{ borderTop: `1px solid ${C.border}`, background: C.bgS }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "60px 24px 40px", display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr 1fr", gap: 48 }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: isMobile ? "40px 20px 24px" : "60px 24px 40px", display: "grid", gridTemplateColumns: isMobile ? "1fr" : isTablet ? "1fr 1fr" : "1.2fr 1fr 1fr 1fr", gap: isMobile ? 32 : 40 }}>
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
-              <div style={{ width: 34, height: 34, borderRadius: 10, background: C.grad, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontWeight: 900, fontSize: 17 }}>D</span></div>
-              <span style={{ fontWeight: 800, fontSize: 18, color: C.dark }}>Drop<span style={{ background: C.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Post</span></span>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+              <div style={{ width: 30, height: 30, borderRadius: 8, background: C.grad, display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#fff", fontWeight: 900, fontSize: 14 }}>D</span></div>
+              <span style={{ fontWeight: 800, fontSize: 16, color: C.dark }}>Drop<span style={{ background: C.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Post</span></span>
             </div>
-            <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
-              {[
-                { label: "LinkedIn", href: "#", svg: <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> },
-                { label: "Instagram", href: "https://instagram.com/inspiredmarketingsr", svg: <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg> },
-                { label: "Facebook", href: "https://facebook.com/inspiredmarketingsr", svg: <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg> },
-              ].map(s => (
-                <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" style={{ width: 36, height: 36, borderRadius: 10, background: C.bgT, display: "flex", alignItems: "center", justifyContent: "center", color: C.textS, textDecoration: "none", transition: "all 0.2s" }} onMouseEnter={e => { e.currentTarget.style.background = C.primary; e.currentTarget.style.color = "#fff"; }} onMouseLeave={e => { e.currentTarget.style.background = C.bgT; e.currentTarget.style.color = C.textS; }} title={s.label}>{s.svg}</a>
-              ))}
-            </div>
+            <p style={{ fontSize: 13, color: C.textS, marginBottom: 12 }}>Inspired Marketing Agency<br />Paramaribo, Suriname</p>
+            <a href="mailto:inspiredmarketingsr@gmail.com" style={{ fontSize: 13, color: C.primary, textDecoration: "none" }}>inspiredmarketingsr@gmail.com</a>
           </div>
           <div>
-            <h4 style={{ fontSize: 14, fontWeight: 700, color: C.dark, marginBottom: 16 }}>{t("Quick Menu", "Snelmenu")}</h4>
-            {[
-              { label: t("Home", "Home"), action: () => window.scrollTo({ top: 0, behavior: "smooth" }) },
-              { label: t("Features", "Functies"), action: () => scrollTo("features") },
-              { label: t("Pricing", "Prijzen"), action: () => scrollTo("pricing") },
-              { label: t("Testimonials", "Reviews"), action: () => scrollTo("testimonials") },
-              { label: "Blog", action: () => {} },
-              { label: "Affiliates", action: () => {} },
-              { label: "FAQs", action: () => {} },
-            ].map(l => <button key={l.label} onClick={l.action} style={{ display: "block", fontSize: 14, color: C.textS, textDecoration: "none", marginBottom: 10, transition: "color 0.2s", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", padding: 0, textAlign: "left" }} onMouseEnter={e => (e.currentTarget.style.color = C.primary)} onMouseLeave={e => (e.currentTarget.style.color = C.textS)}>{l.label}</button>)}
+            <h4 style={{ fontSize: 13, fontWeight: 700, color: C.dark, marginBottom: 14 }}>{t("Quick Menu", "Snelmenu")}</h4>
+            {["Home", t("Features", "Functies"), t("Pricing", "Prijzen"), t("Testimonials", "Reviews"), "Blog"].map(l => <div key={l} style={{ fontSize: 13, color: C.textS, marginBottom: 8, cursor: "pointer" }}>{l}</div>)}
           </div>
           <div>
-            <h4 style={{ fontSize: 14, fontWeight: 700, color: C.dark, marginBottom: 16 }}>{t("Free Tools", "Gratis Tools")}</h4>
-            {[
-              { label: t("AI Caption Generator", "AI Bijschrift Generator"), href: "#" },
-              { label: t("Image Resizer", "Afbeelding Resizer"), href: "#" },
-              { label: t("Post Generator", "Post Generator"), href: "#" },
-              { label: t("Hashtag Generator", "Hashtag Generator"), href: "#" },
-              { label: t("Bio Generator", "Bio Generator"), href: "#" },
-            ].map(l => <a key={l.label} href={l.href} style={{ display: "block", fontSize: 14, color: C.textS, textDecoration: "none", marginBottom: 10, transition: "color 0.2s" }} onMouseEnter={e => (e.currentTarget.style.color = C.primary)} onMouseLeave={e => (e.currentTarget.style.color = C.textS)}>{l.label}</a>)}
+            <h4 style={{ fontSize: 13, fontWeight: 700, color: C.dark, marginBottom: 14 }}>{t("Free Tools", "Gratis Tools")}</h4>
+            {[t("AI Caption Generator", "AI Bijschrift Generator"), t("Image Resizer", "Afbeelding Resizer"), t("Hashtag Generator", "Hashtag Generator")].map(l => <div key={l} style={{ fontSize: 13, color: C.textS, marginBottom: 8 }}>{l}</div>)}
           </div>
           <div>
-            <h4 style={{ fontSize: 14, fontWeight: 700, color: C.dark, marginBottom: 16 }}>{t("Information", "Informatie")}</h4>
-            <p style={{ fontSize: 14, color: C.textS, marginBottom: 4, lineHeight: 1.6 }}>Inspired Marketing Agency</p>
-            <p style={{ fontSize: 14, color: C.textS, marginBottom: 12, lineHeight: 1.6 }}>Paramaribo, Suriname</p>
-            <a href="mailto:inspiredmarketingsr@gmail.com" style={{ display: "block", fontSize: 14, color: C.textS, textDecoration: "none", marginBottom: 6, transition: "color 0.2s" }} onMouseEnter={e => (e.currentTarget.style.color = C.primary)} onMouseLeave={e => (e.currentTarget.style.color = C.textS)}>inspiredmarketingsr@gmail.com</a>
-            <div style={{ borderTop: `1px solid ${C.border}`, marginTop: 16, paddingTop: 16 }}>
-              <a href="/terms" style={{ display: "block", fontSize: 14, color: C.textS, textDecoration: "none", marginBottom: 8, transition: "color 0.2s" }} onMouseEnter={e => (e.currentTarget.style.color = C.primary)} onMouseLeave={e => (e.currentTarget.style.color = C.textS)}>{t("Terms & Conditions", "Algemene Voorwaarden")}</a>
-              <a href="/privacy" style={{ display: "block", fontSize: 14, color: C.textS, textDecoration: "none", marginBottom: 8, transition: "color 0.2s" }} onMouseEnter={e => (e.currentTarget.style.color = C.primary)} onMouseLeave={e => (e.currentTarget.style.color = C.textS)}>{t("Privacy Policy", "Privacybeleid")}</a>
-            </div>
+            <h4 style={{ fontSize: 13, fontWeight: 700, color: C.dark, marginBottom: 14 }}>{t("Legal", "Juridisch")}</h4>
+            <a href="/terms" style={{ display: "block", fontSize: 13, color: C.textS, textDecoration: "none", marginBottom: 8 }}>{t("Terms & Conditions", "Algemene Voorwaarden")}</a>
+            <a href="/privacy" style={{ display: "block", fontSize: 13, color: C.textS, textDecoration: "none", marginBottom: 8 }}>{t("Privacy Policy", "Privacybeleid")}</a>
           </div>
         </div>
         <div style={{ borderTop: `1px solid ${C.border}`, maxWidth: 1200, margin: "0 auto" }}>
-          <div style={{ padding: "20px 24px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
-            <span style={{ fontSize: 13, color: C.textT }}>Copyright© 2026 <a href="https://droppost.app" style={{ color: C.primary, textDecoration: "none", fontWeight: 600 }}>Inspired Marketing Agency</a></span>
-            <span style={{ fontSize: 13, color: C.textT }}>{t("Need help?", "Hulp nodig?")} <a href="mailto:inspiredmarketingsr@gmail.com" style={{ color: C.primary, textDecoration: "none", fontWeight: 600 }}>{t("Contact Us", "Neem Contact Op")}</a></span>
+          <div style={{ padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+            <span style={{ fontSize: 12, color: C.textT }}>© 2026 <a href="https://droppost.app" style={{ color: C.primary, textDecoration: "none", fontWeight: 600 }}>Inspired Marketing Agency</a></span>
+            <span style={{ fontSize: 12, color: C.textT }}>{t("Need help?", "Hulp nodig?")} <a href="mailto:inspiredmarketingsr@gmail.com" style={{ color: C.primary, textDecoration: "none", fontWeight: 600 }}>{t("Contact Us", "Neem Contact Op")}</a></span>
           </div>
         </div>
       </footer>
